@@ -20,7 +20,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Controllers\Customer\" />
+    <Folder Include="Controllers\Admin\" />
+    <Folder Include="Controllers\Organizer\" />
+    <Folder Include="Controllers\Public\" />
     <Folder Include="Views\Admin\" />
+    <Folder Include="Views\Customer\" />
+    <Folder Include="Views\Public\" />
+    <Folder Include="Views\Organizer\" />
   </ItemGroup>
 
 </Project>
