@@ -118,7 +118,7 @@ Supports **customers** (browse & buy), **organizers** (publish/manage events), a
 ### 2. Clone the repository
 
 ```bash
-git clone git@github.com:Lprabodha/online-event-booking.git
+git clone git@github.com:Lprabodha/online-event-booking-system.git
 cd ticket-booking-system
 ```
 
