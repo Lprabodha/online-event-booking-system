@@ -24,6 +24,7 @@
     <Folder Include="Controllers\Admin\" />
     <Folder Include="Controllers\Organizer\" />
     <Folder Include="Controllers\Public\" />
+    <Folder Include="Migrations\" />
     <Folder Include="Views\Admin\" />
     <Folder Include="Views\Customer\" />
     <Folder Include="Views\Public\" />
