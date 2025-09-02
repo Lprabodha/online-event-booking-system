@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Data.Seeders;
+using online_event_booking_system.Repository.Interface;
+using online_event_booking_system.Repository.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +20,12 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
+// Services
+builder.Services.AddScoped<IAdminService, AdminService>();
+
+// Repositories
+builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 
 var app = builder.Build();
 
