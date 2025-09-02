@@ -3,47 +3,44 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - online_event_booking_system</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/online_event_booking_system.styles.css" asp-append-version="true" />
+    <title>@ViewData["Title"] - Star Events | Where Every Event Becomes a Memory</title>
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">online_event_booking_system</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
+<body class="min-h-screen flex flex-col bg-gradient-to-b from-black via-[#0a0f14] to-black text-gray-100 antialiased selection:bg-[#14a0ee]/30 selection:text-white">
+    <header class="sticky top-0 z-50 backdrop-blur bg-black/60 border-b border-[#14a0ee]/30 shadow-[0_0_30px_#14a0ee33]">
+        <nav class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center justify-between h-16">
+                <a class="flex items-center gap-3 group" asp-area="" asp-controller="Home" asp-action="Index">
+                    <img src="~/images/logo.png" alt="Logo" class="h-16 w-16 object-contain drop-shadow-[0_0_10px_#14a0eeaa]" />
+                    <span class="text-base font-semibold tracking-wide text-[#14a0ee] group-hover:drop-shadow-[0_0_10px_#14a0ee] transition">Where Every Event Becomes a Memory</span>
+                </a>
+                <div class="hidden md:flex items-center gap-6">
+                    <a asp-area="" asp-controller="Home" asp-action="Index" class="text-sm font-medium text-gray-300 hover:text-[#14a0ee] transition duration-200 hover:drop-shadow-[0_0_10px_#14a0ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Home</a>
+                    <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-sm font-medium text-gray-300 hover:text-[#14a0ee] transition duration-200 hover:drop-shadow-[0_0_10px_#14a0ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Privacy</a>
+                </div>
+                <div class="hidden md:flex items-center gap-2">
+                    <a asp-area="Identity" asp-page="/Account/Register" class="px-4 py-2 rounded-lg text-sm font-semibold text-black bg-[#14a0ee] hover:bg-[#51baf3] active:bg-[#0e8dd4] shadow-[0_0_14px_#14a0ee99] hover:shadow-[0_0_20px_#14a0eecc] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Register</a>
+                    <a asp-area="Identity" asp-page="/Account/Login" class="px-4 py-2 rounded-lg text-sm font-semibold text-[#14a0ee] border border-[#14a0ee]/60 hover:text-white hover:bg-[#14a0ee]/25 active:bg-[#14a0ee]/35 shadow-[0_0_10px_#14a0ee55] hover:shadow-[0_0_18px_#14a0eeaa] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Login</a>
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - online_event_booking_system - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <main role="main" class="flex-1 max-w-7xl mx-auto px-4 py-10 w-full">
+        <div class="rounded-xl border border-[#14a0ee]/20 bg-black/30 shadow-[0_0_40px_#14a0ee22]">
+            <div class="p-6">
+                @RenderBody()
+            </div>
+        </div>
+    </main>
+
+    <footer class="mt-16 border-t border-[#14a0ee]/30 bg-black/60">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
+            <p class="text-sm text-gray-400">&copy; 2025 - online_event_booking_system</p>
+            <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-sm text-[#14a0ee] hover:text-white transition drop-shadow-[0_0_6px_#14a0ee]">Privacy</a>
         </div>
     </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

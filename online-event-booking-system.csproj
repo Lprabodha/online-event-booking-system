@@ -23,6 +23,7 @@
     <Folder Include="Controllers\Public\" />
     <Folder Include="Migrations\" />
     <Folder Include="Views\Public\" />
+    <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
 </Project>
