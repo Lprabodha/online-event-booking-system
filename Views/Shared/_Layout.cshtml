@@ -19,8 +19,7 @@
                     <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-sm font-medium text-gray-300 hover:text-[#14a0ee] transition duration-200 hover:drop-shadow-[0_0_10px_#14a0ee] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Privacy</a>
                 </div>
                 <div class="hidden md:flex items-center gap-2">
-                    <a asp-area="Identity" asp-page="/Account/Register" class="px-4 py-2 rounded-lg text-sm font-semibold text-black bg-[#14a0ee] hover:bg-[#51baf3] active:bg-[#0e8dd4] shadow-[0_0_14px_#14a0ee99] hover:shadow-[0_0_20px_#14a0eecc] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Register</a>
-                    <a asp-area="Identity" asp-page="/Account/Login" class="px-4 py-2 rounded-lg text-sm font-semibold text-[#14a0ee] border border-[#14a0ee]/60 hover:text-white hover:bg-[#14a0ee]/25 active:bg-[#14a0ee]/35 shadow-[0_0_10px_#14a0ee55] hover:shadow-[0_0_18px_#14a0eeaa] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black">Login</a>
+                    <partial name="_LoginPartial" />
                 </div>
             </div>
         </nav>
@@ -36,8 +35,9 @@
 
     <footer class="mt-16 border-t border-[#14a0ee]/30 bg-black/60">
         <div class="max-w-7xl mx-auto px-4 py-6 flex items-center justify-between">
-            <p class="text-sm text-gray-400">&copy; 2025 - online_event_booking_system</p>
-            <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-sm text-[#14a0ee] hover:text-white transition drop-shadow-[0_0_6px_#14a0ee]">Privacy</a>
+            <p class="text-sm text-gray-400">&copy; 2025 - Star Events Pvt Ltd | All Rights Reserved.</p>
+            @* <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-sm text-[#14a0ee] hover:text-white transition drop-shadow-[0_0_6px_#14a0ee]">Privacy</a> *@
+            <p class="text-sm text-gray-400">Developed By: XYZ Pvt Ltd</p>
         </div>
     </footer>
 

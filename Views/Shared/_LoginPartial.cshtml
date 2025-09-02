@@ -3,25 +3,95 @@
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
-<ul class="navbar-nav">
 @if (SignInManager.IsSignedIn(User))
 {
-    <li class="nav-item">
-        <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @User.Identity?.Name!</a>
-    </li>
-    <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Logout</button>
-        </form>
-    </li>
+    <!-- User Dropdown Menu -->
+    <div class="relative group">
+        <!-- User Avatar Button -->
+        <button class="flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-semibold text-[#14a0ee] border border-[#14a0ee]/60 hover:text-white hover:bg-[#14a0ee]/25 active:bg-[#14a0ee]/35 shadow-[0_0_10px_#14a0ee55] hover:shadow-[0_0_18px_#14a0eeaa] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black group-hover:drop-shadow-[0_0_10px_#14a0ee]">
+            <!-- User Icon -->
+            <div class="w-8 h-8 rounded-full bg-[#14a0ee]/20 border border-[#14a0ee]/40 flex items-center justify-center group-hover:bg-[#14a0ee]/30 transition-all duration-200">
+                <svg class="w-5 h-5 text-[#14a0ee]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </div>
+            <!-- Username -->
+            <span class="hidden sm:block">@User.Identity?.Name</span>
+            <!-- Dropdown Arrow -->
+            <svg class="w-4 h-4 text-[#14a0ee] transition-transform duration-200 group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+
+        <!-- Dropdown Menu -->
+        <div class="absolute right-0 mt-2 w-56 bg-black/90 backdrop-blur-lg border border-[#14a0ee]/30 rounded-xl shadow-[0_0_30px_#14a0ee33] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform scale-95 group-hover:scale-100 z-50">
+            <!-- User Info Header -->
+            <div class="px-4 py-3 border-b border-[#14a0ee]/20">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-[#14a0ee]/20 border border-[#14a0ee]/40 flex items-center justify-center">
+                        <svg class="w-6 h-6 text-[#14a0ee]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-white">@User.Identity?.Name</p>
+                        <p class="text-xs text-gray-400">Signed in</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Menu Items -->
+            <div class="py-2">
+                <!-- Profile Link -->
+                <a asp-area="Identity" asp-page="/Account/Manage/Index" 
+                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-[#14a0ee]/10 transition-all duration-200 group/item">
+                    <svg class="w-4 h-4 text-[#14a0ee] group-hover/item:drop-shadow-[0_0_6px_#14a0ee] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    <span>Edit Profile</span>
+                </a>
+
+                <!-- Settings Link -->
+                <a href="#" 
+                   class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-[#14a0ee]/10 transition-all duration-200 group/item">
+                    <svg class="w-4 h-4 text-[#14a0ee] group-hover/item:drop-shadow-[0_0_6px_#14a0ee] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>Settings</span>
+                </a>
+
+                <!-- Divider -->
+                <div class="border-t border-[#14a0ee]/20 my-2"></div>
+
+                <!-- Logout Form -->
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post">
+                    <button type="submit" 
+                            class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-all duration-200 group/item">
+                        <svg class="w-4 h-4 text-red-400 group-hover/item:drop-shadow-[0_0_6px_#ef4444] transition-all duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        <span>Sign Out</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 }
 else
 {
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
+    <!-- Authentication Buttons -->
+    <div class="flex items-center gap-2">
+        <!-- Register Button -->
+        <a asp-area="Identity" asp-page="/Account/Register" 
+           class="px-4 py-2 rounded-lg text-sm font-semibold text-black bg-[#14a0ee] hover:bg-[#51baf3] active:bg-[#0e8dd4] shadow-[0_0_14px_#14a0ee99] hover:shadow-[0_0_20px_#14a0eecc] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black transform hover:scale-[1.02] active:scale-[0.98]">
+            Register
+        </a>
+        
+        <!-- Login Button -->
+        <a asp-area="Identity" asp-page="/Account/Login" 
+           class="px-4 py-2 rounded-lg text-sm font-semibold text-[#14a0ee] border border-[#14a0ee]/60 hover:text-white hover:bg-[#14a0ee]/25 active:bg-[#14a0ee]/35 shadow-[0_0_10px_#14a0ee55] hover:shadow-[0_0_18px_#14a0eeaa] transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#14a0ee] focus-visible:ring-offset-2 focus-visible:ring-offset-black transform hover:scale-[1.02] active:scale-[0.98]">
+            Login
+        </a>
+    </div>
 }
-</ul>
