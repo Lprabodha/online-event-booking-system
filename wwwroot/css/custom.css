@@ -552,3 +552,338 @@
     transform: none;
   }
 }
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 768px) {
+    /* Header Mobile Responsiveness */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Mobile Navigation Improvements */
+    #mobile-menu {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 0 0 1rem 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        margin: 0 -1rem;
+        padding: 1rem;
+    }
+    
+    #mobile-menu input {
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+    
+    #mobile-menu a {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    #mobile-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(0.5rem);
+    }
+    
+    /* Footer Mobile Responsiveness */
+    footer .grid {
+        gap: 2rem;
+    }
+    
+    footer .lg\:col-span-2 {
+        grid-column: span 1;
+    }
+    
+    /* Social Media Icons Mobile */
+    footer .flex.space-x-4 {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    footer .w-10.h-10 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    /* Payment Methods Mobile */
+    footer .flex.space-x-4:last-child {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    footer .w-16.h-10 {
+        width: 4rem;
+        height: 2.5rem;
+        font-size: 0.625rem;
+    }
+    
+    /* Bottom Footer Mobile */
+    footer .border-t {
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
+    
+    footer .flex.flex-col.md\:flex-row {
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    footer .flex.flex-wrap.items-center.space-x-4 {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    footer .text-gray-600 {
+        display: none; /* Hide separators on mobile */
+    }
+}
+
+@media (max-width: 640px) {
+    /* Extra Small Mobile Devices */
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    /* Header Logo Mobile */
+    .w-12.h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-xs {
+        font-size: 0.625rem;
+    }
+    
+    /* Footer Mobile Adjustments */
+    footer {
+        padding: 2rem 0;
+    }
+    
+    footer .py-16 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    footer .grid {
+        gap: 1.5rem;
+    }
+    
+    footer h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+    
+    footer .space-y-3 > li {
+        margin-bottom: 0.5rem;
+    }
+    
+    footer .space-y-4 > div {
+        margin-bottom: 1rem;
+    }
+    
+    /* Social Icons Extra Small */
+    footer .w-10.h-10 {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+    
+    footer .w-5.h-5 {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    /* Payment Methods Extra Small */
+    footer .w-16.h-10 {
+        width: 3.5rem;
+        height: 2rem;
+        font-size: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Very Small Mobile Devices */
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Header Mobile */
+    .w-12.h-12 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.125rem;
+    }
+    
+    /* Footer Very Small */
+    footer .py-16 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    footer .grid {
+        gap: 1rem;
+    }
+    
+    footer h3 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    footer .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    footer .text-sm {
+        font-size: 0.75rem;
+    }
+    
+    /* Social Icons Very Small */
+    footer .w-10.h-10 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    footer .w-5.h-5 {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+    
+    /* Payment Methods Very Small */
+    footer .w-16.h-10 {
+        width: 3rem;
+        height: 1.75rem;
+        font-size: 0.5rem;
+    }
+    
+    /* Contact Section Very Small */
+    footer .w-10.h-10 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    footer .space-x-3 > div:first-child {
+        margin-right: 0.5rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Touch-friendly button sizes */
+    button, 
+    a[href],
+    .category-tab {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .hover\:scale-105:hover,
+    .hover\:scale-110:hover,
+    .hover:-translate-y-2:hover,
+    .hover:translate-x-2:hover {
+        transform: none;
+    }
+    
+    /* Touch-friendly spacing */
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+    
+    .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+    
+    /* Touch-friendly footer links */
+    footer a {
+        padding: 0.5rem 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Landscape Mobile Optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Reduce vertical spacing on landscape mobile */
+    footer .py-16 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    footer .mt-12 {
+        margin-top: 1.5rem;
+    }
+    
+    footer .pt-8 {
+        padding-top: 1.5rem;
+    }
+    
+    /* Optimize grid for landscape */
+    footer .grid {
+        gap: 1.5rem;
+    }
+    
+    /* Reduce heading sizes */
+    footer h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* High DPI Mobile Devices */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Ensure crisp rendering on high DPI screens */
+    footer svg {
+        shape-rendering: geometricPrecision;
+    }
+    
+    /* Optimize text rendering */
+    footer {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Dark Mode Mobile Optimizations */
+@media (prefers-color-scheme: dark) {
+    /* Ensure proper contrast on mobile dark mode */
+    footer .text-gray-400 {
+        color: #9ca3af;
+    }
+    
+    footer .text-gray-300 {
+        color: #d1d5db;
+    }
+    
+    footer .border-gray-700 {
+        border-color: #374151;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable animations for users who prefer reduced motion */
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hover\:scale-105:hover,
+    .hover\:scale-110:hover,
+    .hover:-translate-y-2:hover,
+    .hover:translate-x-2:hover {
+        transform: none !important;
+    }
+}

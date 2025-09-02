@@ -41,7 +41,7 @@
                     </div>
                 </div>
                 
-                <button class="md:hidden p-2 rounded-lg hover:bg-white/10 transition-colors text-white" onclick="toggleMobileMenu()">
+                <button class="md:hidden p-3 rounded-xl hover:bg-white/10 transition-all duration-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
@@ -49,22 +49,22 @@
             </div>
             
             <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-white/20 pt-4">
-                <div class="mb-4">
+                <div class="mb-6">
                     <div class="relative">
                         <input type="text" 
                                placeholder="Search events..." 
-                               class="w-full px-4 py-3 pl-12 bg-white/5 border border-white/20 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                               class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm text-base">
                         <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                         </svg>
                     </div>
                 </div>
                 
-                <div class="flex flex-col space-y-3">
-                    <a href="/" class="text-gray-300 hover:text-white font-medium transition-colors py-2">Home</a>
-                    <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-colors py-2">Events</a>
-                    <a href="/Identity/Account/Register" class="text-gray-300 hover:text-white font-medium transition-colors py-2">Register</a>
-                    <a href="/Identity/Account/Login" class="bg-gradient-to-r from-purple-600 to-teal-500 text-white px-4 py-2 rounded-full hover:from-purple-700 hover:to-teal-600 transition-colors font-medium text-center">Login</a>
+                <div class="flex flex-col space-y-4">
+                    <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Home</a>
+                    <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Events</a>
+                    <a href="/Identity/Account/Register" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Register</a>
+                    <a href="/Identity/Account/Login" class="bg-gradient-to-r from-purple-600 to-teal-500 text-white px-6 py-4 rounded-2xl hover:from-purple-700 hover:to-teal-600 transition-all duration-300 font-medium text-center text-lg shadow-lg">Login</a>
                 </div>
             </div>
         </nav>
@@ -74,39 +74,30 @@
         @RenderBody()
     </main>
 
-    <!-- Footer similar to MyTickets.lk design -->
-    <footer class="bg-slate-900 text-white mt-16 relative overflow-hidden">
-        <!-- Background ticket stub decorations -->
-        <div class="absolute top-0 right-0 w-32 h-32 opacity-10">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 20 L90 20 L90 80 L10 80 Z M20 30 L80 30 M20 50 L80 50 M20 70 L80 70" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-        </div>
-        <div class="absolute bottom-0 right-0 w-24 h-24 opacity-10">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M15 25 L85 25 L85 75 L15 75 Z M25 35 L75 35 M25 55 L75 55 M25 65 L75 65" stroke="currentColor" stroke-width="2" fill="none"/>
-            </svg>
-        </div>
+    <!-- Footer with Old Design -->
+    <footer class="bg-gradient-to-br from-dark-blue via-dark-navy to-dark-purple/20 text-foreground mt-16 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-purple-900/10 via-transparent to-teal-900/10"></div>
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500/5 rounded-full blur-3xl"></div>
         
         <div class="container mx-auto px-4 py-16 relative z-10">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                <!-- TicketBooking Information Section -->
                 <div class="lg:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-700 rounded-xl flex items-center justify-center shadow-lg">
-                            <span class="text-white font-bold text-xl">TB</span>
+                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-teal-400 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
+                            <span class="text-white font-bold text-2xl">TB</span>
                         </div>
-                        <div>
-                            <h3 class="text-2xl font-bold text-white">TicketBooking<sup class="text-sm text-blue-300">LK</sup></h3>
-                            <p class="text-gray-400 text-sm">Your Event Partner</p>
+                        <div class="flex flex-col">
+                            <span class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">TicketBooking</span>
+                            <span class="text-sm text-gray-400">Your Event Gateway</span>
                         </div>
                     </div>
-                    <p class="text-gray-300 mb-8 leading-relaxed max-w-lg">
-                        TicketBooking, Sri Lanka's premier and most trusted online ticket partner, serves as the official marketplace providing a secure and safe platform for purchasing tickets to all entertainment events in Sri Lanka.
+                    <p class="text-gray-400 mb-8 max-w-md leading-relaxed text-lg">
+                        Discover and book tickets to the most exciting events in your city. From concerts to conferences, we've got your entertainment covered.
                     </p>
                     
-                    <!-- Social Media Icons -->
-                    <div class="flex space-x-4 mb-6">
+                    
+                    <div class="flex space-x-4">
                         <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-blue-500 transition-all duration-300 transform hover:scale-110">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
@@ -179,34 +170,6 @@
                     </ul>
                 </div>
                 
-                <!-- Contact Section -->
-                <div>
-                    <h3 class="font-semibold mb-6 text-xl text-white">Contact</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.446-1.076-.612-1.47-.166-.394-.333-.333-.446-.334-.114-.001-.247-.001-.38-.001-.133 0-.347.074-.52.223-.173.149-.662.648-.662 1.582 0 .934.679 1.836 1.774 2.402.932.468 2.002.748 3.01.748.968 0 1.891-.235 2.715-.748.825-.514 1.549-1.244 2.047-2.108.496-.864.744-1.799.744-2.734 0-.934-.248-1.869-.744-2.733-.498-.864-1.222-1.594-2.047-2.108-.824-.513-1.747-.748-2.715-.748-.968 0-1.891.235-2.715.748-.825.514-1.549 1.244-2.047 2.108-.496.864-.744 1.799-.744 2.734 0 .934.248 1.869.744 2.733.498.864 1.222 1.594 2.047 2.108.824.513 1.747.748 2.715.748.968 0 1.891-.235 2.715-.748.825-.514 1.549-1.244 2.047-2.108.496-.864.744-1.799.744-2.734 0-.934-.248-1.869-.744-2.733-.498-.864-1.222-1.594-2.047-2.108-.824-.513-1.747-.748-2.715-.748z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-white font-medium">WhatsApp</div>
-                                <div class="text-sm text-gray-400">(Text-only service)</div>
-                            </div>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-white font-medium">Email</div>
-                                <div class="text-sm text-gray-400">support@ticketbooking.com</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <!-- Bottom Footer with Legal Links and Copyright -->
@@ -230,10 +193,52 @@
     <script>
         function toggleMobileMenu() {
             const menu = document.getElementById('mobile-menu');
+            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+            
             menu.classList.toggle('hidden');
+            
+            // Update button aria-expanded for accessibility
+            const isExpanded = !menu.classList.contains('hidden');
+            button.setAttribute('aria-expanded', isExpanded);
+            
+            // Prevent body scroll when menu is open on mobile
+            if (isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
         }
         
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+            
+            if (!menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const menu = document.getElementById('mobile-menu');
+                if (!menu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const menu = document.getElementById('mobile-menu');
+            if (window.innerWidth >= 768 && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        });
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
                     e.preventDefault();
@@ -246,6 +251,20 @@
                     }
                 });
             });
+            
+            // Touch-friendly interactions for mobile
+            if ('ontouchstart' in window) {
+                // Add touch feedback for interactive elements
+                document.querySelectorAll('button, a[href], .category-tab').forEach(element => {
+                    element.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+                    
+                    element.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
         });
     </script>
 
