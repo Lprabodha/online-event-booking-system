@@ -1,0 +1,889 @@
+/* Custom CSS for Online Event Booking System */
+
+/* Custom Color Variables */
+:root {
+  --dark-navy: #181f2f;
+  --dark-blue: #232946;
+  --dark-purple: #3d2c8d;
+  --muted: #f3f6fb;
+  --foreground: #f8fafc;
+  --muted-foreground: #bfc9d9;
+  --card: #232946;
+  --primary: #8b5cf6;
+  --primary-foreground: #ffffff;
+  --secondary: #14b8a6;
+  --secondary-foreground: #ffffff;
+}
+
+/* Dark Theme Colors */
+.bg-dark-navy {
+  background-color: var(--dark-navy);
+}
+
+.bg-dark-blue {
+  background-color: var(--dark-blue);
+}
+
+.bg-dark-purple {
+  background-color: var(--dark-purple);
+}
+
+.bg-muted {
+  background-color: var(--muted);
+}
+
+.bg-card {
+  background-color: var(--card);
+}
+
+.bg-primary {
+  background-color: var(--primary);
+}
+
+.bg-secondary {
+  background-color: var(--secondary);
+}
+
+/* Text Colors */
+.text-foreground {
+  color: var(--foreground);
+}
+
+.text-muted-foreground {
+  color: var(--muted-foreground);
+}
+
+.text-primary-foreground {
+  color: var(--primary-foreground);
+}
+
+.text-secondary-foreground {
+  color: var(--secondary-foreground);
+}
+
+.text-dark-navy {
+  color: var(--dark-navy);
+}
+
+/* Background Opacity Classes */
+.bg-dark-navy\/90 {
+  background-color: rgba(15, 23, 42, 0.9);
+}
+
+.bg-dark-navy\/80 {
+  background-color: rgba(15, 23, 42, 0.8);
+}
+
+.bg-dark-blue\/50 {
+  background-color: rgba(30, 41, 59, 0.5);
+}
+
+.bg-dark-blue\/80 {
+  background-color: rgba(30, 41, 59, 0.8);
+}
+
+.bg-secondary\/10 {
+  background-color: rgba(100, 116, 139, 0.1);
+}
+
+/* Border Colors */
+.border-gradient {
+  border-image: linear-gradient(to right, #8b5cf6, #14b8a6);
+  border-image-slice: 1;
+}
+
+/* Category Tab Styles */
+.category-tab {
+  transition: all 0.3s ease;
+}
+
+.category-tab.active {
+  background: linear-gradient(to right, #8b5cf6, #14b8a6);
+  color: white;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+}
+
+.category-tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+}
+
+/* Custom Animations */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes float-delayed {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+@keyframes float-slow {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-float-delayed {
+  animation: float-delayed 8s ease-in-out infinite;
+  animation-delay: 2s;
+}
+
+.animate-float-slow {
+  animation: float-slow 10s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+/* Enhanced Hover Effects */
+.hover-lift {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.3);
+}
+
+/* Glass Morphism Effects */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced Button Styles */
+.btn-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #14b8a6 100%);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #0d9488 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Enhanced Card Styles */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(139, 92, 246, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(139, 92, 246, 0.2);
+}
+
+/* Enhanced Form Styles */
+.form-input {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 12px 16px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #8b5cf6;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Enhanced Navigation Styles */
+.nav-link {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #8b5cf6, #14b8a6);
+  transition: width 0.3s ease;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* Enhanced Footer Styles */
+.footer-link {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.footer-link:hover {
+  color: white;
+  transform: translateX(8px);
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 768px) {
+  .container {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  
+  .card {
+    padding: 16px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+  
+  /* Mobile-specific text sizes */
+  .text-6xl {
+    font-size: 2.5rem;
+  }
+  
+  .text-8xl {
+    font-size: 3rem;
+  }
+  
+  .py-24 {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+  
+  .py-20 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+  
+  /* Mobile navigation improvements */
+  #mobile-menu {
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 0 0 16px 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* Mobile category tabs */
+  .category-tab {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+  
+  /* Mobile grid adjustments */
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  .grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  
+  .card {
+    padding: 12px;
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  /* Extra small screen adjustments */
+  .text-4xl {
+    font-size: 1.875rem;
+  }
+  
+  .text-5xl {
+    font-size: 2.25rem;
+  }
+  
+  .py-16 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .py-12 {
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+  }
+  
+  /* Mobile spacing adjustments */
+  .gap-6 {
+    gap: 1rem;
+  }
+  
+  .gap-8 {
+    gap: 1.5rem;
+  }
+  
+  .mb-16 {
+    margin-bottom: 2rem;
+  }
+  
+  .mb-20 {
+    margin-bottom: 2.5rem;
+  }
+}
+
+/* Enhanced Loading States */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: loading 1.5s infinite;
+}
+
+@keyframes loading {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #8b5cf6, #14b8a6);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7c3aed, #0d9488);
+}
+
+/* Enhanced Focus States */
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+}
+
+/* Enhanced Transitions */
+.transition-all {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-transform {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.transition-colors {
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Shadows */
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.shadow-glow:hover {
+  box-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
+}
+
+/* Enhanced Text Gradients */
+.text-gradient-primary {
+  background: linear-gradient(135deg, #8b5cf6 0%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-secondary {
+  background: linear-gradient(135deg, #14b8a6 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Enhanced Border Gradients */
+.border-gradient-primary {
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #8b5cf6, #14b8a6) 1;
+}
+
+.border-gradient-secondary {
+  border: 2px solid;
+  border-image: linear-gradient(135deg, #14b8a6, #8b5cf6) 1;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 640px) {
+  /* Small mobile adjustments */
+  .px-4 {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  .px-8 {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* Mobile button improvements */
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+  
+  /* Mobile form improvements */
+  .form-input {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+  
+  /* Mobile navigation improvements */
+  .nav-link {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 4px 0;
+  }
+  
+  .nav-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  /* Touch device optimizations */
+  .btn-primary,
+  .btn-secondary,
+  .nav-link {
+    min-height: 44px; /* Apple's recommended minimum touch target */
+  }
+  
+  .category-tab {
+    min-height: 48px;
+    min-width: 48px;
+  }
+  
+  /* Remove hover effects on touch devices */
+  .hover\:scale-105:hover,
+  .hover\:-translate-y-2:hover,
+  .hover\:translate-x-2:hover {
+    transform: none;
+  }
+}
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 768px) {
+    /* Header Mobile Responsiveness */
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Mobile Navigation Improvements */
+    #mobile-menu {
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(20px);
+        border-radius: 0 0 1rem 1rem;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        margin: 0 -1rem;
+        padding: 1rem;
+    }
+    
+    #mobile-menu input {
+        font-size: 16px; /* Prevents iOS zoom */
+    }
+    
+    #mobile-menu a {
+        padding: 0.75rem 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    #mobile-menu a:hover {
+        background: rgba(255, 255, 255, 0.1);
+        transform: translateX(0.5rem);
+    }
+    
+    /* Footer Mobile Responsiveness */
+    footer .grid {
+        gap: 2rem;
+    }
+    
+    footer .lg\:col-span-2 {
+        grid-column: span 1;
+    }
+    
+    /* Social Media Icons Mobile */
+    footer .flex.space-x-4 {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    footer .w-10.h-10 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    /* Payment Methods Mobile */
+    footer .flex.space-x-4:last-child {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+    }
+    
+    footer .w-16.h-10 {
+        width: 4rem;
+        height: 2.5rem;
+        font-size: 0.625rem;
+    }
+    
+    /* Bottom Footer Mobile */
+    footer .border-t {
+        margin-top: 2rem;
+        padding-top: 2rem;
+    }
+    
+    footer .flex.flex-col.md\:flex-row {
+        gap: 1rem;
+        text-align: center;
+    }
+    
+    footer .flex.flex-wrap.items-center.space-x-4 {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    footer .text-gray-600 {
+        display: none; /* Hide separators on mobile */
+    }
+}
+
+@media (max-width: 640px) {
+    /* Extra Small Mobile Devices */
+    .container {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+    
+    /* Header Logo Mobile */
+    .w-12.h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    .text-xs {
+        font-size: 0.625rem;
+    }
+    
+    /* Footer Mobile Adjustments */
+    footer {
+        padding: 2rem 0;
+    }
+    
+    footer .py-16 {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    footer .grid {
+        gap: 1.5rem;
+    }
+    
+    footer h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+    
+    footer .space-y-3 > li {
+        margin-bottom: 0.5rem;
+    }
+    
+    footer .space-y-4 > div {
+        margin-bottom: 1rem;
+    }
+    
+    /* Social Icons Extra Small */
+    footer .w-10.h-10 {
+        width: 2.25rem;
+        height: 2.25rem;
+    }
+    
+    footer .w-5.h-5 {
+        width: 1rem;
+        height: 1rem;
+    }
+    
+    /* Payment Methods Extra Small */
+    footer .w-16.h-10 {
+        width: 3.5rem;
+        height: 2rem;
+        font-size: 0.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    /* Very Small Mobile Devices */
+    .container {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+    
+    /* Header Mobile */
+    .w-12.h-12 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    .text-2xl {
+        font-size: 1.125rem;
+    }
+    
+    /* Footer Very Small */
+    footer .py-16 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    footer .grid {
+        gap: 1rem;
+    }
+    
+    footer h3 {
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    footer .text-2xl {
+        font-size: 1.25rem;
+    }
+    
+    footer .text-sm {
+        font-size: 0.75rem;
+    }
+    
+    /* Social Icons Very Small */
+    footer .w-10.h-10 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    footer .w-5.h-5 {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+    
+    /* Payment Methods Very Small */
+    footer .w-16.h-10 {
+        width: 3rem;
+        height: 1.75rem;
+        font-size: 0.5rem;
+    }
+    
+    /* Contact Section Very Small */
+    footer .w-10.h-10 {
+        width: 2rem;
+        height: 2rem;
+    }
+    
+    footer .space-x-3 > div:first-child {
+        margin-right: 0.5rem;
+    }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+    /* Touch-friendly button sizes */
+    button, 
+    a[href],
+    .category-tab {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .hover\:scale-105:hover,
+    .hover\:scale-110:hover,
+    .hover:-translate-y-2:hover,
+    .hover:translate-x-2:hover {
+        transform: none;
+    }
+    
+    /* Touch-friendly spacing */
+    .space-y-3 > * + * {
+        margin-top: 0.75rem;
+    }
+    
+    .space-y-4 > * + * {
+        margin-top: 1rem;
+    }
+    
+    /* Touch-friendly footer links */
+    footer a {
+        padding: 0.5rem 0;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
+
+/* Landscape Mobile Optimizations */
+@media (max-width: 768px) and (orientation: landscape) {
+    /* Reduce vertical spacing on landscape mobile */
+    footer .py-16 {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+    }
+    
+    footer .mt-12 {
+        margin-top: 1.5rem;
+    }
+    
+    footer .pt-8 {
+        padding-top: 1.5rem;
+    }
+    
+    /* Optimize grid for landscape */
+    footer .grid {
+        gap: 1.5rem;
+    }
+    
+    /* Reduce heading sizes */
+    footer h3 {
+        font-size: 1.125rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* High DPI Mobile Devices */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* Ensure crisp rendering on high DPI screens */
+    footer svg {
+        shape-rendering: geometricPrecision;
+    }
+    
+    /* Optimize text rendering */
+    footer {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* Dark Mode Mobile Optimizations */
+@media (prefers-color-scheme: dark) {
+    /* Ensure proper contrast on mobile dark mode */
+    footer .text-gray-400 {
+        color: #9ca3af;
+    }
+    
+    footer .text-gray-300 {
+        color: #d1d5db;
+    }
+    
+    footer .border-gray-700 {
+        border-color: #374151;
+    }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+    /* Disable animations for users who prefer reduced motion */
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    
+    .hover\:scale-105:hover,
+    .hover\:scale-110:hover,
+    .hover:-translate-y-2:hover,
+    .hover:translate-x-2:hover {
+        transform: none !important;
+    }
+}

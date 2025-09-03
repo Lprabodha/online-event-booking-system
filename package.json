@@ -1,0 +1,18 @@
+{
+  "name": "online-event-booking-system",
+  "version": "1.0.0",
+  "description": "ASP.NET Core 9 MVC + Identity project for managing events, ticket sales, and bookings.   Supports **customers** (browse & buy), **organizers** (publish/manage events), and **admins** (users, reports).",
+  "main": "index.js",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.12",
+    "tailwindcss": "^4.1.12"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tw:dev": "npx @tailwindcss/cli -i ./Styles/tailwind.css -o ./wwwroot/css/app.css --watch",
+    "tw:build": "npx @tailwindcss/cli -i ./Styles/tailwind.css -o ./wwwroot/css/app.css --minify"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

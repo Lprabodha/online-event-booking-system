@@ -18,7 +18,20 @@ public class HomeController : Controller
         return View();
     }
 
+    [HttpGet("privacy")]
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+    [HttpGet("faq")]
+    public IActionResult Faq()
+    {
+        return View();
+    }
+
+    [HttpGet("contact")]
+    public IActionResult Contact()
     {
         return View();
     }

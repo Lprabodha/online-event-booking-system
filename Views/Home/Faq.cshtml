@@ -1,0 +1,297 @@
+﻿@{
+    ViewData["Title"] = "FAQ";
+    ViewData["Description"] = "Find answers to frequently asked questions about TicketBooking, including booking, payments, refunds, and event information.";
+}
+
+<section class="min-h-screen bg-navy-950 text-white py-24 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-20 right-20 w-64 h-64 bg-gradient-to-r from-purple-400 to-teal-400 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-20 left-20 w-48 h-48 bg-gradient-to-r from-teal-400 to-purple-400 rounded-full blur-2xl animate-pulse delay-1000"></div>
+    </div>
+
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16">
+            <h1 class="text-5xl md:text-7xl font-bold mb-8">
+                Frequently Asked <span class="bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Questions</span>
+            </h1>
+            <p class="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Find answers to common questions about booking tickets, payments, refunds, and more. Can't find what you're looking for? Contact our support team.
+            </p>
+        </div>
+
+        <div class="max-w-2xl mx-auto mb-16">
+            <div class="relative">
+                <input type="text" id="faqSearch" placeholder="Search FAQ..."
+                       class="w-full px-6 py-4 pl-12 bg-white/5 backdrop-blur-sm border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300">
+                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <button class="faq-category-btn active bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-full font-medium transition-all hover:scale-105 shadow-lg" data-category="all">
+                All Questions
+            </button>
+            <button class="faq-category-btn bg-white/10 backdrop-blur-sm text-gray-300 px-6 py-3 rounded-full font-medium hover:bg-purple-500/50 hover:text-white transition-all hover:scale-105 border border-white/20" data-category="booking">
+                Booking
+            </button>
+            <button class="faq-category-btn bg-white/10 backdrop-blur-sm text-gray-300 px-6 py-3 rounded-full font-medium hover:bg-purple-500/50 hover:text-white transition-all hover:scale-105 border border-white/20" data-category="payment">
+                Payment
+            </button>
+            <button class="faq-category-btn bg-white/10 backdrop-blur-sm text-gray-300 px-6 py-3 rounded-full font-medium hover:bg-purple-500/50 hover:text-white transition-all hover:scale-105 border border-white/20" data-category="refunds">
+                Refunds
+            </button>
+            <button class="faq-category-btn bg-white/10 backdrop-blur-sm text-gray-300 px-6 py-3 rounded-full font-medium hover:bg-purple-500/50 hover:text-white transition-all hover:scale-105 border border-white/20" data-category="account">
+                Account
+            </button>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6">
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="booking">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">How do I book tickets for an event?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Booking tickets is simple! Browse our events, select the one you want to attend, choose your preferred date and seating, and proceed to checkout. You'll receive your tickets via email immediately after payment confirmation.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="booking">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">Can I select specific seats?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Yes! For most venues, you can select your specific seats using our interactive seating chart. Simply click on available seats to select them. Some events offer general admission or assigned seating only.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="booking">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">How far in advance can I book tickets?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        You can book tickets as soon as they go on sale, which varies by event. Popular events may have tickets available months in advance, while others may only be available a few weeks before the event date.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="payment">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">What payment methods do you accept?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        We accept all major credit cards (Visa, MasterCard, American Express), PayPal, Apple Pay, and Google Pay. All transactions are secured with SSL encryption for your safety.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="payment">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">Are there any additional fees?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Yes, there may be service fees and processing fees added to your ticket price. These fees help us maintain our platform and provide customer support. All fees are clearly displayed before you complete your purchase.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="refunds">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">Can I get a refund for my tickets?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Refund policies vary by event and organizer. Generally, tickets are non-refundable unless the event is cancelled or postponed. Some events may offer refunds within a specific timeframe. Check the event details for specific refund policies.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="refunds">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">What happens if an event is cancelled?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        If an event is cancelled, you will receive a full refund including all fees. Refunds are typically processed within 5-10 business days. We'll notify you immediately via email if an event is cancelled.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="account">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">Do I need to create an account to buy tickets?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        While you can browse events without an account, you'll need to create one to complete your purchase. Having an account allows you to track your orders, receive updates, and makes future purchases faster.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="account">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">How do I reset my password?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Click on "Forgot Password" on the login page, enter your email address, and we'll send you a password reset link. Follow the instructions in the email to create a new password.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="general">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">How do I receive my tickets?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Tickets are delivered electronically via email immediately after purchase. You can present them on your mobile device or print them at home. Some venues may also offer will-call pickup options.
+                    </p>
+                </div>
+            </div>
+
+            <div class="faq-item bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 hover:border-purple-500/50 transition-all duration-300" data-category="general">
+                <button class="faq-question w-full text-left p-6 flex items-center justify-between hover:bg-white/5 rounded-2xl transition-colors" onclick="toggleFAQ(this)">
+                    <span class="text-lg font-semibold text-white">Can I transfer my tickets to someone else?</span>
+                    <svg class="w-6 h-6 text-purple-400 transform transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <div class="faq-answer hidden px-6 pb-6">
+                    <p class="text-gray-300 leading-relaxed">
+                        Yes, most tickets can be transferred to another person through your account dashboard. Simply select the tickets you want to transfer and enter the recipient's email address. They'll receive the tickets directly.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-16">
+            <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-8 max-w-2xl mx-auto border border-white/10">
+                <h3 class="text-2xl font-bold text-white mb-4">Still have questions?</h3>
+                <p class="text-gray-300 mb-6">Our support team is here to help you with any questions or concerns.</p>
+                <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                    <a href="/contact" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                        Contact Support
+                    </a>
+                    <a href="mailto:support@ticketbooking.com" class="border-2 border-white/30 bg-white/5 backdrop-blur-sm text-white px-8 py-3 rounded-xl font-bold hover:bg-white hover:text-navy-950 transition-all transform hover:scale-105">
+                        Email Us
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        function toggleFAQ(button) {
+            const answer = button.nextElementSibling;
+            const icon = button.querySelector('svg');
+            const isOpen = !answer.classList.contains('hidden');
+
+            document.querySelectorAll('.faq-answer').forEach(item => {
+                if (item !== answer) {
+                    item.classList.add('hidden');
+                    item.previousElementSibling.querySelector('svg').style.transform = 'rotate(0deg)';
+                }
+            });
+
+            if (isOpen) {
+                answer.classList.add('hidden');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                answer.classList.remove('hidden');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        document.querySelectorAll('.faq-category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const category = this.dataset.category;
+
+                document.querySelectorAll('.faq-category-btn').forEach(b => {
+                    b.classList.remove('active', 'bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+                    b.classList.add('bg-white/10', 'text-gray-300');
+                });
+
+                this.classList.add('active', 'bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+                this.classList.remove('bg-white/10', 'text-gray-300');
+
+                document.querySelectorAll('.faq-item').forEach(item => {
+                    if (category === 'all' || item.dataset.category === category) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                        const answer = item.querySelector('.faq-answer');
+                        const icon = item.querySelector('svg');
+                        answer.classList.add('hidden');
+                        icon.style.transform = 'rotate(0deg)';
+                    }
+                });
+            });
+        });
+
+        document.getElementById('faqSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const faqItems = document.querySelectorAll('.faq-item');
+
+            faqItems.forEach(item => {
+                const question = item.querySelector('.faq-question span').textContent.toLowerCase();
+                const answer = item.querySelector('.faq-answer p').textContent.toLowerCase();
+
+                if (question.includes(searchTerm) || answer.includes(searchTerm)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+
+            // If searching, show all categories
+            if (searchTerm) {
+                document.querySelectorAll('.faq-category-btn').forEach(btn => {
+                    if (btn.dataset.category === 'all') {
+                        btn.click();
+                    }
+                });
+            }
+        });
+    </script>
+}
