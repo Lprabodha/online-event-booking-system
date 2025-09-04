@@ -1,0 +1,462 @@
+﻿@{
+    ViewData["Title"] = "Checkout - Summer Music Festival";
+    ViewData["Description"] = "Complete your ticket purchase for Summer Music Festival. Secure payment processing.";
+}
+
+
+<section class="bg-slate-800/50 py-8 border-b border-slate-700">
+    <div class="container mx-auto px-4">
+        <div class="flex items-center justify-center space-x-12">
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 text-white rounded-2xl flex items-center justify-center text-lg font-bold shadow-lg">
+                    ✓
+                </div>
+                <span class="ml-3 text-white font-medium">Event Selected</span>
+            </div>
+            <div class="w-20 h-1 bg-gradient-to-r from-green-500 to-purple-500 rounded-full"></div>
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl flex items-center justify-center text-lg font-bold shadow-lg">
+                    2
+                </div>
+                <span class="ml-3 text-white font-medium">Checkout</span>
+            </div>
+            <div class="w-20 h-1 bg-slate-600 rounded-full"></div>
+            <div class="flex items-center">
+                <div class="w-12 h-12 bg-slate-600 text-slate-400 rounded-2xl flex items-center justify-center text-lg font-bold">
+                    3
+                </div>
+                <span class="ml-3 text-slate-400 font-medium">Confirmation</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-slate-900">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+            <!-- Checkout Form -->
+            <div class="lg:col-span-2 space-y-12">
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Contact Information
+                    </h2>
+                    <form class="space-y-8">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div>
+                                <label for="firstName" class="block text-sm font-bold text-white mb-3">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required
+                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                       placeholder="Enter your first name">
+                            </div>
+                            <div>
+                                <label for="lastName" class="block text-sm font-bold text-white mb-3">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required
+                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                       placeholder="Enter your last name">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-bold text-white mb-3">Email Address *</label>
+                            <input type="email" id="email" name="email" required
+                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                   placeholder="your.email@example.com">
+                            <p class="text-sm text-slate-400 mt-3">Your tickets will be sent to this email address</p>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-bold text-white mb-3">Phone Number</label>
+                            <input type="tel" id="phone" name="phone"
+                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                   placeholder="+1 (555) 123-4567">
+                        </div>
+                    </form>
+                </div>
+
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2 5a2 2 0 012-2h8a2 2 0 012 2v10a2 2 0 002 2H4a2 2 0 01-2-2V5zm3 1h6v4H5V6zm6 6H5v2h6v-2z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Select Tickets
+                    </h2>
+
+                    <div class="space-y-6">
+                        <div class="border-2 border-purple-500/50 bg-purple-500/10 rounded-2xl p-8 backdrop-blur-sm">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">General Admission</h3>
+                                    <p class="text-slate-300 text-lg">Standing room, full venue access</p>
+                                    <div class="flex items-center gap-3 mt-4">
+                                        <span class="text-4xl font-bold text-purple-400">$45</span>
+                                        <span class="text-slate-400 line-through text-lg">$60</span>
+                                        <span class="bg-green-500/20 text-green-300 text-sm font-bold px-3 py-2 rounded-full border border-green-500/30">25% OFF</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('general')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <span id="general-qty" class="text-3xl font-bold text-white w-12 text-center">2</span>
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('general')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-8 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">VIP Seating</h3>
+                                    <p class="text-slate-300 text-lg">Reserved seats, premium view</p>
+                                    <div class="flex items-center gap-3 mt-4">
+                                        <span class="text-4xl font-bold text-white">$85</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('vip')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <span id="vip-qty" class="text-3xl font-bold text-white w-12 text-center">0</span>
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('vip')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-8 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-white">VIP Package</h3>
+                                    <p class="text-slate-300 text-lg">Meet & greet, exclusive merchandise, premium seating</p>
+                                    <div class="flex items-center gap-3 mt-4">
+                                        <span class="text-4xl font-bold text-white">$150</span>
+                                        <span class="bg-yellow-500/20 text-yellow-300 text-sm font-bold px-3 py-2 rounded-full border border-yellow-500/30">Limited</span>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-4">
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('package')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                    <span id="package-qty" class="text-3xl font-bold text-white w-12 text-center">0</span>
+                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('package')">
+                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Payment Information
+                    </h2>
+
+                    <div class="mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <label class="flex items-center p-6 border-2 border-purple-500/50 bg-purple-500/10 rounded-2xl cursor-pointer backdrop-blur-sm">
+                                <input type="radio" name="paymentMethod" value="card" checked class="sr-only">
+                                <div class="flex items-center">
+                                    <svg class="w-8 h-8 text-purple-400 mr-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v4a2 2 0 002 2V6h10a2 2 0 00-2-2H4zm2 6a2 2 0 012-2h8a2 2 0 012 2v4a2 2 0 01-2 2H8a2 2 0 01-2-2v-4zm6 4a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span class="font-bold text-white text-lg">Credit Card</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-6 border border-slate-600/50 bg-slate-700/30 rounded-2xl cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
+                                <input type="radio" name="paymentMethod" value="paypal" class="sr-only">
+                                <div class="flex items-center">
+                                    <div class="w-8 h-8 bg-blue-600 rounded-xl mr-4 flex items-center justify-center shadow-lg">
+                                        <span class="text-white text-sm font-bold">P</span>
+                                    </div>
+                                    <span class="font-bold text-white text-lg">PayPal</span>
+                                </div>
+                            </label>
+                            <label class="flex items-center p-6 border border-slate-600/50 bg-slate-700/30 rounded-2xl cursor-pointer hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
+                                <input type="radio" name="paymentMethod" value="apple" class="sr-only">
+                                <div class="flex items-center">
+                                    <svg class="w-8 h-8 mr-4 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M13.2 2.4c.7-.8 1.2-1.9 1.1-3-.9 0-2.1.6-2.8 1.3-.6.7-1.2 1.8-1 2.9.9.1 2-.5 2.7-1.2zM15.6 4.9c-1.5-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-2.9.9-3.7 2.2-1.6 2.7-.4 6.7 1.1 8.9.7 1.1 1.6 2.3 2.7 2.2 1.1 0 1.5-.7 2.8-.7s1.6.7 2.8.7c1.2 0 1.9-1 2.6-2.1.8-1.3 1.1-2.5 1.1-2.6-.1 0-2-.8-2-3.2 0-2.1 1.7-3.1 1.8-3.2-1-1.5-2.6-1.7-3.2-1.7z"></path>
+                                    </svg>
+                                    <span class="font-bold text-white text-lg">Apple Pay</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="cardForm" class="space-y-8">
+                        <div>
+                            <label for="cardNumber" class="block text-sm font-bold text-white mb-3">Card Number *</label>
+                            <input type="text" id="cardNumber" name="cardNumber" required
+                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                   placeholder="1234 5678 9012 3456">
+                        </div>
+                        <div class="grid grid-cols-2 gap-8">
+                            <div>
+                                <label for="expiryDate" class="block text-sm font-bold text-white mb-3">Expiry Date *</label>
+                                <input type="text" id="expiryDate" name="expiryDate" required
+                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                       placeholder="MM/YY">
+                            </div>
+                            <div>
+                                <label for="cvv" class="block text-sm font-bold text-white mb-3">CVV *</label>
+                                <input type="text" id="cvv" name="cvv" required
+                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                       placeholder="123">
+                            </div>
+                        </div>
+                        <div>
+                            <label for="cardName" class="block text-sm font-bold text-white mb-3">Name on Card *</label>
+                            <input type="text" id="cardName" name="cardName" required
+                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                                   placeholder="John Doe">
+                        </div>
+                    </div>
+
+                    <div class="mt-10 pt-8 border-t border-slate-700">
+                        <label class="flex items-start gap-4 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 w-6 h-6 text-purple-500 bg-slate-700/50 border-slate-600/50 rounded-lg focus:ring-purple-500">
+                            <span class="text-slate-300">
+                                I agree to the <a href="/terms" class="text-purple-400 hover:text-purple-300 underline">Terms and Conditions</a> and
+                                <a href="/privacy" class="text-purple-400 hover:text-purple-300 underline">Privacy Policy</a>.
+                                I understand that tickets are non-refundable except as outlined in the terms.
+                            </span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-1">
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sticky top-6 border border-slate-700/50">
+                    <div class="mb-8">
+                        <img src="/placeholder.svg?height=150&width=300" alt="Summer Music Festival" class="w-full h-40 object-cover rounded-2xl mb-6">
+                        <h3 class="text-2xl font-bold text-white mb-4">Summer Music Festival</h3>
+                        <div class="space-y-3 text-slate-300">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                </svg>
+                                July 15, 2024 • 7:00 PM
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                                Central Park Amphitheater
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-6 mb-8">
+                        <h4 class="font-bold text-white text-xl">Order Summary</h4>
+
+                        <div id="orderItems" class="space-y-4">
+                            <div class="flex items-center justify-between py-3 border-b border-slate-700">
+                                <div>
+                                    <span class="font-bold text-white">General Admission</span>
+                                    <span class="text-slate-400 block">x2 tickets</span>
+                                </div>
+                                <span class="font-bold text-white text-lg">$90.00</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="flex items-center justify-between text-slate-300">
+                            <span>Subtotal</span>
+                            <span id="subtotal" class="font-bold">$90.00</span>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-300">
+                            <span>Service Fee</span>
+                            <span id="serviceFee" class="font-bold">$7.50</span>
+                        </div>
+                        <div class="flex items-center justify-between text-slate-300">
+                            <span>Processing Fee</span>
+                            <span id="processingFee" class="font-bold">$2.99</span>
+                        </div>
+                        <div class="flex items-center justify-between text-green-400">
+                            <span>Early Bird Discount</span>
+                            <span id="discount">-$15.00</span>
+                        </div>
+                        <div class="border-t border-slate-700 pt-4">
+                            <div class="flex items-center justify-between text-2xl font-bold">
+                                <span class="text-white">Total</span>
+                                <span id="total" class="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">$85.49</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-700/50 rounded-2xl p-6 mb-8 border border-slate-600/50">
+                        <div class="flex items-center gap-3 mb-3">
+                            <svg class="w-6 h-6 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span class="font-bold text-white">Secure Checkout</span>
+                        </div>
+                        <p class="text-sm text-slate-400">Your payment information is encrypted and secure. We never store your card details.</p>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white py-5 rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 mb-6 shadow-lg">
+                        Complete Purchase
+                    </button>
+
+                    <div class="text-center">
+                        <div class="flex items-center justify-center gap-3 text-slate-400">
+                            <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                            <span>30-day money back guarantee</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        // Ticket quantity management
+        const prices = {
+            general: 45,
+            vip: 85,
+            package: 150
+        };
+
+        function increaseQuantity(type) {
+            const qtyElement = document.getElementById(type + '-qty');
+            let qty = parseInt(qtyElement.textContent);
+            if (qty < 10) { // Max 10 tickets per type
+                qtyElement.textContent = qty + 1;
+                updateOrderSummary();
+            }
+        }
+
+        function decreaseQuantity(type) {
+            const qtyElement = document.getElementById(type + '-qty');
+            let qty = parseInt(qtyElement.textContent);
+            if (qty > 0) {
+                qtyElement.textContent = qty - 1;
+                updateOrderSummary();
+            }
+        }
+
+        function updateOrderSummary() {
+            const generalQty = parseInt(document.getElementById('general-qty').textContent);
+            const vipQty = parseInt(document.getElementById('vip-qty').textContent);
+            const packageQty = parseInt(document.getElementById('package-qty').textContent);
+
+            let subtotal = 0;
+            let orderItemsHtml = '';
+
+            if (generalQty > 0) {
+                const total = generalQty * prices.general;
+                subtotal += total;
+                orderItemsHtml += `
+                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
+                        <div>
+                            <span class="font-bold text-white">General Admission</span>
+                            <span class="text-slate-400 block">x${generalQty} tickets</span>
+                        </div>
+                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            if (vipQty > 0) {
+                const total = vipQty * prices.vip;
+                subtotal += total;
+                orderItemsHtml += `
+                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
+                        <div>
+                            <span class="font-bold text-white">VIP Seating</span>
+                            <span class="text-slate-400 block">x${vipQty} tickets</span>
+                        </div>
+                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            if (packageQty > 0) {
+                const total = packageQty * prices.package;
+                subtotal += total;
+                orderItemsHtml += `
+                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
+                        <div>
+                            <span class="font-bold text-white">VIP Package</span>
+                            <span class="text-slate-400 block">x${packageQty} tickets</span>
+                        </div>
+                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+
+            if (subtotal === 0) {
+                orderItemsHtml = '<p class="text-slate-400">No tickets selected</p>';
+            }
+
+            document.getElementById('orderItems').innerHTML = orderItemsHtml;
+
+            const serviceFee = subtotal * 0.08; // 8% service fee
+            const processingFee = 2.99;
+            const discount = subtotal > 0 ? 15.00 : 0; // Early bird discount
+            const total = subtotal + serviceFee + processingFee - discount;
+
+            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+            document.getElementById('serviceFee').textContent = `$${serviceFee.toFixed(2)}`;
+            document.getElementById('processingFee').textContent = `$${processingFee.toFixed(2)}`;
+            document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
+            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // Payment method switching
+        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Update UI based on selected payment method
+                document.querySelectorAll('label').forEach(label => {
+                    label.classList.remove('border-purple-500/50', 'bg-purple-500/10');
+                    label.classList.add('border-slate-600/50', 'bg-slate-700/30');
+                });
+
+                this.closest('label').classList.add('border-purple-500/50', 'bg-purple-500/10');
+                this.closest('label').classList.remove('border-slate-600/50', 'bg-slate-700/30');
+
+                // Show/hide card form
+                const cardForm = document.getElementById('cardForm');
+                if (this.value === 'card') {
+                    cardForm.style.display = 'block';
+                } else {
+                    cardForm.style.display = 'none';
+                }
+            });
+        });
+
+        // Initialize
+        updateOrderSummary();
+    </script>
+}
