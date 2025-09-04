@@ -20,8 +20,16 @@ namespace online_event_booking_system.Controllers.Admin
 
         public async Task<IActionResult> Index()
         {
-            var users = await _adminService.GetAllUsers();
-            return View(users);
+            try
+            {
+                var users = await _adminService.GetAllUsers();
+                return View(users);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return View(new List<ApplicationUser>());
+            }
         }
 
         public async Task<IActionResult> Details(string id)
@@ -30,12 +38,20 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 return NotFound();
             }
-            var user = await _adminService.GetUserById(id);
-            if (user == null)
+            
+            try
+            {
+                var user = await _adminService.GetUserById(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
+            }
+            catch
             {
                 return NotFound();
             }
-            return View(user);
         }
 
         // GET: Admin/Create
@@ -51,14 +67,29 @@ namespace online_event_booking_system.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                var (succeeded, errors) = await _adminService.CreateUser(user, password, role);
-                if (succeeded)
+                // Validate required fields
+                if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(password))
                 {
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError(string.Empty, "Email, Username, and Password are required.");
+                    return View(user);
                 }
-                foreach (var error in errors)
+
+                try
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    var (succeeded, errors) = await _adminService.CreateUser(user, password, role);
+                    if (succeeded)
+                    {
+                        TempData["SuccessMessage"] = "User created successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    foreach (var error in errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 }
             }
             return View(user);
@@ -71,12 +102,20 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 return NotFound();
             }
-            var user = await _adminService.GetUserById(id);
-            if (user == null)
+            
+            try
+            {
+                var user = await _adminService.GetUserById(id);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+                return View(user);
+            }
+            catch
             {
                 return NotFound();
             }
-            return View(user);
         }
 
         // POST: Admin/Edit/5
@@ -88,14 +127,30 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 return NotFound();
             }
+            
             if (ModelState.IsValid)
             {
-                var result = await _adminService.UpdateUser(user);
-                if (result)
+                // Validate required fields
+                if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
                 {
-                    return RedirectToAction(nameof(Index));
+                    ModelState.AddModelError(string.Empty, "Email and Username are required.");
+                    return View(user);
                 }
-                ModelState.AddModelError(string.Empty, "Failed to update user.");
+
+                try
+                {
+                    var result = await _adminService.UpdateUser(user);
+                    if (result)
+                    {
+                        TempData["SuccessMessage"] = "User updated successfully.";
+                        return RedirectToAction(nameof(Index));
+                    }
+                    ModelState.AddModelError(string.Empty, "Failed to update user.");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                }
             }
             return View(user);
         }
@@ -105,12 +160,25 @@ namespace online_event_booking_system.Controllers.Admin
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var result = await _adminService.SoftDeleteUser(id);
-            if (!result)
+            if (string.IsNullOrEmpty(id))
             {
                 return NotFound();
             }
-            return RedirectToAction(nameof(Index));
+
+            try
+            {
+                var result = await _adminService.SoftDeleteUser(id);
+                if (!result)
+                {
+                    return NotFound();
+                }
+                TempData["SuccessMessage"] = "User deleted successfully.";
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return NotFound();
+            }
         }
 
         //[HttpPost]

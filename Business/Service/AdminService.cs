@@ -16,8 +16,28 @@ namespace online_event_booking_system.Business.Service
 
         public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors)> CreateUser(ApplicationUser user, string password, string role)
         {
-            var created = await _adminRepository.CreateUser(user, password, role);
-            return (created, new List<IdentityError>());
+            try
+            {
+                var created = await _adminRepository.CreateUser(user, password, role);
+                if (created)
+                {
+                    return (true, new List<IdentityError>());
+                }
+                else
+                {
+                    return (false, new List<IdentityError> 
+                    { 
+                        new IdentityError { Description = "Failed to create user. Please check the provided information." } 
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return (false, new List<IdentityError> 
+                { 
+                    new IdentityError { Description = $"An error occurred: {ex.Message}" } 
+                });
+            }
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
