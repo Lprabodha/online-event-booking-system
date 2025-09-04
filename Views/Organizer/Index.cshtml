@@ -148,12 +148,18 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold">Sales Trend</h2>
                         <div class="flex space-x-2" role="tablist" aria-label="Sales range tabs">
-                            <button role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
-                            <button role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
+                            <button onclick="updateSalesTrend('7d')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
+                            <button onclick="updateSalesTrend('30d')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
                         </div>
                     </div>
-                    <div class="h-64 bg-white/5 rounded-xl flex items-center justify-center">
-                        <p class="text-gray-400">Chart placeholder - sales trend visualization will render here</p>
+                    <div class="h-64 relative">
+                        <div id="salesTrendLoading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                                <p class="text-gray-400 text-sm">Loading chart...</p>
+                            </div>
+                        </div>
+                        <canvas id="salesTrendChart" class="hidden"></canvas>
                     </div>
                 </section>
 
@@ -161,8 +167,8 @@
                 <section aria-label="Quick Actions" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h2 class="text-xl font-bold mb-4">Quick Actions</h2>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <a asp-page="/Organizer/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105 text-center">Create Event</a>
-                        <a asp-page="/Organizer/Discounts/Index" class="px-4 py-3 rounded-xl text-sm font-semibold text-purple-400 border border-purple-400/50 hover:bg-white/10 transition text-center">Manage Discounts</a>
+                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105 text-center">Create Event</a>
+                        <a asp-controller="Organizer" asp-action="Discounts" class="px-4 py-3 rounded-xl text-sm font-semibold text-purple-400 border border-purple-400/50 hover:bg-white/10 transition text-center">Manage Discounts</a>
                         <a href="#" class="px-4 py-3 rounded-xl text-sm font-semibold text-teal-400 border border-teal-400/50 hover:bg-white/10 transition text-center">Export Attendees (CSV)</a>
                         <a href="#" class="px-4 py-3 rounded-xl text-sm font-semibold text-blue-400 border border-blue-400/50 hover:bg-white/10 transition text-center">Download QR Set (ZIP)</a>
                     </div>
@@ -173,7 +179,7 @@
             <section aria-label="My Events" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-8">
                 <div class="flex items-center justify-between mb-6">
                     <h2 class="text-xl font-bold">My Events</h2>
-                    <a asp-page="/Organizer/Events/Index" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
+                    <a asp-controller="Organizer" asp-action="Events" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full" role="table">
@@ -206,10 +212,10 @@
                                     <td class="py-3 text-gray-300">$@(1800 + i * 250)</td>
                                     <td class="py-3">
                                         <div class="flex space-x-2">
-                                            <a asp-page="/Organizer/Events/Details" class="text-purple-400 hover:text-purple-300" aria-label="View">
+                                            <a href="#" class="text-purple-400 hover:text-purple-300" aria-label="View">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                             </a>
-                                            <a asp-page="/Organizer/Events/Edit" class="text-blue-400 hover:text-blue-300" aria-label="Edit">
+                                            <a asp-controller="Organizer" asp-action="EditEvent" asp-route-id="@(i+1)" class="text-blue-400 hover:text-blue-300" aria-label="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                                             </a>
                                         </div>
@@ -250,7 +256,7 @@
                 <section aria-label="Discounts Overview" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold">Active Discounts</h2>
-                        <a asp-page="/Organizer/Discounts/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105">Create Discount</a>
+                        <a asp-controller="Organizer" asp-action="Discounts" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105">Create Discount</a>
                     </div>
                     <div class="space-y-4">
                         @for (var i = 0; i < 3; i++)
@@ -276,8 +282,26 @@
 <!-- Mobile Overlay for Sidebar -->
 <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
 
+<!-- Chart.js CDN with fallback -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="loadChartFallback()"></script>
 <script>
-    // Sidebar toggling hooks (optional usage if wired to a button in the global header)
+    function loadChartFallback() {
+        console.warn('Chart.js CDN failed to load, trying alternative CDN...');
+        const script = document.createElement('script');
+        script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js';
+        script.onerror = function() {
+            console.error('All Chart.js CDNs failed to load');
+            showNotification('Charts failed to load. Please check your internet connection.', 'error');
+        };
+        document.head.appendChild(script);
+    }
+</script>
+
+<script>
+    // Global chart variables
+    let salesTrendChart;
+
+    // Sidebar toggling hooks
     function toggleOrganizerSidebar() {
         const sidebar = document.getElementById('org-sidebar');
         const overlay = document.getElementById('org-overlay');
@@ -289,6 +313,7 @@
             document.body.style.overflow = '';
         }
     }
+    
     // Close on escape
     document.addEventListener('keydown', function (event) {
         if (event.key === 'Escape') {
@@ -298,5 +323,172 @@
             }
         }
     });
+
+    // Notification system
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg backdrop-blur-xl border transition-all duration-300 transform translate-x-full ${
+            type === 'success' ? 'bg-green-500/20 border-green-500/30 text-green-400' :
+            type === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-400' :
+            'bg-blue-500/20 border-blue-500/30 text-blue-400'
+        }`;
+        notification.innerHTML = `
+            <div class="flex items-center space-x-3">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span>${message}</span>
+            </div>
+        `;
+        document.body.appendChild(notification);
+        
+        // Animate in
+        setTimeout(() => {
+            notification.classList.remove('translate-x-full');
+        }, 100);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+            notification.classList.add('translate-x-full');
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
+
+    // Chart initialization
+    document.addEventListener('DOMContentLoaded', function() {
+        // Wait for Chart.js to load, then initialize charts
+        function initializeCharts() {
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded yet, retrying in 100ms...');
+                setTimeout(initializeCharts, 100);
+                return;
+            }
+            
+            try {
+                initSalesTrendChart();
+                console.log('Sales trend chart initialized successfully');
+            } catch (error) {
+                console.error('Error initializing sales trend chart:', error);
+                showNotification('Error loading sales trend chart. Please refresh the page.', 'error');
+            }
+        }
+        
+        // Start initialization
+        initializeCharts();
+    });
+
+    // Sales Trend Chart
+    function initSalesTrendChart() {
+        const canvas = document.getElementById('salesTrendChart');
+        if (!canvas) {
+            console.error('Sales trend chart canvas not found');
+            return;
+        }
+        
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('Could not get 2D context for sales trend chart');
+            return;
+        }
+        
+        salesTrendChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Sales ($)',
+                    data: [1200, 1900, 1500, 2200, 1800, 2500, 2100],
+                    borderColor: 'rgb(168, 85, 247)',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'rgb(168, 85, 247)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: '#9CA3AF'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: '#9CA3AF',
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    intersect: false,
+                    mode: 'index'
+                }
+            }
+        });
+        
+        // Hide loading indicator and show chart
+        const loadingIndicator = document.getElementById('salesTrendLoading');
+        const chartCanvas = document.getElementById('salesTrendChart');
+        if (loadingIndicator && chartCanvas) {
+            loadingIndicator.classList.add('hidden');
+            chartCanvas.classList.remove('hidden');
+        }
+    }
+
+    // Update Sales Trend Chart
+    function updateSalesTrend(period) {
+        if (!salesTrendChart) {
+            console.error('Sales trend chart not initialized');
+            return;
+        }
+        
+        // Update button states
+        document.querySelectorAll('[onclick*="updateSalesTrend"]').forEach(btn => {
+            btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+            btn.classList.add('bg-white/10', 'text-gray-300');
+        });
+        event.target.classList.remove('bg-white/10', 'text-gray-300');
+        event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+
+        // Sample data for different periods
+        const dataSets = {
+            '7d': {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                data: [1200, 1900, 1500, 2200, 1800, 2500, 2100]
+            },
+            '30d': {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                data: [8500, 11200, 9800, 13500]
+            }
+        };
+
+        salesTrendChart.data.labels = dataSets[period].labels;
+        salesTrendChart.data.datasets[0].data = dataSets[period].data;
+        salesTrendChart.update();
+    }
 </script>
 

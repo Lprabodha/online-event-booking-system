@@ -239,7 +239,13 @@
                         </div>
                     </div>
                     <div class="h-64 relative">
-                        <canvas id="revenueChart"></canvas>
+                        <div id="revenueChartLoading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                                <p class="text-gray-400 text-sm">Loading chart...</p>
+                            </div>
+                        </div>
+                        <canvas id="revenueChart" class="hidden"></canvas>
                     </div>
                 </section>
 
@@ -253,7 +259,13 @@
                         </div>
                     </div>
                     <div class="h-64 relative">
-                        <canvas id="ticketChart"></canvas>
+                        <div id="ticketChartLoading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                                <p class="text-gray-400 text-sm">Loading chart...</p>
+                            </div>
+                        </div>
+                        <canvas id="ticketChart" class="hidden"></canvas>
                     </div>
                 </section>
             </div>
@@ -381,8 +393,20 @@
     <!-- Mobile Overlay for Sidebar -->
     <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
 
-    <!-- Chart.js CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chart.js CDN with fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="loadChartFallback()"></script>
+    <script>
+        function loadChartFallback() {
+            console.warn('Chart.js CDN failed to load, trying alternative CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js';
+            script.onerror = function() {
+                console.error('All Chart.js CDNs failed to load');
+                showNotification('Charts failed to load. Please check your internet connection.', 'error');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
     
     <script>
         // Global chart variables
@@ -491,14 +515,42 @@
             // Export dropdown event listener
             document.getElementById('exportDropdownBtn').addEventListener('click', toggleExportDropdown);
             
-            // Initialize charts
-            initRevenueChart();
-            initTicketChart();
+            // Wait for Chart.js to load, then initialize charts
+            function initializeCharts() {
+                if (typeof Chart === 'undefined') {
+                    console.warn('Chart.js not loaded yet, retrying in 100ms...');
+                    setTimeout(initializeCharts, 100);
+                    return;
+                }
+                
+                try {
+                    initRevenueChart();
+                    initTicketChart();
+                    console.log('Charts initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing charts:', error);
+                    showNotification('Error loading charts. Please refresh the page.', 'error');
+                }
+            }
+            
+            // Start initialization
+            initializeCharts();
         });
 
         // Revenue Chart
         function initRevenueChart() {
-            const ctx = document.getElementById('revenueChart').getContext('2d');
+            const canvas = document.getElementById('revenueChart');
+            if (!canvas) {
+                console.error('Revenue chart canvas not found');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Could not get 2D context for revenue chart');
+                return;
+            }
+            
             revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -555,11 +607,30 @@
                     }
                 }
             });
+            
+            // Hide loading indicator and show chart
+            const loadingIndicator = document.getElementById('revenueChartLoading');
+            const chartCanvas = document.getElementById('revenueChart');
+            if (loadingIndicator && chartCanvas) {
+                loadingIndicator.classList.add('hidden');
+                chartCanvas.classList.remove('hidden');
+            }
         }
 
         // Ticket Sales Chart
         function initTicketChart() {
-            const ctx = document.getElementById('ticketChart').getContext('2d');
+            const canvas = document.getElementById('ticketChart');
+            if (!canvas) {
+                console.error('Ticket chart canvas not found');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Could not get 2D context for ticket chart');
+                return;
+            }
+            
             ticketChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
@@ -608,10 +679,23 @@
                     }
                 }
             });
+            
+            // Hide loading indicator and show chart
+            const loadingIndicator = document.getElementById('ticketChartLoading');
+            const chartCanvas = document.getElementById('ticketChart');
+            if (loadingIndicator && chartCanvas) {
+                loadingIndicator.classList.add('hidden');
+                chartCanvas.classList.remove('hidden');
+            }
         }
 
         // Update Revenue Chart
         function updateRevenueChart(period) {
+            if (!revenueChart) {
+                console.error('Revenue chart not initialized');
+                return;
+            }
+            
             // Update button states
             document.querySelectorAll('[onclick*="updateRevenueChart"]').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
@@ -643,6 +727,11 @@
 
         // Update Ticket Chart
         function updateTicketChart(type) {
+            if (!ticketChart) {
+                console.error('Ticket chart not initialized');
+                return;
+            }
+            
             // Update button states
             document.querySelectorAll('[onclick*="updateTicketChart"]').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
