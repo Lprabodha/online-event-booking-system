@@ -18,17 +18,31 @@ namespace online_event_booking_system.Repository.Service
 
         public async Task<bool> CreateUser(ApplicationUser user, string password, string role)
         {
-            var result = await _userManager.CreateAsync(user, password);
-
-            if (result.Succeeded)
+            try
             {
-                if (await _roleManager.RoleExistsAsync(role))
+                // Check if user already exists
+                var existingUser = await _userManager.FindByEmailAsync(user.Email);
+                if (existingUser != null)
                 {
-                    await _userManager.AddToRoleAsync(user, role);
+                    return false;
+                }
+
+                var result = await _userManager.CreateAsync(user, password);
+
+                if (result.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(role) && await _roleManager.RoleExistsAsync(role))
+                    {
+                        await _userManager.AddToRoleAsync(user, role);
+                    }
                     return true;
                 }
+                return false;
             }
-            return false;
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
@@ -56,7 +70,24 @@ namespace online_event_booking_system.Repository.Service
 
         public async Task<bool> UpdateUser(ApplicationUser user)
         {
-            var result = await _userManager.UpdateAsync(user);
+            // Get the existing user from the database to avoid tracking conflicts
+            var existingUser = await _userManager.FindByIdAsync(user.Id);
+            if (existingUser == null)
+            {
+                return false;
+            }
+
+            // Update the properties of the existing user
+            existingUser.FullName = user.FullName;
+            existingUser.UserName = user.UserName;
+            existingUser.Email = user.Email;
+            existingUser.ContactNumber = user.ContactNumber;
+            existingUser.NIC = user.NIC;
+            existingUser.Address = user.Address;
+            existingUser.OrganizationName = user.OrganizationName;
+            existingUser.IsActive = user.IsActive;
+
+            var result = await _userManager.UpdateAsync(existingUser);
             return result.Succeeded;
         }
     }
