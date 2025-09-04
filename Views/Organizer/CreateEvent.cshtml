@@ -405,5 +405,110 @@
                 }
             }
         });
+
+        // Ticket Type Management
+        let ticketTypeCount = 1;
+
+        function addTicketType() {
+            const container = document.querySelector('.space-y-4');
+            const addButton = container.querySelector('.border-dashed');
+            
+            const newTicketType = document.createElement('div');
+            newTicketType.className = 'bg-white/5 border border-white/10 rounded-xl p-4';
+            newTicketType.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                        <input type="text" placeholder="Ticket Type Name" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                        <input type="number" min="0" step="0.01" placeholder="0.00" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                        <input type="number" min="1" placeholder="100" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" onclick="removeTicketType(this)" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            container.insertBefore(newTicketType, addButton);
+            ticketTypeCount++;
+        }
+
+        function removeTicketType(button) {
+            const ticketType = button.closest('.bg-white/5');
+            ticketType.remove();
+            ticketTypeCount--;
+        }
+
+        // Form validation and submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Basic validation
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value.trim()) {
+                        field.classList.add('border-red-500');
+                        isValid = false;
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+                
+                if (isValid) {
+                    // Show success message
+                    showNotification('Event created successfully!', 'success');
+                    
+                    // In a real application, you would submit the form here
+                    console.log('Form submitted successfully');
+                } else {
+                    showNotification('Please fill in all required fields', 'error');
+                }
+            });
+        });
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg backdrop-blur-xl border transition-all duration-300 transform translate-x-full ${
+                type === 'success' ? 'bg-green-500/20 border-green-500/30 text-green-400' :
+                type === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-400' :
+                'bg-blue-500/20 border-blue-500/30 text-blue-400'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
     </script>
 </div>
