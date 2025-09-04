@@ -1,3 +1,4 @@
+@model online_event_booking_system.Models.DiscountViewModel
 @{
     ViewData["Title"] = "Discounts";
     Layout = "_Layout";
@@ -6,14 +7,14 @@
 <!-- Organizer Discounts Container -->
 <div class="min-h-screen bg-dark-navy text-white">
     <div class="flex">
-        <!-- Sidebar Navigation (collapsible on mobile) -->
+               <!-- Sidebar Navigation (collapsible on mobile) -->
         <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
             <nav class="p-6">
                 <ul class="space-y-2">
                     <!-- Dashboard -->
                     <li>
                         <a asp-controller="Organizer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
                             </svg>
@@ -38,6 +39,15 @@
                             <span>Sales & Reports</span>
                         </a>
                     </li>
+                    <!-- Discounts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Discounts" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Discounts</span>
+                        </a>
+                    </li>
                     <!-- Payouts -->
                     <li>
                         <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
@@ -45,6 +55,16 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
                             <span>Payouts</span>
+                        </a>
+                    </li>
+                    <!-- Settings -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Settings</span>
                         </a>
                     </li>
                     <!-- Support -->
@@ -56,21 +76,23 @@
                             <span>Support</span>
                         </a>
                     </li>
-                    <!-- Discounts -->
-                    <li>
-                        <a asp-controller="Organizer" asp-action="Discounts" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
-                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span>Discounts</span>
-                        </a>
-                    </li>
                 </ul>
             </nav>
         </aside>
 
         <!-- Main Content -->
         <main class="flex-1 p-6">
+            <!-- Success Message -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>@TempData["SuccessMessage"]</span>
+                </div>
+            }
+
             <!-- Page Header -->
             <div class="mb-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
@@ -85,11 +107,11 @@
                             </svg>
                             <span>Export</span>
                         </button>
-                        <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <button id="toggleCreateForm" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            <span>Create Discount</span>
+                            <span id="toggleText">Create Discount</span>
                         </button>
                     </div>
                 </div>
@@ -154,6 +176,91 @@
                 </div>
             </section>
 
+            <!-- Create Discount Form Section -->
+            <section aria-label="Create Discount" class="mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold text-white">Create New Discount</h2>
+                        <button id="toggleCreateForm2" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                            <span id="toggleText2">Show Form</span>
+                        </button>
+                    </div>
+                    
+                    <div id="createDiscountForm" class="hidden">
+                        <form asp-action="CreateDiscount" method="post" class="space-y-6">
+                            @Html.AntiForgeryToken()
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                    <input asp-for="Code" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                                    <span asp-validation-for="Code" class="text-red-400 text-xs mt-1"></span>
+                                    <p class="text-gray-400 text-xs mt-1">Use uppercase letters and numbers only</p>
+                                </div>
+                                <div>
+                                    <label asp-for="Type" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                    <select asp-for="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                        <option value="@((int)online_event_booking_system.Models.DiscountType.Percentage)">Percentage</option>
+                                        <option value="@((int)online_event_booking_system.Models.DiscountType.FixedAmount)">Fixed Amount</option>
+                                    </select>
+                                    <span asp-validation-for="Type" class="text-red-400 text-xs mt-1"></span>
+                                </div>
+                                <div>
+                                    <label asp-for="Value" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                    <div class="relative">
+                                        <input asp-for="Value" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="valueSuffix">%</span>
+                                    </div>
+                                    <span asp-validation-for="Value" class="text-red-400 text-xs mt-1"></span>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
+                                    <div class="space-y-3">
+                                        <label class="flex items-center space-x-3">
+                                            <input asp-for="ApplyToAllEvents" type="checkbox" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
+                                            <span class="text-gray-300">Apply to all events</span>
+                                        </label>
+                                        <div id="eventSelection" class="hidden">
+                                            <select asp-for="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                                <option value="">Select an event</option>
+                                                @foreach (var eventOption in Model.AvailableEvents)
+                                                {
+                                                    <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
+                                                }
+                                            </select>
+                                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label asp-for="UsageLimit" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                    <input asp-for="UsageLimit" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                                    <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1"></span>
+                                    <p class="text-gray-400 text-xs mt-1">Leave empty for unlimited usage</p>
+                                </div>
+                                <div>
+                                    <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                    <input asp-for="ExpiryDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                    <span asp-validation-for="ExpiryDate" class="text-red-400 text-xs mt-1"></span>
+                                </div>
+                            </div>
+                            <div>
+                                <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                                <textarea asp-for="Description" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                                <span asp-validation-for="Description" class="text-red-400 text-xs mt-1"></span>
+                            </div>
+                            <div class="flex justify-end space-x-4">
+                                <button type="button" onclick="toggleCreateForm()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                                    Create Discount
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+
             <!-- Filters and Search -->
             <section aria-label="Filters" class="mb-8">
                 <div class="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
@@ -195,35 +302,35 @@
             </section>
 
             <!-- Discounts Table -->
-            <section aria-label="Discounts" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+            <section aria-label="Discounts" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden mb-8">
                 <div class="overflow-x-auto">
-                    <table class="w-full" role="table">
-                        <thead>
-                            <tr class="border-b border-white/10">
-                                <th class="text-left py-3 text-gray-400 font-medium">Discount Code</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Type</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Value</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Event</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Usage</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Expires</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Status</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Actions</th>
+                    <table class="w-full">
+                        <thead class="bg-white/10">
+                            <tr>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Discount Code</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Type</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Value</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Event</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Usage</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Expires</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Status</th>
+                                <th class="px-6 py-4 text-left text-sm font-semibold text-white">Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @for (var i = 0; i < 8; i++)
+                        <tbody class="divide-y divide-white/10">
+                            @for (var i = 0; i < 15; i++)
                             {
-                                var codes = new[] { "EARLY20", "VIP15", "FLASH30", "STUDENT10", "GROUP25", "SUMMER50", "WELCOME5", "LOYALTY20" };
-                                var types = new[] { "Percentage", "Fixed Amount", "Percentage", "Percentage", "Percentage", "Fixed Amount", "Percentage", "Percentage" };
-                                var values = new[] { "20%", "$15", "30%", "10%", "25%", "$50", "5%", "20%" };
-                                var events = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition", "All Events", "Food & Wine Tasting", "Comedy Night", "All Events", "All Events" };
-                                var usages = new[] { "45/100", "12/50", "8/25", "156/500", "23/100", "3/10", "89/200", "67/150" };
-                                var expires = new[] { "Dec 31, 2024", "Jan 15, 2025", "Dec 20, 2024", "Mar 1, 2025", "Feb 14, 2025", "Dec 25, 2024", "Jun 30, 2025", "Apr 1, 2025" };
-                                var statuses = new[] { "Active", "Active", "Active", "Active", "Active", "Expired", "Active", "Paused" };
-                                var statusColors = new[] { "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-red-500/20 text-red-400", "bg-green-500/20 text-green-400", "bg-yellow-500/20 text-yellow-400" };
+                                var codes = new[] { "EARLY20", "VIP15", "FLASH30", "STUDENT10", "GROUP25", "SUMMER50", "WELCOME5", "LOYALTY20", "NEWUSER10", "BULK20", "EARLYBIRD25", "FINAL10", "WEEKEND15", "MEMBER30", "SPECIAL40" };
+                                var types = new[] { "Percentage", "Fixed Amount", "Percentage", "Percentage", "Percentage", "Fixed Amount", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage" };
+                                var values = new[] { "20%", "$15", "30%", "10%", "25%", "$50", "5%", "20%", "10%", "20%", "25%", "10%", "15%", "30%", "40%" };
+                                var events = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition", "All Events", "Food & Wine Tasting", "Comedy Night", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events" };
+                                var usages = new[] { "45/100", "12/50", "8/25", "156/500", "23/100", "3/10", "89/200", "67/150", "34/100", "78/200", "12/50", "45/100", "23/75", "56/150", "9/25" };
+                                var expires = new[] { "Dec 31, 2024", "Jan 15, 2025", "Dec 20, 2024", "Mar 1, 2025", "Feb 14, 2025", "Dec 25, 2024", "Jun 30, 2025", "Apr 1, 2025", "Jan 31, 2025", "Feb 28, 2025", "Mar 15, 2025", "Apr 30, 2025", "May 15, 2025", "Jun 30, 2025", "Jul 15, 2025" };
+                                var statuses = new[] { "Active", "Active", "Active", "Active", "Active", "Expired", "Active", "Paused", "Active", "Active", "Active", "Active", "Active", "Active", "Active" };
+                                var statusColors = new[] { "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-red-500/20 text-red-400", "bg-green-500/20 text-green-400", "bg-yellow-500/20 text-yellow-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400" };
                                 
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-                                    <td class="py-3">
+                                <tr class="hover:bg-white/5 transition-all duration-200">
+                                    <td class="px-6 py-4">
                                         <div class="flex items-center space-x-3">
                                             <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg flex items-center justify-center">
                                                 <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -231,30 +338,32 @@
                                                 </svg>
                                             </div>
                                             <div>
-                                                <p class="text-white font-semibold">@codes[i]</p>
-                                                <p class="text-gray-400 text-sm">@types[i]</p>
+                                                <p class="text-white font-semibold">@codes[i % codes.Length]</p>
+                                                <p class="text-gray-400 text-sm">@types[i % types.Length]</p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="py-3 text-gray-300">@types[i]</td>
-                                    <td class="py-3 text-white font-semibold">@values[i]</td>
-                                    <td class="py-3 text-gray-300">@events[i]</td>
-                                    <td class="py-3 text-gray-300">@usages[i]</td>
-                                    <td class="py-3 text-gray-300">@expires[i]</td>
-                                    <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i]">@statuses[i]</span></td>
-                                    <td class="py-3">
+                                    <td class="px-6 py-4 text-gray-300">@types[i % types.Length]</td>
+                                    <td class="px-6 py-4 text-white font-semibold">@values[i % values.Length]</td>
+                                    <td class="px-6 py-4 text-gray-300">@events[i % events.Length]</td>
+                                    <td class="px-6 py-4 text-gray-300">@usages[i % usages.Length]</td>
+                                    <td class="px-6 py-4 text-gray-300">@expires[i % expires.Length]</td>
+                                    <td class="px-6 py-4">
+                                        <span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i % statusColors.Length]">@statuses[i % statuses.Length]</span>
+                                    </td>
+                                    <td class="px-6 py-4">
                                         <div class="flex space-x-2">
-                                            <button class="text-purple-400 hover:text-purple-300" title="Edit">
+                                            <button onclick="openEditModal(@i)" class="p-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-all" title="Edit">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                                                 </svg>
                                             </button>
-                                            <button class="text-blue-400 hover:text-blue-300" title="Copy">
+                                            <button class="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all" title="Copy">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
                                                 </svg>
                                             </button>
-                                            <button class="text-red-400 hover:text-red-300" title="Delete">
+                                            <button class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all" title="Delete">
                                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                                                 </svg>
@@ -265,6 +374,32 @@
                             }
                         </tbody>
                     </table>
+                </div>
+                
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-white/10">
+                    <div class="flex items-center justify-between">
+                        <div class="text-sm text-gray-400">
+                            Showing <span class="font-semibold text-white">1</span> to <span class="font-semibold text-white">15</span> of <span class="font-semibold text-white">47</span> results
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                                </svg>
+                            </button>
+                            <button class="px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold">1</button>
+                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">2</button>
+                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">3</button>
+                            <span class="px-3 py-2 text-gray-400">...</span>
+                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">4</button>
+                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -307,6 +442,75 @@
     <!-- Mobile Overlay for Sidebar -->
     <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
 
+    <!-- Edit Discount Modal -->
+    <div id="editDiscountModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Edit Discount</h2>
+                    <button onclick="closeEditModal()" class="p-2 hover:bg-white/10 rounded-lg transition-all">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                
+                <form class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Code</label>
+                            <input type="text" id="editCode" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Type</label>
+                            <select id="editType" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                <option>Percentage</option>
+                                <option>Fixed Amount</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Value</label>
+                            <div class="relative">
+                                <input type="number" id="editValue" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="editValueSuffix">%</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
+                            <select id="editEvent" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                <option>All Events</option>
+                                <option>Summer Music Festival</option>
+                                <option>Tech Conference 2024</option>
+                                <option>Art Exhibition</option>
+                                <option>Food & Wine Tasting</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Usage Limit</label>
+                            <input type="number" id="editLimit" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
+                            <input type="date" id="editExpiry" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                        <textarea rows="3" id="editDescription" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="closeEditModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                            Update Discount
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         // Sidebar toggling hooks
         function toggleOrganizerSidebar() {
@@ -325,10 +529,128 @@
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 const sidebar = document.getElementById('org-sidebar');
+                const modal = document.getElementById('editDiscountModal');
                 if (!sidebar.classList.contains('-translate-x-full')) {
                     toggleOrganizerSidebar();
                 }
+                if (!modal.classList.contains('hidden')) {
+                    closeEditModal();
+                }
+            }
+        });
+
+        // Create Discount Form Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleCreateForm');
+            const toggleBtn2 = document.getElementById('toggleCreateForm2');
+            const toggleText = document.getElementById('toggleText');
+            const toggleText2 = document.getElementById('toggleText2');
+            const createForm = document.getElementById('createDiscountForm');
+            
+            // Toggle form visibility
+            function toggleForm() {
+                if (createForm) {
+                    createForm.classList.toggle('hidden');
+                    const isHidden = createForm.classList.contains('hidden');
+                    if (toggleText) toggleText.textContent = isHidden ? 'Create Discount' : 'Hide Form';
+                    if (toggleText2) toggleText2.textContent = isHidden ? 'Show Form' : 'Hide Form';
+                }
+            }
+            
+            if (toggleBtn) {
+                toggleBtn.addEventListener('click', toggleForm);
+            }
+            if (toggleBtn2) {
+                toggleBtn2.addEventListener('click', toggleForm);
+            }
+
+            // Discount type change handler
+            const typeSelect = document.querySelector('select[name="Type"]');
+            const valueSuffix = document.getElementById('valueSuffix');
+            const editTypeSelect = document.getElementById('editType');
+            const editValueSuffix = document.getElementById('editValueSuffix');
+            
+            if (typeSelect && valueSuffix) {
+                typeSelect.addEventListener('change', function() {
+                    valueSuffix.textContent = this.value === '2' ? '$' : '%'; // 2 = FixedAmount, 1 = Percentage
+                });
+            }
+            
+            if (editTypeSelect && editValueSuffix) {
+                editTypeSelect.addEventListener('change', function() {
+                    editValueSuffix.textContent = this.value === 'Fixed Amount' ? '$' : '%';
+                });
+            }
+
+            // Apply to all events checkbox handler
+            const applyToAllCheckbox = document.querySelector('input[name="ApplyToAllEvents"]');
+            const eventSelection = document.getElementById('eventSelection');
+            
+            if (applyToAllCheckbox && eventSelection) {
+                applyToAllCheckbox.addEventListener('change', function() {
+                    if (this.checked) {
+                        eventSelection.classList.add('hidden');
+                    } else {
+                        eventSelection.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+
+        // Edit Modal Functions
+        function openEditModal(index) {
+            const modal = document.getElementById('editDiscountModal');
+            if (modal) {
+                // Sample data for editing (in real app, this would come from the server)
+                const sampleData = {
+                    code: 'EARLY20',
+                    type: 'Percentage',
+                    value: '20',
+                    event: 'Summer Music Festival',
+                    limit: '100',
+                    expiry: '2024-12-31',
+                    description: 'Early bird discount for summer festival'
+                };
+                
+                // Populate form fields
+                document.getElementById('editCode').value = sampleData.code;
+                document.getElementById('editType').value = sampleData.type;
+                document.getElementById('editValue').value = sampleData.value;
+                document.getElementById('editEvent').value = sampleData.event;
+                document.getElementById('editLimit').value = sampleData.limit;
+                document.getElementById('editExpiry').value = sampleData.expiry;
+                document.getElementById('editDescription').value = sampleData.description;
+                
+                // Update suffix based on type
+                const editValueSuffix = document.getElementById('editValueSuffix');
+                if (editValueSuffix) {
+                    editValueSuffix.textContent = sampleData.type === 'Fixed Amount' ? '$' : '%';
+                }
+                
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('editDiscountModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(event) {
+            const modal = document.getElementById('editDiscountModal');
+            if (modal && event.target === modal) {
+                closeEditModal();
             }
         });
     </script>
+
+    <!-- Validation Scripts -->
+    @section Scripts {
+        @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    }
 </div>
