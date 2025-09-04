@@ -1,0 +1,321 @@
+@{
+    ViewData["Title"] = "Payouts";
+    Layout = "_Layout";
+}
+
+<!-- Organizer Payouts Container -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation (collapsible on mobile) -->
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- My Events -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>My Events</span>
+                        </a>
+                    </li>
+                    <!-- Sales & Reports -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Sales & Reports</span>
+                        </a>
+                    </li>
+                    <!-- Payouts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <!-- Support -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Payouts</h1>
+                        <p class="text-gray-400">Manage your earnings and payment history</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <button class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            <span>Export</span>
+                        </button>
+                        <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <span>Request Payout</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payout Summary Cards -->
+            <section aria-label="Payout Summary" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-green-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <span class="text-green-400 text-sm font-semibold">Available</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Available Balance</p>
+                    <p class="text-3xl font-bold mt-2">$8,450</p>
+                    <p class="text-gray-400 text-xs mt-1">Ready for payout</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-blue-400 text-sm font-semibold">Pending</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Pending Payouts</p>
+                    <p class="text-3xl font-bold mt-2">$2,150</p>
+                    <p class="text-gray-400 text-xs mt-1">Processing</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-purple-400 text-sm font-semibold">Completed</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Paid</p>
+                    <p class="text-3xl font-bold mt-2">$24,680</p>
+                    <p class="text-gray-400 text-xs mt-1">This year</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-teal-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <span class="text-teal-400 text-sm font-semibold">+15.2%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Growth Rate</p>
+                    <p class="text-3xl font-bold mt-2">$3,240</p>
+                    <p class="text-gray-400 text-xs mt-1">vs last month</p>
+                </div>
+            </section>
+
+            <!-- Payment Method & Settings -->
+            <section aria-label="Payment Settings" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Payment Method & Settings</h2>
+                    <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105">
+                        Update Payment Info
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Current Payment Method</h3>
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-8 bg-gradient-to-r from-blue-500 to-purple-500 rounded flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v12h16V6H4zm2 2h12v2H6V8zm0 4h8v2H6v-2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold">**** **** **** 1234</p>
+                                    <p class="text-gray-400 text-sm">Expires 12/26</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold mb-4">Payout Settings</h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300">Auto Payout</span>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300">Payout Frequency</span>
+                                <select class="px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white text-sm">
+                                    <option>Weekly</option>
+                                    <option>Bi-weekly</option>
+                                    <option>Monthly</option>
+                                </select>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-gray-300">Minimum Payout</span>
+                                <span class="text-white font-semibold">$100</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Payout History -->
+            <section aria-label="Payout History" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Payout History</h2>
+                    <div class="flex space-x-2">
+                        <select aria-label="Status filter" class="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm">
+                            <option>All Status</option>
+                            <option>Completed</option>
+                            <option>Pending</option>
+                            <option>Failed</option>
+                        </select>
+                        <select aria-label="Date filter" class="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white text-sm">
+                            <option>Last 30 Days</option>
+                            <option>Last 3 Months</option>
+                            <option>Last 6 Months</option>
+                            <option>This Year</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full" role="table">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 text-gray-400 font-medium">Date</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Amount</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Method</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Status</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Reference</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < 8; i++)
+                            {
+                                var dates = new[] { "Dec 15, 2024", "Dec 8, 2024", "Dec 1, 2024", "Nov 24, 2024", "Nov 17, 2024", "Nov 10, 2024", "Nov 3, 2024", "Oct 27, 2024" };
+                                var amounts = new[] { 2450, 1890, 3200, 1560, 2780, 2100, 1850, 2300 };
+                                var methods = new[] { "Bank Transfer", "PayPal", "Bank Transfer", "PayPal", "Bank Transfer", "PayPal", "Bank Transfer", "PayPal" };
+                                var statuses = new[] { "Completed", "Completed", "Completed", "Completed", "Completed", "Completed", "Completed", "Completed" };
+                                var statusColors = new[] { "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400" };
+                                var references = new[] { "PAY-001234", "PAY-001233", "PAY-001232", "PAY-001231", "PAY-001230", "PAY-001229", "PAY-001228", "PAY-001227" };
+                                
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                                    <td class="py-3 text-gray-300">@dates[i]</td>
+                                    <td class="py-3 text-white font-semibold">$@amounts[i]</td>
+                                    <td class="py-3 text-gray-300">@methods[i]</td>
+                                    <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i]">@statuses[i]</span></td>
+                                    <td class="py-3 text-gray-300">@references[i]</td>
+                                    <td class="py-3">
+                                        <button class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Upcoming Payouts -->
+            <section aria-label="Upcoming Payouts" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-6">Upcoming Payouts</h2>
+                <div class="space-y-4">
+                    @for (var i = 0; i < 3; i++)
+                    {
+                        var upcomingDates = new[] { "Dec 22, 2024", "Dec 29, 2024", "Jan 5, 2025" };
+                        var upcomingAmounts = new[] { 2150, 1890, 3200 };
+                        var upcomingEvents = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition" };
+                        
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-4 flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-teal-500 rounded-xl flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="text-white font-semibold">$@upcomingAmounts[i]</p>
+                                    <p class="text-gray-400 text-sm">@upcomingDates[i] • @upcomingEvents[i]</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Scheduled</span>
+                                <button class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+
+    <script>
+        // Sidebar toggling hooks
+        function toggleOrganizerSidebar() {
+            const sidebar = document.getElementById('org-sidebar');
+            const overlay = document.getElementById('org-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('org-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleOrganizerSidebar();
+                }
+            }
+        });
+    </script>
+</div>

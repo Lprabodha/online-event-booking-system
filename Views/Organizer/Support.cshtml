@@ -1,0 +1,288 @@
+@{
+    ViewData["Title"] = "Support";
+    Layout = "_Layout";
+}
+
+<!-- Organizer Support Container -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation (collapsible on mobile) -->
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- My Events -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>My Events</span>
+                        </a>
+                    </li>
+                    <!-- Sales & Reports -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Sales & Reports</span>
+                        </a>
+                    </li>
+                    <!-- Payouts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <!-- Support -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Support Center</h1>
+                        <p class="text-gray-400">Get help with your events and account management</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <button class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>FAQ</span>
+                        </button>
+                        <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                            <span>Live Chat</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Options -->
+            <section aria-label="Support Options" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="p-3 bg-blue-500/20 rounded-xl group-hover:bg-blue-500/30 transition">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold">Help Center</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Browse our comprehensive knowledge base for answers to common questions.</p>
+                    <a href="#" class="text-blue-400 hover:text-blue-300 text-sm font-medium">Browse Articles →</a>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="p-3 bg-green-500/20 rounded-xl group-hover:bg-green-500/30 transition">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold">Live Chat</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Chat with our support team in real-time for immediate assistance.</p>
+                    <a href="#" class="text-green-400 hover:text-green-300 text-sm font-medium">Start Chat →</a>
+                </div>
+
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300 group cursor-pointer">
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-xl group-hover:bg-purple-500/30 transition">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold">Email Support</h3>
+                    </div>
+                    <p class="text-gray-400 text-sm mb-4">Send us a detailed message and we'll respond within 24 hours.</p>
+                    <a href="#" class="text-purple-400 hover:text-purple-300 text-sm font-medium">Send Email →</a>
+                </div>
+            </section>
+
+            <!-- Quick Help Topics -->
+            <section aria-label="Quick Help" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <h2 class="text-xl font-bold mb-6">Quick Help Topics</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-purple-400">Event Management</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">How to create and publish an event?</p>
+                                <p class="text-gray-400 text-sm">Step-by-step guide to creating your first event</p>
+                            </a>
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">Managing ticket sales and pricing</p>
+                                <p class="text-gray-400 text-sm">Learn how to set up different ticket types and pricing</p>
+                            </a>
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">Event promotion and marketing</p>
+                                <p class="text-gray-400 text-sm">Tips and strategies to promote your events</p>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold text-teal-400">Account & Payments</h3>
+                        <div class="space-y-3">
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">Setting up payment methods</p>
+                                <p class="text-gray-400 text-sm">Configure your bank account and payment preferences</p>
+                            </a>
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">Understanding payout schedules</p>
+                                <p class="text-gray-400 text-sm">When and how you'll receive your payments</p>
+                            </a>
+                            <a href="#" class="block p-3 bg-white/5 rounded-xl hover:bg-white/10 transition-all duration-200">
+                                <p class="text-white font-medium">Tax reporting and documentation</p>
+                                <p class="text-gray-400 text-sm">Get help with tax forms and reporting requirements</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Support Tickets -->
+            <section aria-label="Support Tickets" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">My Support Tickets</h2>
+                    <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105">
+                        New Ticket
+                    </button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full" role="table">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 text-gray-400 font-medium">Ticket ID</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Subject</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Category</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Status</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Created</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < 5; i++)
+                            {
+                                var ticketIds = new[] { "TKT-001234", "TKT-001233", "TKT-001232", "TKT-001231", "TKT-001230" };
+                                var subjects = new[] { "Event promotion help needed", "Payment processing issue", "Account verification", "Technical support request", "Feature request" };
+                                var categories = new[] { "Event Management", "Payment", "Account", "Technical", "Feature" };
+                                var statuses = new[] { "Open", "In Progress", "Resolved", "Closed", "Open" };
+                                var statusColors = new[] { "bg-yellow-500/20 text-yellow-400", "bg-blue-500/20 text-blue-400", "bg-green-500/20 text-green-400", "bg-gray-500/20 text-gray-400", "bg-yellow-500/20 text-yellow-400" };
+                                var dates = new[] { "Dec 15, 2024", "Dec 12, 2024", "Dec 10, 2024", "Dec 8, 2024", "Dec 5, 2024" };
+                                
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                                    <td class="py-3 text-gray-300">@ticketIds[i]</td>
+                                    <td class="py-3 text-white font-medium">@subjects[i]</td>
+                                    <td class="py-3 text-gray-300">@categories[i]</td>
+                                    <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i]">@statuses[i]</span></td>
+                                    <td class="py-3 text-gray-300">@dates[i]</td>
+                                    <td class="py-3">
+                                        <button class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                                            View Details
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Contact Information -->
+            <section aria-label="Contact Information" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-6">Contact Information</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Phone Support</h3>
+                        <p class="text-gray-400 text-sm mb-2">Available 24/7 for urgent issues</p>
+                        <p class="text-white font-semibold">+1 (555) 123-4567</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Email Support</h3>
+                        <p class="text-gray-400 text-sm mb-2">Response within 24 hours</p>
+                        <p class="text-white font-semibold">support@starevents.com</p>
+                    </div>
+                    
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-lg font-semibold mb-2">Live Chat</h3>
+                        <p class="text-gray-400 text-sm mb-2">Available 9 AM - 6 PM EST</p>
+                        <p class="text-white font-semibold">Start Chat Now</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+
+    <script>
+        // Sidebar toggling hooks
+        function toggleOrganizerSidebar() {
+            const sidebar = document.getElementById('org-sidebar');
+            const overlay = document.getElementById('org-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('org-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleOrganizerSidebar();
+                }
+            }
+        });
+    </script>
+</div>

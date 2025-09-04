@@ -12,7 +12,7 @@
                 <ul class="space-y-2">
                     <!-- Dashboard -->
                     <li>
-                        <a asp-page="/Customer/Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                        <a asp-controller="Customer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
                             <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
@@ -20,54 +20,27 @@
                             <span>Dashboard</span>
                         </a>
                     </li>
-                    <!-- Search Events -->
+                    <!-- My Events -->
                     <li>
-                        <a asp-page="/Events/Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <a asp-controller="Customer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
-                            <span>Search Events</span>
-                        </a>
-                    </li>
-                    <!-- Categories -->
-                    <li>
-                        <a asp-page="/Events/Categories" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
-                            </svg>
-                            <span>Categories</span>
+                            <span>Browse Events</span>
                         </a>
                     </li>
                     <!-- My Bookings -->
                     <li>
-                        <a asp-page="/Customer/Bookings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <a asp-controller="Customer" asp-action="Bookings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                             </svg>
                             <span>My Bookings</span>
                         </a>
                     </li>
-                    <!-- My QR Tickets -->
-                    <li>
-                        <a asp-page="/Customer/Tickets" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V6a1 1 0 00-1-1H5a1 1 0 00-1 1v1a1 1 0 001 1zm12 0h2a1 1 0 001-1V6a1 1 0 00-1-1h-2a1 1 0 00-1 1v1a1 1 0 001 1zM5 20h2a1 1 0 001-1v-1a1 1 0 00-1-1H5a1 1 0 00-1 1v1a1 1 0 001 1z"></path>
-                            </svg>
-                            <span>My QR Tickets</span>
-                        </a>
-                    </li>
-                    <!-- Discounts -->
-                    <li>
-                        <a asp-page="/Customer/Discounts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span>Discounts</span>
-                        </a>
-                    </li>
                     <!-- Profile -->
                     <li>
-                        <a asp-page="/Customer/Profile" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <a asp-controller="Customer" asp-action="Profile" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                             </svg>
@@ -76,7 +49,7 @@
                     </li>
                     <!-- Support -->
                     <li>
-                        <a asp-page="/Customer/Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <a asp-controller="Customer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
                             </svg>
@@ -91,330 +64,161 @@
         <main class="flex-1 p-6">
             <!-- Page Header -->
             <div class="mb-8">
-                <nav class="flex items-center space-x-2 text-sm text-gray-400 mb-4" aria-label="Breadcrumb">
-                    <a href="/" class="hover:text-white transition-colors">Home</a>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                    </svg>
-                    <span class="text-white">Dashboard</span>
-                </nav>
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Customer Dashboard</h1>
-                        <p class="text-gray-400">Welcome back! Here's what's happening with your events and bookings.</p>
-                    </div>
-                    <a asp-page="/Events/Index" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-2xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
-                        Search Events
-                    </a>
-                </div>
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Customer Dashboard</h1>
+                <p class="text-gray-400">Welcome back! Discover amazing events and manage your bookings</p>
             </div>
 
-            <!-- Upcoming Events Section -->
-            <section aria-label="Upcoming Events" class="mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-2xl font-bold">Upcoming Events</h2>
-                    <div class="flex items-center space-x-4">
-                        <div class="relative">
-                            <input type="text" 
-                                   placeholder="Search events..." 
-                                   class="px-4 py-2 pl-10 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-64">
-                            <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+            <!-- Quick Stats -->
+            <section aria-label="Quick Stats" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                             </svg>
                         </div>
-                        <select class="px-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                            <option>All Categories</option>
-                            <option>Music</option>
-                            <option>Sports</option>
-                            <option>Technology</option>
-                            <option>Business</option>
-                        </select>
                     </div>
+                    <p class="text-gray-400 text-sm">Total Bookings</p>
+                    <p class="text-3xl font-bold mt-2">12</p>
+                    <p class="text-gray-400 text-xs mt-1">This year</p>
                 </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-green-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Upcoming Events</p>
+                    <p class="text-3xl font-bold mt-2">3</p>
+                    <p class="text-gray-400 text-xs mt-1">Next 30 days</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Spent</p>
+                    <p class="text-3xl font-bold mt-2">$450</p>
+                    <p class="text-gray-400 text-xs mt-1">This year</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-teal-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-sm">Favorite Categories</p>
+                    <p class="text-3xl font-bold mt-2">5</p>
+                    <p class="text-gray-400 text-xs mt-1">Music, Sports, Tech</p>
+                </div>
+            </section>
 
-                <!-- Events Grid -->
+            <!-- Upcoming Events -->
+            <section aria-label="Upcoming Events" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Upcoming Events</h2>
+                    <a asp-controller="Customer" asp-action="Events" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    @for (var i = 0; i < 6; i++)
+                    @for (var i = 0; i < 3; i++)
                     {
-                        var categories = new[] { "Music", "Sports", "Technology", "Business", "Arts", "Food" };
-                        var venues = new[] { "Concert Hall", "Stadium", "Convention Center", "Auditorium", "Arena", "Theater" };
-                        var prices = new[] { "$25", "$45", "$35", "$60", "$30", "$50" };
-                        var dates = new[] { "Dec 15", "Dec 18", "Dec 20", "Dec 22", "Dec 25", "Dec 28" };
+                        var events = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition" };
+                        var dates = new[] { "Dec 15, 2024", "Dec 20, 2024", "Dec 25, 2024" };
+                        var venues = new[] { "Concert Hall", "Expo Center", "Gallery" };
+                        var prices = new[] { "$25", "$50", "$15" };
                         
-                        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 hover:scale-105">
-                            <div class="h-48 bg-gradient-to-br from-purple-500/20 to-teal-500/20 flex items-center justify-center">
-                                <svg class="w-16 h-16 text-purple-400/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <div class="p-6">
-                                <div class="flex items-center justify-between mb-2">
-                                    <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-medium">@categories[i]</span>
-                                    <span class="text-green-400 font-bold">@prices[i]</span>
+                        <div class="bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:bg-white/10 transition-all duration-300 group">
+                            <div class="h-32 bg-gradient-to-br from-purple-500/20 to-teal-500/20 relative">
+                                <div class="absolute top-3 right-3">
+                                    <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Booked</span>
                                 </div>
-                                <h3 class="text-lg font-bold text-white mb-2">Event Title @(i + 1)</h3>
-                                <p class="text-gray-400 text-sm mb-3">@dates[i], 2024 • @venues[i]</p>
-                                <div class="flex space-x-2">
-                                    <a href="#" class="flex-1 bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:from-purple-600 hover:to-teal-600 transition text-center">View</a>
-                                    <a href="#" class="flex-1 px-4 py-2 rounded-xl text-sm font-semibold text-purple-400 border border-purple-400/50 hover:bg-white/10 transition text-center">Buy</a>
+                            </div>
+                            <div class="p-4">
+                                <h3 class="text-white font-bold text-lg mb-1">@events[i]</h3>
+                                <p class="text-gray-300 text-sm mb-2">@dates[i] • @venues[i]</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-purple-400 font-semibold">@prices[i]</span>
+                                    <button class="text-blue-400 hover:text-blue-300 text-sm font-medium">
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
                         </div>
                     }
                 </div>
+            </section>
 
-                <!-- Empty State (hidden by default) -->
-                <div class="hidden text-center py-12">
-                    <svg class="w-24 h-24 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                    <h3 class="text-xl font-bold text-white mb-2">No upcoming events</h3>
-                    <p class="text-gray-400 mb-4">Explore our events and discover amazing experiences.</p>
-                    <a asp-page="/Events/Index" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-2xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                        Explore Now
+            <!-- Quick Actions -->
+            <section aria-label="Quick Actions" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-6">Quick Actions</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <a asp-controller="Customer" asp-action="Events" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-4 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 text-center">
+                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        Browse Events
+                    </a>
+                    
+                    <a asp-controller="Customer" asp-action="Bookings" class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
+                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                        </svg>
+                        My Bookings
+                    </a>
+                    
+                    <a asp-controller="Customer" asp-action="Profile" class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
+                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                        Edit Profile
+                    </a>
+                    
+                    <a asp-controller="Customer" asp-action="Support" class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
+                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                        </svg>
+                        Get Support
                     </a>
                 </div>
             </section>
-
-            <!-- Main Content Grid -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- My Bookings Section -->
-                <section aria-label="My Bookings" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold">My Bookings</h2>
-                        <a asp-page="/Customer/Bookings" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="w-full" role="table">
-                            <thead>
-                                <tr class="border-b border-white/10">
-                                    <th class="text-left py-3 text-gray-400 font-medium">Event</th>
-                                    <th class="text-left py-3 text-gray-400 font-medium">Date</th>
-                                    <th class="text-left py-3 text-gray-400 font-medium">Tickets</th>
-                                    <th class="text-left py-3 text-gray-400 font-medium">Status</th>
-                                    <th class="text-left py-3 text-gray-400 font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @for (var i = 0; i < 4; i++)
-                                {
-                                    var statuses = new[] { "Paid", "Pending", "Cancelled", "Paid" };
-                                    var statusColors = new[] { "green", "yellow", "red", "green" };
-                                    var status = statuses[i];
-                                    var statusColor = statusColors[i];
-                                    var badge = status == "Paid" ? "bg-green-500/20 text-green-400" : status == "Pending" ? "bg-yellow-500/20 text-yellow-400" : "bg-red-500/20 text-red-400";
-                                    
-                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-                                        <td class="py-3">
-                                            <p class="text-white font-medium">Event @(i + 1)</p>
-                                            <p class="text-gray-400 text-sm">Booking #@(1000 + i)</p>
-                                        </td>
-                                        <td class="py-3 text-gray-300">Dec @(15 + i), 2024</td>
-                                        <td class="py-3 text-gray-300">@(1 + i) ticket(s)</td>
-                                        <td class="py-3">
-                                            <span class="px-3 py-1 rounded-full text-xs font-medium @badge">@status</span>
-                                        </td>
-                                        <td class="py-3">
-                                            <div class="flex space-x-2">
-                                                <a href="#" class="text-purple-400 hover:text-purple-300" aria-label="View">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                    </svg>
-                                                </a>
-                                                <a href="#" class="text-blue-400 hover:text-blue-300" aria-label="Download QR">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                                    </svg>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Pagination -->
-                    <div class="flex items-center justify-between mt-4 pt-4 border-t border-white/10">
-                        <span class="text-gray-400 text-sm">Showing 1-4 of 12 bookings</span>
-                        <div class="flex space-x-2">
-                            <button class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" disabled>Previous</button>
-                            <button class="px-3 py-1 rounded-lg bg-purple-500/20 text-purple-400">1</button>
-                            <button class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition">2</button>
-                            <button class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition">3</button>
-                            <button class="px-3 py-1 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition">Next</button>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- QR E-Tickets Section -->
-                <section aria-label="QR E-Tickets" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold">QR E-Tickets</h2>
-                        <a asp-page="/Customer/Tickets" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
-                    </div>
-                    <div class="space-y-4">
-                        @for (var i = 0; i < 3; i++)
-                        {
-                            <div class="p-4 bg-white/5 rounded-xl border border-purple-500/20">
-                                <div class="flex items-center justify-between mb-3">
-                                    <div>
-                                        <p class="text-white font-medium">Booking #@(1000 + i)</p>
-                                        <p class="text-gray-400 text-sm">Event @(i + 1) • Dec @(15 + i), 2024</p>
-                                    </div>
-                                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Valid</span>
-                                </div>
-                                <div class="flex items-center space-x-4">
-                                    <div class="w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center">
-                                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V6a1 1 0 00-1-1H5a1 1 0 00-1 1v1a1 1 0 001 1zm12 0h2a1 1 0 001-1V6a1 1 0 00-1-1h-2a1 1 0 00-1 1v1a1 1 0 001 1zM5 20h2a1 1 0 001-1v-1a1 1 0 00-1-1H5a1 1 0 00-1 1v1a1 1 0 001 1z"></path>
-                                        </svg>
-                                    </div>
-                                    <div class="flex-1">
-                                        <div class="flex space-x-2">
-                                            <button class="px-3 py-2 rounded-lg text-sm font-semibold text-teal-400 border border-teal-400/50 hover:bg-white/10 transition">Download</button>
-                                            <button class="px-3 py-2 rounded-lg text-sm font-semibold text-blue-400 border border-blue-400/50 hover:bg-white/10 transition">Add to Wallet</button>
-                                            <button class="px-3 py-2 rounded-lg text-sm font-semibold text-purple-400 border border-purple-400/50 hover:bg-white/10 transition">Generate QR Again</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </section>
-            </div>
-
-            <!-- Bottom Row -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
-                <!-- Discounts & Loyalty -->
-                <section aria-label="Discounts & Loyalty" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <h2 class="text-xl font-bold mb-4">Discounts & Loyalty</h2>
-                    <div class="space-y-4">
-                        <div class="p-4 bg-gradient-to-r from-purple-500/20 to-teal-500/20 rounded-xl border border-purple-500/30">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-white font-bold text-lg">120 pts</span>
-                                <span class="text-purple-400 text-sm">Current Balance</span>
-                            </div>
-                            <p class="text-gray-400 text-sm">Earn points with every booking!</p>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-green-500/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-green-400 font-bold">SAVE10</span>
-                                <span class="text-green-400 text-sm">10% off</span>
-                            </div>
-                            <p class="text-gray-400 text-sm">Apply at checkout</p>
-                        </div>
-                        <div class="p-4 bg-white/5 rounded-xl border border-blue-500/20">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-blue-400 font-bold">WELCOME20</span>
-                                <span class="text-blue-400 text-sm">20% off</span>
-                            </div>
-                            <p class="text-gray-400 text-sm">First booking only</p>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Profile Completeness -->
-                <section aria-label="Profile Completeness" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <h2 class="text-xl font-bold mb-4">Profile Completeness</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-white font-medium">Profile Progress</span>
-                                <span class="text-purple-400 font-bold">70%</span>
-                            </div>
-                            <div class="w-full bg-white/10 rounded-full h-3">
-                                <div class="bg-gradient-to-r from-purple-500 to-teal-500 h-3 rounded-full" style="width: 70%"></div>
-                            </div>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-gray-300 text-sm">Basic Information</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                                </svg>
-                                <span class="text-gray-300 text-sm">Email Verification</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                                </svg>
-                                <span class="text-gray-300 text-sm">Phone Number</span>
-                            </div>
-                            <div class="flex items-center space-x-2">
-                                <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                                <span class="text-gray-300 text-sm">Profile Picture</span>
-                            </div>
-                        </div>
-                        <a asp-page="/Customer/Profile" class="w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition text-center">
-                            Complete Profile
-                        </a>
-                    </div>
-                </section>
-
-                <!-- Announcements -->
-                <section aria-label="Announcements" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <h2 class="text-xl font-bold mb-4">Announcements</h2>
-                    <div class="space-y-4">
-                        @for (var i = 0; i < 3; i++)
-                        {
-                            var announcements = new[] { 
-                                "New feature: Add tickets to your digital wallet", 
-                                "Big event coming: New Year's Eve Concert", 
-                                "System maintenance scheduled for Dec 20" 
-                            };
-                            var types = new[] { "Feature", "Event", "Maintenance" };
-                            var typeColors = new[] { "purple", "green", "blue" };
-                            var typeColor = typeColors[i];
-                            var badge = typeColor == "purple" ? "bg-purple-500/20 text-purple-400" : typeColor == "green" ? "bg-green-500/20 text-green-400" : "bg-blue-500/20 text-blue-400";
-                            
-                            <div class="p-4 bg-white/5 rounded-xl">
-                                <div class="flex items-start space-x-3">
-                                    <span class="px-2 py-1 rounded-full text-xs font-medium @badge">@types[i]</span>
-                                    <div class="flex-1">
-                                        <p class="text-white text-sm">@announcements[i]</p>
-                                        <p class="text-gray-400 text-xs mt-1">@(i + 1) day ago</p>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </section>
-            </div>
         </main>
     </div>
-</div>
 
-<!-- Mobile Overlay for Sidebar -->
-<div id="customer-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="customer-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
 
-<script>
-    // Sidebar toggling hooks (optional usage if wired to a button in the global header)
-    function toggleCustomerSidebar() {
-        const sidebar = document.getElementById('customer-sidebar');
-        const overlay = document.getElementById('customer-overlay');
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-        if (!sidebar.classList.contains('-translate-x-full')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    }
-    // Close on escape
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape') {
+    <script>
+        // Sidebar toggling hooks
+        function toggleCustomerSidebar() {
             const sidebar = document.getElementById('customer-sidebar');
+            const overlay = document.getElementById('customer-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
             if (!sidebar.classList.contains('-translate-x-full')) {
-                toggleCustomerSidebar();
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
             }
         }
-    });
-</script>
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('customer-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleCustomerSidebar();
+                }
+            }
+        });
+    </script>
+</div>

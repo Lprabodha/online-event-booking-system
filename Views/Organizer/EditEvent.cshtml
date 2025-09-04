@@ -1,0 +1,451 @@
+@{
+    ViewData["Title"] = "Edit Event";
+    Layout = "_Layout";
+}
+
+<!-- Event Edit Form Container -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation (collapsible on mobile) -->
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- My Events -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>My Events</span>
+                        </a>
+                    </li>
+                    <!-- Sales & Reports -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Sales & Reports</span>
+                        </a>
+                    </li>
+                    <!-- Payouts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <!-- Support -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Edit Event</h1>
+                        <p class="text-gray-400">Update your event details and settings</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex space-x-3">
+                        <button class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200">
+                            View Event
+                        </button>
+                        <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Event Status Banner -->
+            <section aria-label="Event Status" class="mb-8">
+                <div class="bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-500/30 rounded-2xl p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <div>
+                            <h3 class="text-white font-semibold">Event is Live</h3>
+                            <p class="text-gray-300 text-sm">This event is currently published and accepting ticket sales</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Form Progress -->
+            <section aria-label="Form Progress" class="mb-8">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-white font-semibold">Basic Info</span>
+                        </div>
+                        <div class="w-16 h-1 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                            </div>
+                            <span class="text-white font-semibold">Details</span>
+                        </div>
+                        <div class="w-16 h-1 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full"></div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                                <span class="text-white text-sm font-bold">3</span>
+                            </div>
+                            <span class="text-white font-semibold">Tickets</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Event Edit Form -->
+            <form class="space-y-8">
+                <!-- Basic Information -->
+                <section aria-label="Basic Information" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Basic Information</h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Title *</label>
+                                <input type="text" value="Summer Music Festival 2024" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Enter your event title">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Category *</label>
+                                <select required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="music" selected>Music & Concerts</option>
+                                    <option value="sports">Sports</option>
+                                    <option value="technology">Technology</option>
+                                    <option value="business">Business</option>
+                                    <option value="arts">Arts & Culture</option>
+                                    <option value="food">Food & Drink</option>
+                                    <option value="education">Education</option>
+                                    <option value="health">Health & Wellness</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Type</label>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                        <input type="radio" name="eventType" value="online" class="text-purple-500 focus:ring-purple-500">
+                                        <span class="text-white">Online</span>
+                                    </label>
+                                    <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                        <input type="radio" name="eventType" value="in-person" class="text-purple-500 focus:ring-purple-500" checked>
+                                        <span class="text-white">In-Person</span>
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Venue *</label>
+                                <select required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="concert-hall" selected>Concert Hall</option>
+                                    <option value="expo-center">Expo Center</option>
+                                    <option value="open-arena">Open Arena</option>
+                                    <option value="theater">Theater</option>
+                                    <option value="stadium">Stadium</option>
+                                    <option value="conference-center">Conference Center</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Description *</label>
+                                <textarea rows="6" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm resize-none" placeholder="Describe your event in detail...">Join us for an unforgettable summer music festival featuring top artists, delicious food, and amazing vibes. This year's lineup includes both established and emerging artists across multiple genres. Don't miss out on this incredible experience!</textarea>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
+                                <div class="relative">
+                                    <img src="~/images/placeholder.svg" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
+                                    <button type="button" class="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-lg hover:bg-black/70 transition-all">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center hover:border-purple-500/50 transition-all cursor-pointer">
+                                    <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <p class="text-gray-400 text-sm">Click to change image</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Date & Time -->
+                <section aria-label="Date & Time" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Date & Time</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Start Date *</label>
+                            <input type="date" value="2024-07-15" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
+                            <input type="time" value="18:00" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">End Time *</label>
+                            <input type="time" value="23:00" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6">
+                        <label class="flex items-center space-x-3">
+                            <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded">
+                            <span class="text-gray-300">This is a multi-day event</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Ticket Information -->
+                <section aria-label="Ticket Information" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Ticket Information</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Total Capacity *</label>
+                                <input type="number" value="500" required min="1" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales Start</label>
+                                <input type="datetime-local" value="2024-06-01T10:00" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales End</label>
+                                <input type="datetime-local" value="2024-07-14T23:59" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Refund Policy</label>
+                                <select class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="no-refunds">No Refunds</option>
+                                    <option value="full-refund-7days" selected>Full Refund (7 days before)</option>
+                                    <option value="full-refund-24hours">Full Refund (24 hours before)</option>
+                                    <option value="partial-refund">Partial Refund</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ticket Types -->
+                <section aria-label="Ticket Types" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Ticket Types</h2>
+                        <button type="button" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105">
+                            Add Ticket Type
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- General Admission -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                                    <input type="text" value="General Admission" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                                    <input type="number" value="25" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                                    <input type="number" value="300" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div class="flex items-end">
+                                    <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- VIP -->
+                        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
+                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                                    <input type="text" value="VIP Pass" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                                    <input type="number" value="75" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                                    <input type="number" value="100" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                </div>
+                                <div class="flex items-end">
+                                    <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Add New Ticket Type Button -->
+                        <div class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-purple-500/50 transition-all cursor-pointer">
+                            <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                            </svg>
+                            <p class="text-gray-400">Add another ticket type</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Event Analytics -->
+                <section aria-label="Event Analytics" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Event Performance</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-green-400">247</p>
+                            <p class="text-gray-400 text-sm">Tickets Sold</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-blue-400">$6,175</p>
+                            <p class="text-gray-400 text-sm">Revenue</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-purple-400">49.4%</p>
+                            <p class="text-gray-400 text-sm">Capacity Used</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-teal-400">253</p>
+                            <p class="text-gray-400 text-sm">Remaining</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Additional Settings -->
+                <section aria-label="Additional Settings" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Additional Settings</h2>
+                    <div class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Tags</label>
+                                <input type="text" value="music, festival, outdoor, summer" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="music, festival, outdoor (comma separated)">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Age Restriction</label>
+                                <select class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="all-ages" selected>All Ages</option>
+                                    <option value="18+">18+ Only</option>
+                                    <option value="21+">21+ Only</option>
+                                    <option value="family-friendly">Family Friendly</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <h3 class="text-lg font-semibold">Event Features</h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                    <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded" checked>
+                                    <span class="text-white">Allow waitlist when sold out</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                    <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded" checked>
+                                    <span class="text-white">Require attendee information</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                    <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded" checked>
+                                    <span class="text-white">Send confirmation emails</span>
+                                </label>
+                                <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/20 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                                    <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded" checked>
+                                    <span class="text-white">Enable social sharing</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Form Actions -->
+                <section aria-label="Form Actions" class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
+                    <button type="button" class="w-full sm:w-auto bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
+                        Cancel
+                    </button>
+                    <div class="flex space-x-4 w-full sm:w-auto">
+                        <button type="button" class="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
+                            Save as Draft
+                        </button>
+                        <button type="submit" class="flex-1 sm:flex-none bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                            Update Event
+                        </button>
+                    </div>
+                </section>
+            </form>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+
+    <script>
+        // Sidebar toggling hooks
+        function toggleOrganizerSidebar() {
+            const sidebar = document.getElementById('org-sidebar');
+            const overlay = document.getElementById('org-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('org-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleOrganizerSidebar();
+                }
+            }
+        });
+    </script>
+</div>
