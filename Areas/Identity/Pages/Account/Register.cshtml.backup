@@ -1,4 +1,4 @@
-@page
+﻿@page
 @model RegisterModel
 
 @{
@@ -48,81 +48,72 @@
         </div>
         <div class="bg-white/5 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 p-8">
             <form class="space-y-6" method="post">
-                <div asp-validation-summary="ModelOnly" class="text-red-400"></div>
-                
                 <div>
-                    <label asp-for="Input.FullName" class="block text-sm font-medium text-gray-300 mb-3">
+                    <label for="full-name" class="block text-sm font-medium text-gray-300 mb-3">
                         Full Name
                     </label>
-                    <input asp-for="Input.FullName"
+                    <input id="full-name"
+                           name="full-name"
                            type="text"
-                           autocomplete="name"
+                           autocomplete="full-name"
+                           required
                            class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm"
                            placeholder="John Doe">
-                    <span asp-validation-for="Input.FullName" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div>
-                    <label asp-for="Input.ContactNumber" class="block text-sm font-medium text-gray-300 mb-3">
+                    <label for="contact-number" class="block text-sm font-medium text-gray-300 mb-3">
                         Contact Number
                     </label>
-                    <input asp-for="Input.ContactNumber"
-                           type="tel"
-                           autocomplete="tel"
+                    <input id="contact-number"
+                           name="contact-number"
+                           type="text"
+                           autocomplete="contact-number"
+                           required
                            class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm"
-                           placeholder="+1 (555) 123-4567">
-                    <span asp-validation-for="Input.ContactNumber" class="text-red-400 text-sm"></span>
+                           placeholder="XXX-XXXXXXX">
                 </div>
 
                 <div>
-                    <label asp-for="Input.Email" class="block text-sm font-medium text-gray-300 mb-3">
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-3">
                         Email address
                     </label>
-                    <input asp-for="Input.Email"
+                    <input id="email"
+                           name="email"
                            type="email"
                            autocomplete="email"
+                           required
                            class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm"
                            placeholder="john@example.com">
-                    <span asp-validation-for="Input.Email" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div>
-                    <label asp-for="Input.Address" class="block text-sm font-medium text-gray-300 mb-3">
-                        Address
-                    </label>
-                    <textarea asp-for="Input.Address"
-                              autocomplete="address-line1"
-                              rows="3"
-                              class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm resize-none"
-                              placeholder="123 Main Street, City, State 12345"></textarea>
-                    <span asp-validation-for="Input.Address" class="text-red-400 text-sm"></span>
-                </div>
-
-                <div>
-                    <label asp-for="Input.Password" class="block text-sm font-medium text-gray-300 mb-3">
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-3">
                         Password
                     </label>
-                    <input asp-for="Input.Password"
+                    <input id="password"
+                           name="password"
                            type="password"
                            autocomplete="new-password"
+                           required
                            class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm"
                            placeholder="Create a strong password">
-                    <span asp-validation-for="Input.Password" class="text-red-400 text-sm"></span>
                     <p class="mt-2 text-sm text-gray-400">
-                        Must be at least 6 characters with uppercase, lowercase, and numbers.
+                        Must be at least 8 characters with uppercase, lowercase, and numbers.
                     </p>
                 </div>
 
                 <div>
-                    <label asp-for="Input.ConfirmPassword" class="block text-sm font-medium text-gray-300 mb-3">
+                    <label for="confirm-password" class="block text-sm font-medium text-gray-300 mb-3">
                         Confirm password
                     </label>
-                    <input asp-for="Input.ConfirmPassword"
+                    <input id="confirm-password"
+                           name="confirm-password"
                            type="password"
                            autocomplete="new-password"
+                           required
                            class="w-full px-4 py-4 bg-white/5 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm"
                            placeholder="Confirm your password">
-                    <span asp-validation-for="Input.ConfirmPassword" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div class="flex items-start">
@@ -177,7 +168,3 @@
 
     </div>
 </section>
-
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
