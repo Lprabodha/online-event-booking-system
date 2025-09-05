@@ -1,0 +1,430 @@
+@{
+    ViewData["Title"] = "Browse Events";
+    Layout = "_Layout";
+}
+
+<!-- Browse Events Page -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside id="customer-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed lg:relative z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Customer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- My Events -->
+                    <li>
+                        <a asp-controller="Customer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Browse Events</span>
+                        </a>
+                    </li>
+                    <!-- My Bookings -->
+                    <li>
+                        <a asp-controller="Customer" asp-action="Bookings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                            </svg>
+                            <span>My Bookings</span>
+                        </a>
+                    </li>
+                    <!-- Profile -->
+                    <li>
+                        <a asp-controller="Customer" asp-action="Profile" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span>Profile</span>
+                        </a>
+                    </li>
+                    <!-- Support -->
+                    <li>
+                        <a asp-controller="Customer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 lg:p-6">
+            <!-- Page Header -->
+            <div class="mb-6 lg:mb-8">
+                <h1 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Browse Events</h1>
+                <p class="text-gray-400 text-sm lg:text-base">Discover amazing events and book your tickets</p>
+            </div>
+
+            <!-- Search and Filters -->
+            <div class="mb-6 lg:mb-8 space-y-4">
+                <!-- Search Bar -->
+                <div class="relative">
+                    <input type="text" id="eventSearch" placeholder="Search events..." 
+                           class="w-full px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterEvents('all')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gradient-to-r from-purple-500 to-teal-500 text-white text-sm">
+                        All Events
+                    </button>
+                    <button onclick="filterEvents('music')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Music
+                    </button>
+                    <button onclick="filterEvents('sports')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Sports
+                    </button>
+                    <button onclick="filterEvents('tech')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Technology
+                    </button>
+                    <button onclick="filterEvents('art')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Art & Culture
+                    </button>
+                </div>
+            </div>
+
+            <!-- Events Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                <!-- Event Card 1 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="music">
+                    <div class="h-48 bg-gradient-to-br from-purple-500/20 to-teal-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-medium">Music</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Summer Music Festival 2024</h3>
+                        <p class="text-gray-400 text-sm mb-3">Join us for an unforgettable evening of music featuring top artists</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 15, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Concert Hall</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$35</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 2 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="tech">
+                    <div class="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Technology</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Tech Conference 2024</h3>
+                        <p class="text-gray-400 text-sm mb-3">Explore the latest in technology and innovation</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 20, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Expo Center</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$120</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 3 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="art">
+                    <div class="h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Limited</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs font-medium">Art & Culture</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Art Exhibition Opening</h3>
+                        <p class="text-gray-400 text-sm mb-3">Contemporary art showcase featuring local and international artists</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 10, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Gallery</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$25</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 4 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="sports">
+                    <div class="h-48 bg-gradient-to-br from-green-500/20 to-emerald-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Sports</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Basketball Championship</h3>
+                        <p class="text-gray-400 text-sm mb-3">Watch the final game of the season championship</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 22, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Sports Arena</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$45</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 5 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="music">
+                    <div class="h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium">Sold Out</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded-full text-xs font-medium">Music</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Jazz Night</h3>
+                        <p class="text-gray-400 text-sm mb-3">Intimate jazz performance in a cozy setting</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 18, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Jazz Club</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$60</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gray-500/20 border border-gray-500/30 text-gray-400 rounded-lg font-semibold cursor-not-allowed text-sm">
+                                Sold Out
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Event Card 6 -->
+                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="tech">
+                    <div class="h-48 bg-gradient-to-br from-orange-500/20 to-red-500/20 relative">
+                        <div class="absolute top-3 right-3">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
+                        </div>
+                        <div class="absolute bottom-3 left-3">
+                            <span class="px-2 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">Technology</span>
+                        </div>
+                    </div>
+                    <div class="p-4 lg:p-6">
+                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">AI Workshop</h3>
+                        <p class="text-gray-400 text-sm mb-3">Hands-on workshop on artificial intelligence and machine learning</p>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <span class="text-gray-300">Dec 25, 2024</span>
+                            </div>
+                            <div class="flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                </svg>
+                                <span class="text-gray-300">Tech Hub</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-2xl font-bold text-white">$80</p>
+                                <p class="text-gray-400 text-xs">per ticket</p>
+                            </div>
+                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
+                                Book Now
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-8">
+                <button class="px-8 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
+                    Load More Events
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="customer-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" aria-hidden="true"></div>
+
+    <script>
+        // Event filtering functionality
+        function filterEvents(category) {
+            const eventCards = document.querySelectorAll('.event-card');
+            const filterButtons = document.querySelectorAll('.event-filter');
+
+            // Update filter button styles
+            filterButtons.forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+                btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+            });
+
+            // Highlight active filter
+            event.target.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+            event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+
+            // Filter events
+            eventCards.forEach(card => {
+                const cardCategory = card.getAttribute('data-category');
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Search functionality
+        document.getElementById('eventSearch').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const eventCards = document.querySelectorAll('.event-card');
+
+            eventCards.forEach(card => {
+                const eventTitle = card.querySelector('h3').textContent.toLowerCase();
+                const eventDescription = card.querySelector('p').textContent.toLowerCase();
+                
+                if (eventTitle.includes(searchTerm) || eventDescription.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Sidebar toggling hooks
+        function toggleCustomerSidebar() {
+            const sidebar = document.getElementById('customer-sidebar');
+            const overlay = document.getElementById('customer-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('customer-sidebar');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleCustomerSidebar();
+                }
+            }
+        });
+    </script>
+</div>

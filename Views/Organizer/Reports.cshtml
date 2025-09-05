@@ -1,0 +1,760 @@
+@{
+    ViewData["Title"] = "Sales & Reports";
+    Layout = "_Layout";
+}
+
+<!-- Organizer Reports Container -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+                <!-- Sidebar Navigation (collapsible on mobile) -->
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <!-- My Events -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>My Events</span>
+                        </a>
+                    </li>
+                    <!-- Sales & Reports -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Sales & Reports</span>
+                        </a>
+                    </li>
+                    <!-- Discounts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Discounts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Discounts</span>
+                        </a>
+                    </li>
+                    <!-- Payouts -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <!-- Settings -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <!-- Support -->
+                    <li>
+                        <a asp-controller="Organizer" asp-action="Support" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Support</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-4 md:p-6">
+            <!-- Mobile Menu Button -->
+            <button onclick="toggleOrganizerSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <!-- Page Header -->
+            <div class="mb-8">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                    <div>
+                        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Sales & Reports</h1>
+                        <p class="text-gray-400">Track your event performance and revenue analytics</p>
+                    </div>
+                    <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
+                        <!-- Export Dropdown -->
+                        <div class="relative">
+                            <button id="exportDropdownBtn" class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200 flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Export</span>
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            <div id="exportDropdown" class="absolute right-0 mt-2 w-48 bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-lg z-10 hidden">
+                                <div class="py-2">
+                                    <button onclick="exportReport('pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>Export as PDF</span>
+                                    </button>
+                                    <button onclick="exportReport('csv')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                        </svg>
+                                        <span>Export as CSV</span>
+                                    </button>
+                                    <button onclick="exportReport('excel')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>Export as Excel</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Quick PDF Download -->
+                        <button onclick="exportReport('pdf')" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            <span>Quick PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Date Range Selector -->
+            <section aria-label="Date Range" class="mb-8">
+                <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <div class="flex items-center space-x-4">
+                        <select aria-label="Report period" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <option>Last 7 Days</option>
+                            <option>Last 30 Days</option>
+                            <option>Last 3 Months</option>
+                            <option>Last 6 Months</option>
+                            <option>This Year</option>
+                            <option>Custom Range</option>
+                        </select>
+                        <select aria-label="Event filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <option>All Events</option>
+                            <option>Live Events</option>
+                            <option>Completed Events</option>
+                            <option>Draft Events</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <button class="px-4 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold">Apply Filters</button>
+                        <button class="px-4 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">Reset</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Key Metrics Cards -->
+            <section aria-label="Key Metrics" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-green-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                        </div>
+                        <span class="text-green-400 text-sm font-semibold">+12.5%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Total Revenue</p>
+                    <p class="text-3xl font-bold mt-2">$45,230</p>
+                    <p class="text-gray-400 text-xs mt-1">vs last period</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-blue-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-blue-400 text-sm font-semibold">+8.3%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Tickets Sold</p>
+                    <p class="text-3xl font-bold mt-2">2,847</p>
+                    <p class="text-gray-400 text-xs mt-1">vs last period</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-purple-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                            </svg>
+                        </div>
+                        <span class="text-purple-400 text-sm font-semibold">+5.7%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">Conversion Rate</p>
+                    <p class="text-3xl font-bold mt-2">4.2%</p>
+                    <p class="text-gray-400 text-xs mt-1">vs last period</p>
+                </div>
+                
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="p-3 bg-teal-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </div>
+                        <span class="text-teal-400 text-sm font-semibold">+15.2%</span>
+                    </div>
+                    <p class="text-gray-400 text-sm">New Customers</p>
+                    <p class="text-3xl font-bold mt-2">1,234</p>
+                    <p class="text-gray-400 text-xs mt-1">vs last period</p>
+                </div>
+            </section>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+                <!-- Revenue Chart -->
+                <section aria-label="Revenue Chart" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Revenue Trend</h2>
+                        <div class="flex space-x-2" role="tablist" aria-label="Chart range tabs">
+                            <button onclick="updateRevenueChart('7d')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
+                            <button onclick="updateRevenueChart('30d')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
+                            <button onclick="updateRevenueChart('90d')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">90D</button>
+                        </div>
+                    </div>
+                    <div class="h-64 relative">
+                        <div id="revenueChartLoading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                                <p class="text-gray-400 text-sm">Loading chart...</p>
+                            </div>
+                        </div>
+                        <canvas id="revenueChart" class="hidden"></canvas>
+                    </div>
+                </section>
+
+                <!-- Ticket Sales Chart -->
+                <section aria-label="Ticket Sales Chart" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h2 class="text-xl font-bold">Ticket Sales</h2>
+                        <div class="flex space-x-2" role="tablist" aria-label="Chart type tabs">
+                            <button onclick="updateTicketChart('daily')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">Daily</button>
+                            <button onclick="updateTicketChart('weekly')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">Weekly</button>
+                        </div>
+                    </div>
+                    <div class="h-64 relative">
+                        <div id="ticketChartLoading" class="absolute inset-0 flex items-center justify-center">
+                            <div class="text-center">
+                                <div class="animate-spin w-8 h-8 border-2 border-teal-500 border-t-transparent rounded-full mx-auto mb-2"></div>
+                                <p class="text-gray-400 text-sm">Loading chart...</p>
+                            </div>
+                        </div>
+                        <canvas id="ticketChart" class="hidden"></canvas>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Top Performing Events -->
+            <section aria-label="Top Performing Events" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-xl font-bold">Top Performing Events</h2>
+                    <a href="#" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full" role="table">
+                        <thead>
+                            <tr class="border-b border-white/10">
+                                <th class="text-left py-3 text-gray-400 font-medium">Event</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Date</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Tickets Sold</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Revenue</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Conversion</th>
+                                <th class="text-left py-3 text-gray-400 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (var i = 0; i < 5; i++)
+                            {
+                                var events = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition", "Food & Wine Tasting", "Comedy Night" };
+                                var dates = new[] { "Dec 15, 2024", "Dec 20, 2024", "Dec 25, 2024", "Jan 5, 2025", "Jan 10, 2025" };
+                                var tickets = new[] { 850, 650, 420, 380, 320 };
+                                var revenues = new[] { 12750, 9750, 6300, 5700, 4800 };
+                                var conversions = new[] { "5.2%", "4.8%", "4.1%", "3.9%", "3.7%" };
+                                var statuses = new[] { "Completed", "Live", "Completed", "Upcoming", "Upcoming" };
+                                var statusColors = new[] { "bg-green-500/20 text-green-400", "bg-blue-500/20 text-blue-400", "bg-green-500/20 text-green-400", "bg-yellow-500/20 text-yellow-400", "bg-yellow-500/20 text-yellow-400" };
+                                
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                                    <td class="py-3">
+                                        <p class="text-white font-medium">@events[i]</p>
+                                        <p class="text-gray-400 text-sm">Concert Hall</p>
+                                    </td>
+                                    <td class="py-3 text-gray-300">@dates[i]</td>
+                                    <td class="py-3 text-gray-300">@tickets[i]</td>
+                                    <td class="py-3 text-gray-300">$@revenues[i]</td>
+                                    <td class="py-3 text-gray-300">@conversions[i]</td>
+                                    <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i]">@statuses[i]</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Sales Analytics -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Sales by Category -->
+                <section aria-label="Sales by Category" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Sales by Category</h2>
+                    <div class="space-y-4">
+                        @{
+                            var categories = new[] { "Music", "Technology", "Art", "Food", "Comedy" };
+                            var percentages = new[] { 35, 25, 20, 12, 8 };
+                            var colors = new[] { "bg-purple-500", "bg-blue-500", "bg-green-500", "bg-yellow-500", "bg-red-500" };
+                        }
+                        @for (var i = 0; i < 5; i++)
+                        {
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-3 h-3 @colors[i] rounded-full"></div>
+                                    <span class="text-gray-300">@categories[i]</span>
+                                </div>
+                                <span class="text-white font-semibold">@percentages[i]%</span>
+                            </div>
+                            <div class="w-full bg-white/10 rounded-full h-2">
+                                <div class="@colors[i] h-2 rounded-full" style="width: @percentages[i]%"></div>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <!-- Recent Activity -->
+                <section aria-label="Recent Activity" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Recent Activity</h2>
+                    <div class="space-y-4">
+                        @{
+                            var activities = new[] { "New ticket sale for Summer Music Festival", "Event 'Tech Conference 2024' went live", "Payment received for Art Exhibition", "New customer registered", "Event 'Food & Wine Tasting' created" };
+                            var times = new[] { "2 minutes ago", "1 hour ago", "3 hours ago", "5 hours ago", "1 day ago" };
+                        }
+                        @for (var i = 0; i < 5; i++)
+                        {
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mt-2"></div>
+                                <div>
+                                    <p class="text-white text-sm">@activities[i]</p>
+                                    <p class="text-gray-400 text-xs">@times[i]</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </section>
+
+                <!-- Quick Stats -->
+                <section aria-label="Quick Stats" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h2 class="text-xl font-bold mb-6">Quick Stats</h2>
+                    <div class="space-y-6">
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-purple-400">$15.89</p>
+                            <p class="text-gray-400 text-sm">Average Ticket Price</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-blue-400">2.3 days</p>
+                            <p class="text-gray-400 text-sm">Average Sale Time</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-green-400">94.2%</p>
+                            <p class="text-gray-400 text-sm">Customer Satisfaction</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-3xl font-bold text-teal-400">$2,847</p>
+                            <p class="text-gray-400 text-sm">Monthly Recurring</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Mobile Overlay for Sidebar -->
+    <div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+
+    <!-- Chart.js CDN with fallback -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="loadChartFallback()"></script>
+    <script>
+        function loadChartFallback() {
+            console.warn('Chart.js CDN failed to load, trying alternative CDN...');
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.min.js';
+            script.onerror = function() {
+                console.error('All Chart.js CDNs failed to load');
+                showNotification('Charts failed to load. Please check your internet connection.', 'error');
+            };
+            document.head.appendChild(script);
+        }
+    </script>
+    
+    <script>
+        // Global chart variables
+        let revenueChart, ticketChart;
+
+        // Sidebar toggling hooks
+        function toggleOrganizerSidebar() {
+            const sidebar = document.getElementById('org-sidebar');
+            const overlay = document.getElementById('org-overlay');
+            sidebar.classList.toggle('-translate-x-full');
+            overlay.classList.toggle('hidden');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const sidebar = document.getElementById('org-sidebar');
+                const dropdown = document.getElementById('exportDropdown');
+                if (!sidebar.classList.contains('-translate-x-full')) {
+                    toggleOrganizerSidebar();
+                }
+                if (!dropdown.classList.contains('hidden')) {
+                    toggleExportDropdown();
+                }
+            }
+        });
+
+        // Export dropdown functionality
+        function toggleExportDropdown() {
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.toggle('hidden');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('exportDropdown');
+            const dropdownBtn = document.getElementById('exportDropdownBtn');
+            if (!dropdown.contains(event.target) && !dropdownBtn.contains(event.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+
+        // Export functionality
+        function exportReport(format) {
+            const dropdown = document.getElementById('exportDropdown');
+            dropdown.classList.add('hidden');
+            
+            // Show loading state
+            const button = event.target.closest('button');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Exporting...';
+            button.disabled = true;
+            
+            // Simulate export process
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                // Show success message
+                showNotification(`Report exported as ${format.toUpperCase()} successfully!`, 'success');
+                
+                // In a real application, this would trigger the actual download
+                console.log(`Exporting report as ${format}`);
+            }, 2000);
+        }
+
+        // Notification system
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-xl shadow-lg backdrop-blur-xl border transition-all duration-300 transform translate-x-full ${
+                type === 'success' ? 'bg-green-500/20 border-green-500/30 text-green-400' :
+                type === 'error' ? 'bg-red-500/20 border-red-500/30 text-red-400' :
+                'bg-blue-500/20 border-blue-500/30 text-blue-400'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Chart initialization
+        document.addEventListener('DOMContentLoaded', function() {
+            // Export dropdown event listener
+            document.getElementById('exportDropdownBtn').addEventListener('click', toggleExportDropdown);
+            
+            // Wait for Chart.js to load, then initialize charts
+            function initializeCharts() {
+                if (typeof Chart === 'undefined') {
+                    console.warn('Chart.js not loaded yet, retrying in 100ms...');
+                    setTimeout(initializeCharts, 100);
+                    return;
+                }
+                
+                try {
+                    initRevenueChart();
+                    initTicketChart();
+                    console.log('Charts initialized successfully');
+                } catch (error) {
+                    console.error('Error initializing charts:', error);
+                    showNotification('Error loading charts. Please refresh the page.', 'error');
+                }
+            }
+            
+            // Start initialization
+            initializeCharts();
+        });
+
+        // Revenue Chart
+        function initRevenueChart() {
+            const canvas = document.getElementById('revenueChart');
+            if (!canvas) {
+                console.error('Revenue chart canvas not found');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Could not get 2D context for revenue chart');
+                return;
+            }
+            
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: [3200, 4500, 2800, 5200, 4800, 6100, 4200],
+                        borderColor: 'rgb(168, 85, 247)',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(168, 85, 247)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            ticks: {
+                                color: '#9CA3AF',
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+            
+            // Hide loading indicator and show chart
+            const loadingIndicator = document.getElementById('revenueChartLoading');
+            const chartCanvas = document.getElementById('revenueChart');
+            if (loadingIndicator && chartCanvas) {
+                loadingIndicator.classList.add('hidden');
+                chartCanvas.classList.remove('hidden');
+            }
+        }
+
+        // Ticket Sales Chart
+        function initTicketChart() {
+            const canvas = document.getElementById('ticketChart');
+            if (!canvas) {
+                console.error('Ticket chart canvas not found');
+                return;
+            }
+            
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                console.error('Could not get 2D context for ticket chart');
+                return;
+            }
+            
+            ticketChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    datasets: [{
+                        label: 'Tickets Sold',
+                        data: [45, 67, 32, 89, 76, 124, 98],
+                        backgroundColor: 'rgba(20, 184, 166, 0.8)',
+                        borderColor: 'rgb(20, 184, 166)',
+                        borderWidth: 2,
+                        borderRadius: 8,
+                        borderSkipped: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            }
+                        },
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)',
+                                borderColor: 'rgba(255, 255, 255, 0.2)'
+                            },
+                            ticks: {
+                                color: '#9CA3AF'
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+            
+            // Hide loading indicator and show chart
+            const loadingIndicator = document.getElementById('ticketChartLoading');
+            const chartCanvas = document.getElementById('ticketChart');
+            if (loadingIndicator && chartCanvas) {
+                loadingIndicator.classList.add('hidden');
+                chartCanvas.classList.remove('hidden');
+            }
+        }
+
+        // Update Revenue Chart
+        function updateRevenueChart(period) {
+            if (!revenueChart) {
+                console.error('Revenue chart not initialized');
+                return;
+            }
+            
+            // Update button states
+            document.querySelectorAll('[onclick*="updateRevenueChart"]').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+                btn.classList.add('bg-white/10', 'text-gray-300');
+            });
+            event.target.classList.remove('bg-white/10', 'text-gray-300');
+            event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+
+            // Sample data for different periods
+            const dataSets = {
+                '7d': {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [3200, 4500, 2800, 5200, 4800, 6100, 4200]
+                },
+                '30d': {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    data: [18500, 22100, 19800, 25600]
+                },
+                '90d': {
+                    labels: ['Month 1', 'Month 2', 'Month 3'],
+                    data: [86000, 94500, 102300]
+                }
+            };
+
+            revenueChart.data.labels = dataSets[period].labels;
+            revenueChart.data.datasets[0].data = dataSets[period].data;
+            revenueChart.update();
+        }
+
+        // Update Ticket Chart
+        function updateTicketChart(type) {
+            if (!ticketChart) {
+                console.error('Ticket chart not initialized');
+                return;
+            }
+            
+            // Update button states
+            document.querySelectorAll('[onclick*="updateTicketChart"]').forEach(btn => {
+                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+                btn.classList.add('bg-white/10', 'text-gray-300');
+            });
+            event.target.classList.remove('bg-white/10', 'text-gray-300');
+            event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+
+            // Sample data for different types
+            const dataSets = {
+                'daily': {
+                    labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                    data: [45, 67, 32, 89, 76, 124, 98]
+                },
+                'weekly': {
+                    labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                    data: [420, 580, 390, 650]
+                }
+            };
+
+            ticketChart.data.labels = dataSets[type].labels;
+            ticketChart.data.datasets[0].data = dataSets[type].data;
+            ticketChart.update();
+        }
+    </script>
+</div>

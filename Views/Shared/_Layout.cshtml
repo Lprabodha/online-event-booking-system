@@ -9,35 +9,60 @@
 </head>
 <body class="min-h-screen bg-dark-navy text-foreground font-sans">
     <header class="fixed top-0 left-0 right-0 z-50 bg-dark-navy/80 backdrop-blur-xl border-b border-primary/30">
-        <nav class="container mx-auto px-4 py-4">
+        <nav class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
                 <div class="flex items-center space-x-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-teal-400 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                        <span class="text-white font-bold text-xl">TB</span>
-                    </div>
+                    <img src="~/images/logo-main.png" alt="Star Events Logo" class="h-16 w-16 object-contain">
                     <div class="flex flex-col">
-                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">TicketBooking</span>
-                        <span class="text-xs text-gray-400">Your Event Gateway</span>
-                    </div>
-                </div>
-                
-                <div class="hidden md:flex flex-1 max-w-md mx-8">
-                    <div class="relative w-full">
-                        <input type="text" 
-                               placeholder="Search for events, artists, venues..." 
-                               class="w-full px-4 py-3 pl-12 pr-4 bg-dark-blue/40 border border-purple-500/30 rounded-full text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 transition-all duration-300 backdrop-blur-sm">
-                        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
+                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Star - Events</span>
+                        <span class="text-xs text-gray-400">Where Every Event Becomes a Memory</span>
                     </div>
                 </div>
                 
                 <div class="hidden md:flex items-center space-x-8">
-                    <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Home</a>
-                    <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Events</a>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Home</a>
+                        <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Events</a>
+                    }
+                    
+                    <!-- Admin Dashboard Elements -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <input type="text" 
+                                       placeholder="Search events, users, venues..." 
+                                       class="w-80 px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Create Event</span>
+                            </a>
+                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span>Add Venue</span>
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Organizer Quick Action -->
+                    @if (User.IsInRole("Organizer"))
+                    {
+                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
+                            Create Event
+                        </a>
+                    }
+                    
                     <div class="flex items-center space-x-4 ml-6 pl-6 border-l border-white/20">
-                        <a href="/Identity/Account/Register" class="text-gray-300 hover:text-white font-medium transition-all duration-300">Register</a>
-                        <a href="/Identity/Account/Login" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-2 rounded-full hover:from-purple-600 hover:to-teal-600 transition-all duration-300 font-medium shadow-lg shadow-purple-500/25 hover:shadow-purple-500/40 transform hover:scale-105">Login</a>
+                        <partial name="_LoginPartial" />
                     </div>
                 </div>
                 
@@ -60,11 +85,44 @@
                     </div>
                 </div>
                 
+                <!-- Admin Mobile Elements -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="mb-6">
+                        <div class="flex flex-col space-y-3">
+                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Create Event</span>
+                            </a>
+                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span>Add Venue</span>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <!-- Organizer Mobile Elements -->
+                @if (User.IsInRole("Organizer"))
+                {
+                    <div class="mb-6">
+                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg w-full block text-center">Create Event</a>
+                    </div>
+                }
+                
                 <div class="flex flex-col space-y-4">
-                    <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Home</a>
-                    <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Events</a>
-                    <a href="/Identity/Account/Register" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Register</a>
-                    <a href="/Identity/Account/Login" class="bg-gradient-to-r from-purple-600 to-teal-500 text-white px-6 py-4 rounded-2xl hover:from-purple-700 hover:to-teal-600 transition-all duration-300 font-medium text-center text-lg shadow-lg">Login</a>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Home</a>
+                        <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Events</a>
+                    }
+                    <div class="flex justify-center">
+                        <partial name="_LoginPartial" />
+                    </div>
                 </div>
             </div>
         </nav>
@@ -84,12 +142,10 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                 <div class="lg:col-span-2">
                     <div class="flex items-center space-x-3 mb-6">
-                        <div class="w-14 h-14 bg-gradient-to-br from-purple-500 to-teal-400 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/25">
-                            <span class="text-white font-bold text-2xl">TB</span>
-                        </div>
+                        <img src="~/images/logo-main.png" alt="Star Events Logo" class="h-12 w-12 object-contain">
                         <div class="flex flex-col">
-                            <span class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">TicketBooking</span>
-                            <span class="text-sm text-gray-400">Your Event Gateway</span>
+                            <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Star - Events</span>
+                            <span class="text-xs text-gray-400">Where Every Event Becomes a Memory</span>
                         </div>
                     </div>
                     <p class="text-gray-400 mb-8 max-w-md leading-relaxed text-lg">
@@ -130,41 +186,9 @@
                         </a>
                         <a href="#" class="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white hover:bg-green-500 transition-all duration-300 transform hover:scale-110">
                             <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.446-1.076-.612-1.47-.166-.394-.333-.333-.446-.334-.114-.001-.247-.001-.38-.001-.133 0-.347.074-.52.223-.173.149-.662.648-.662 1.582 0 .934.679 1.836 1.774 2.402.932.468 2.002.748 3.01.748.968 0 1.891-.235 2.715-.748.825-.514 1.549-1.244 2.047-2.108.496-.864.744-1.799.744-2.734 0-.934-.248-1.869-.744-2.733-.498-.864-1.222-1.594-2.047-2.108-.824-.513-1.747-.748-2.715-.748-.968 0-1.891.235-2.715.748-.825.514-1.549 1.244-2.047 2.108-.496.864-.744 1.799-.744 2.734 0 .934.248 1.869.744 2.733.498.864 1.222 1.594 2.047 2.108.824.513 1.747.748 2.715.748.968 0 1.891-.235 2.715-.748.825-.514 1.549-1.244 2.047-2.108.496-.864.744-1.799.744-2.734 0-.934-.248-1.869-.744-2.733-.498-.864-1.222-1.594-2.047-2.108-.824-.513-1.747-.748-2.715-.748z"/>
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.446-1.076-.612-1.47-.166-.394-.333-.333-.446-.334-.114-.001-.247-.001-.38-.001-.133 0-.347.074-.52.223-.173.149-.662.648-.662 1.582 0 .934.679 1.836 1.774 2.402.932.468 2.002.748 3.01.748.968 0 1.891-.235 2.715-.748.825-.514 1.549-1.244 2.047-2.108.496-.864.744-1.799.744-2.734 0-.934-.248-1.869-.744-2.733-.498-.864-1.222-1.594-2.047-2.108-.824-.513-1.747-.748-2.715-.748z"/>
                             </svg>
                         </a>
-                    </div>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-6 text-xl text-white">Quick Links</h3>
-                    <ul class="space-y-4">
-                        <li><a href="/" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-2 transform inline-block">Home</a></li>
-                        <li><a href="/Events" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-2 transform inline-block">Browse Events</a></li>
-                        <li><a href="/Identity/Account/Register" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-2 transform inline-block">Register</a></li>
-                        <li><a href="/Identity/Account/Login" class="text-gray-400 hover:text-white transition-all duration-300 hover:translate-x-2 transform inline-block">Login</a></li>
-                    </ul>
-                </div>
-                
-                <div>
-                    <h3 class="font-semibold mb-6 text-xl text-white">Connect With Us</h3>
-                    <div class="space-y-4 mb-8">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-300">hello@ticketbooking.com</span>
-                        </div>
-                        <div class="flex items-center space-x-3">
-                            <div class="w-10 h-10 bg-teal-500/20 rounded-lg flex items-center justify-center">
-                                <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                                </svg>
-                            </div>
-                            <span class="text-gray-300">(555) 123-4567</span>
-                        </div>
                     </div>
                 </div>
                 
