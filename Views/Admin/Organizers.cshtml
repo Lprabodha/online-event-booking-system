@@ -1,0 +1,618 @@
+@{
+    ViewData["Title"] = "Organizers Management";
+    Layout = "_Layout";
+}
+
+<!-- Organizers Management Page -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Users Management -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Users" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Events -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Events</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Organizers -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Organizers" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            <span>Organizers</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Venues -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Venues" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>Venues</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Reports -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Settings -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Mobile Toggle Button -->
+            <button onclick="toggleSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Page Header -->
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Organizers Management</h1>
+                    <p class="text-gray-400">Manage event organizers, create new organizers, and control access</p>
+                </div>
+                <button onclick="openCreateOrganizerModal()" class="mt-4 lg:mt-0 px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Create Organizer
+                </button>
+            </div>
+
+        <!-- Search and Filter Bar -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+            <div class="flex flex-col lg:flex-row gap-4">
+                <!-- Search -->
+                <div class="flex-1">
+                    <div class="relative">
+                        <input type="text" id="organizerSearch" placeholder="Search organizers by name, email, or organization..." 
+                               class="w-full px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Filter Buttons -->
+                <div class="flex flex-wrap gap-2">
+                    <button onclick="filterOrganizers('all')" class="organizer-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gradient-to-r from-purple-500 to-teal-500 text-white text-sm">
+                        All Organizers
+                    </button>
+                    <button onclick="filterOrganizers('active')" class="organizer-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Active
+                    </button>
+                    <button onclick="filterOrganizers('inactive')" class="organizer-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Inactive
+                    </button>
+                    <button onclick="filterOrganizers('verified')" class="organizer-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Verified
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Organizers Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            <!-- Organizer Card 1 -->
+            <div class="organizer-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300" data-status="active" data-verified="true">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">JS</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white">Jane Smith</h3>
+                        <p class="text-gray-400 text-sm">jane.smith@example.com</p>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Active</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Verified</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <span class="text-gray-300">Tech Solutions Inc.</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="text-gray-300">8 Events</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        <span class="text-gray-300">$2,340 Revenue</span>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button onclick="viewOrganizer(1)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        View
+                    </button>
+                    <button onclick="editOrganizer(1)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
+                        Edit
+                    </button>
+                    <button onclick="toggleOrganizerStatus(1, 'active')" class="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        Deactivate
+                    </button>
+                </div>
+            </div>
+
+            <!-- Organizer Card 2 -->
+            <div class="organizer-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300" data-status="active" data-verified="false">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">SB</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white">Sarah Brown</h3>
+                        <p class="text-gray-400 text-sm">sarah.brown@example.com</p>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Active</span>
+                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Pending</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <span class="text-gray-300">Art Gallery Co.</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="text-gray-300">3 Events</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        <span class="text-gray-300">$890 Revenue</span>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button onclick="viewOrganizer(2)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        View
+                    </button>
+                    <button onclick="editOrganizer(2)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
+                        Edit
+                    </button>
+                    <button onclick="verifyOrganizer(2)" class="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        Verify
+                    </button>
+                </div>
+            </div>
+
+            <!-- Organizer Card 3 -->
+            <div class="organizer-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300" data-status="inactive" data-verified="true">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">MJ</span>
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="text-xl font-bold text-white">Mike Johnson</h3>
+                        <p class="text-gray-400 text-sm">mike.johnson@example.com</p>
+                        <div class="flex items-center space-x-2 mt-1">
+                            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium">Inactive</span>
+                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Verified</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 mb-4">
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                        <span class="text-gray-300">Sports Events LLC</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="text-gray-300">5 Events</span>
+                    </div>
+                    <div class="flex items-center space-x-2 text-sm">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                        <span class="text-gray-300">$1,560 Revenue</span>
+                    </div>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button onclick="viewOrganizer(3)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        View
+                    </button>
+                    <button onclick="editOrganizer(3)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
+                        Edit
+                    </button>
+                    <button onclick="toggleOrganizerStatus(3, 'inactive')" class="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        Activate
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pagination -->
+        <div class="flex items-center justify-between">
+            <div class="text-gray-400 text-sm">
+                Showing 1-3 of 45 organizers
+            </div>
+            <div class="flex space-x-2">
+                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
+                    Previous
+                </button>
+                <button class="px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg text-sm">1</button>
+                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">2</button>
+                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">3</button>
+                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
+                    Next
+                </button>
+            </div>
+        </div>
+        </main>
+    </div>
+</div>
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+<!-- Create Organizer Modal -->
+<div id="createOrganizerModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Create New Organizer</h3>
+            <button onclick="closeCreateOrganizerModal()" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form class="space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="firstName" class="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                    <input type="text" id="firstName" name="firstName" required
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="lastName" class="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" required
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+            </div>
+            
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                <input type="email" id="email" name="email" required
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+            
+            <div>
+                <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+            
+            <div>
+                <label for="organization" class="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
+                <input type="text" id="organization" name="organization" required
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+            
+            <div>
+                <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                <textarea id="address" name="address" rows="3" required
+                          class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+            </div>
+            
+            <div class="flex items-center space-x-3">
+                <input type="checkbox" id="verified" name="verified" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                <label for="verified" class="text-sm text-gray-300">Mark as verified organizer</label>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="closeCreateOrganizerModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
+                    Cancel
+                </button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
+                    Create Organizer
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Organizer Details Modal -->
+<div id="organizerModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Organizer Details</h3>
+            <button onclick="closeOrganizerModal()" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <div id="organizerDetails" class="space-y-4">
+            <!-- Organizer details will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // Sidebar toggle functionality
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+        
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                toggleSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        if (window.innerWidth >= 768) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Organizer filtering functionality
+    function filterOrganizers(filter) {
+        const organizerCards = document.querySelectorAll('.organizer-card');
+        const filterButtons = document.querySelectorAll('.organizer-filter');
+
+        // Update filter button styles
+        filterButtons.forEach(btn => {
+            btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+            btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        });
+
+        // Highlight active filter
+        event.target.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+
+        // Filter organizers
+        organizerCards.forEach(card => {
+            const status = card.getAttribute('data-status');
+            const verified = card.getAttribute('data-verified');
+            
+            let show = false;
+            switch(filter) {
+                case 'all':
+                    show = true;
+                    break;
+                case 'active':
+                    show = status === 'active';
+                    break;
+                case 'inactive':
+                    show = status === 'inactive';
+                    break;
+                case 'verified':
+                    show = verified === 'true';
+                    break;
+            }
+            
+            card.style.display = show ? 'block' : 'none';
+        });
+    }
+
+    // Search functionality
+    document.getElementById('organizerSearch').addEventListener('input', function() {
+        const searchTerm = this.value.toLowerCase();
+        const organizerCards = document.querySelectorAll('.organizer-card');
+
+        organizerCards.forEach(card => {
+            const name = card.querySelector('h3').textContent.toLowerCase();
+            const email = card.querySelector('p').textContent.toLowerCase();
+            
+            if (name.includes(searchTerm) || email.includes(searchTerm)) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    });
+
+    // Modal functions
+    function openCreateOrganizerModal() {
+        document.getElementById('createOrganizerModal').classList.remove('hidden');
+    }
+
+    function closeCreateOrganizerModal() {
+        document.getElementById('createOrganizerModal').classList.add('hidden');
+    }
+
+    function viewOrganizer(organizerId) {
+        // Mock organizer data - replace with actual API call
+        const organizerData = {
+            1: {
+                name: 'Jane Smith',
+                email: 'jane.smith@example.com',
+                phone: '+1 (555) 987-6543',
+                organization: 'Tech Solutions Inc.',
+                address: '456 Tech Street, City, State 12345',
+                status: 'Active',
+                verified: 'Yes',
+                events: 8,
+                revenue: '$2,340',
+                joined: 'Feb 20, 2024'
+            }
+        };
+
+        const organizer = organizerData[organizerId];
+        if (organizer) {
+            document.getElementById('organizerDetails').innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Personal Information</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-gray-400 text-sm">Full Name</label>
+                                <p class="text-white">${organizer.name}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Email</label>
+                                <p class="text-white">${organizer.email}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Phone</label>
+                                <p class="text-white">${organizer.phone}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Address</label>
+                                <p class="text-white">${organizer.address}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Account Information</h4>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="text-gray-400 text-sm">Organization</label>
+                                <p class="text-white">${organizer.organization}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Status</label>
+                                <p class="text-white">${organizer.status}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Verified</label>
+                                <p class="text-white">${organizer.verified}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Joined</label>
+                                <p class="text-white">${organizer.joined}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Total Events</label>
+                                <p class="text-white">${organizer.events}</p>
+                            </div>
+                            <div>
+                                <label class="text-gray-400 text-sm">Total Revenue</label>
+                                <p class="text-white">${organizer.revenue}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('organizerModal').classList.remove('hidden');
+        }
+    }
+
+    function closeOrganizerModal() {
+        document.getElementById('organizerModal').classList.add('hidden');
+    }
+
+    function editOrganizer(organizerId) {
+        // Redirect to edit page or open edit modal
+        window.location.href = `/Admin/EditOrganizer/${organizerId}`;
+    }
+
+    function toggleOrganizerStatus(organizerId, currentStatus) {
+        const action = currentStatus === 'active' ? 'deactivate' : 'activate';
+        if (confirm(`Are you sure you want to ${action} this organizer?`)) {
+            // Here you would make an API call to update the organizer status
+            alert(`Organizer ${action}d successfully!`);
+            location.reload();
+        }
+    }
+
+    function verifyOrganizer(organizerId) {
+        if (confirm('Are you sure you want to verify this organizer?')) {
+            // Here you would make an API call to verify the organizer
+            alert('Organizer verified successfully!');
+            location.reload();
+        }
+    }
+
+    // Close modals on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeCreateOrganizerModal();
+            closeOrganizerModal();
+        }
+    });
+</script>

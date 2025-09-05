@@ -1,0 +1,554 @@
+@{
+    ViewData["Title"] = "Reports & Analytics";
+    Layout = "_Layout";
+}
+
+<!-- Reports & Analytics Page -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="flex">
+        <!-- Sidebar Navigation -->
+        <aside id="sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+            <nav class="p-6">
+                <ul class="space-y-2">
+                    <!-- Dashboard -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Users Management -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Events -->
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Events</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Venues -->
+                    <li>
+                        <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>Venues</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Reports -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Settings -->
+                    <li>
+                        <a asp-controller="Admin" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Mobile Toggle Button -->
+            <button onclick="toggleSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Reports & Analytics</h1>
+                <p class="text-gray-400">Generate comprehensive reports and export data in various formats</p>
+            </div>
+
+        <!-- Report Types -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
+            <!-- Event Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-blue-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Event Reports</h3>
+                        <p class="text-gray-400 text-sm">Event performance and analytics</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="generateReport('events', 'pdf')" class="w-full px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="generateReport('events', 'excel')" class="w-full px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        📊 Export as Excel
+                    </button>
+                    <button onclick="generateReport('events', 'csv')" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        📋 Export as CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-purple-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">User Reports</h3>
+                        <p class="text-gray-400 text-sm">User activity and demographics</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="generateReport('users', 'pdf')" class="w-full px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="generateReport('users', 'excel')" class="w-full px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        📊 Export as Excel
+                    </button>
+                    <button onclick="generateReport('users', 'csv')" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        📋 Export as CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Booking Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-teal-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Booking Reports</h3>
+                        <p class="text-gray-400 text-sm">Booking trends and revenue</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="generateReport('bookings', 'pdf')" class="w-full px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="generateReport('bookings', 'excel')" class="w-full px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        📊 Export as Excel
+                    </button>
+                    <button onclick="generateReport('bookings', 'csv')" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        📋 Export as CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Revenue Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-green-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Revenue Reports</h3>
+                        <p class="text-gray-400 text-sm">Financial performance and trends</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="generateReport('revenue', 'pdf')" class="w-full px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="generateReport('revenue', 'excel')" class="w-full px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        📊 Export as Excel
+                    </button>
+                    <button onclick="generateReport('revenue', 'csv')" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        📋 Export as CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Organizer Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-orange-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Organizer Reports</h3>
+                        <p class="text-gray-400 text-sm">Organizer performance metrics</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="generateReport('organizers', 'pdf')" class="w-full px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                        📄 Export as PDF
+                    </button>
+                    <button onclick="generateReport('organizers', 'excel')" class="w-full px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
+                        📊 Export as Excel
+                    </button>
+                    <button onclick="generateReport('organizers', 'csv')" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                        📋 Export as CSV
+                    </button>
+                </div>
+            </div>
+
+            <!-- Custom Reports -->
+            <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all duration-300">
+                <div class="flex items-center space-x-4 mb-4">
+                    <div class="p-3 bg-pink-500/20 rounded-xl">
+                        <svg class="w-8 h-8 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white">Custom Reports</h3>
+                        <p class="text-gray-400 text-sm">Create custom analytics</p>
+                    </div>
+                </div>
+                <div class="space-y-3">
+                    <button onclick="openCustomReportModal()" class="w-full px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg hover:from-purple-600 hover:to-teal-600 transition-all duration-200 font-medium text-sm">
+                        🎯 Create Custom Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Report Filters -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+            <h3 class="text-xl font-bold text-white mb-6">Report Filters</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div>
+                    <label for="dateFrom" class="block text-sm font-medium text-gray-300 mb-2">From Date</label>
+                    <input type="date" id="dateFrom" name="dateFrom"
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="dateTo" class="block text-sm font-medium text-gray-300 mb-2">To Date</label>
+                    <input type="date" id="dateTo" name="dateTo"
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label for="reportCategory" class="block text-sm font-medium text-gray-300 mb-2">Category</label>
+                    <select id="reportCategory" name="reportCategory"
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">All Categories</option>
+                        <option value="music">Music</option>
+                        <option value="sports">Sports</option>
+                        <option value="tech">Technology</option>
+                        <option value="art">Art & Culture</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="reportStatus" class="block text-sm font-medium text-gray-300 mb-2">Status</label>
+                    <select id="reportStatus" name="reportStatus"
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">All Status</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="live">Live</option>
+                        <option value="ended">Ended</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Reports -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <h3 class="text-xl font-bold text-white mb-6">Recent Reports</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-white/5 border-b border-white/10">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Report Name</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Type</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Format</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Generated</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/10">
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4 text-white">Event Performance Report</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">Events</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-300">PDF</td>
+                            <td class="px-6 py-4 text-gray-300">2 hours ago</td>
+                            <td class="px-6 py-4">
+                                <button onclick="downloadReport('event_performance.pdf')" class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 text-sm">
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4 text-white">User Analytics Report</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">Users</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-300">Excel</td>
+                            <td class="px-6 py-4 text-gray-300">1 day ago</td>
+                            <td class="px-6 py-4">
+                                <button onclick="downloadReport('user_analytics.xlsx')" class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 text-sm">
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-white/5 transition-colors">
+                            <td class="px-6 py-4 text-white">Revenue Summary</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">Revenue</span>
+                            </td>
+                            <td class="px-6 py-4 text-gray-300">CSV</td>
+                            <td class="px-6 py-4 text-gray-300">3 days ago</td>
+                            <td class="px-6 py-4">
+                                <button onclick="downloadReport('revenue_summary.csv')" class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 text-sm">
+                                    Download
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </main>
+    </div>
+</div>
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
+
+<!-- Custom Report Modal -->
+<div id="customReportModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="text-xl font-bold text-white">Create Custom Report</h3>
+            <button onclick="closeCustomReportModal()" class="text-gray-400 hover:text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+        </div>
+        
+        <form class="space-y-6">
+            <div>
+                <label for="reportName" class="block text-sm font-medium text-gray-300 mb-2">Report Name</label>
+                <input type="text" id="reportName" name="reportName" required
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+            </div>
+            
+            <div>
+                <label for="reportDescription" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <textarea id="reportDescription" name="reportDescription" rows="3"
+                          class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="customReportType" class="block text-sm font-medium text-gray-300 mb-2">Report Type</label>
+                    <select id="customReportType" name="customReportType" required
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Select report type</option>
+                        <option value="events">Events</option>
+                        <option value="users">Users</option>
+                        <option value="bookings">Bookings</option>
+                        <option value="revenue">Revenue</option>
+                        <option value="organizers">Organizers</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label for="customReportFormat" class="block text-sm font-medium text-gray-300 mb-2">Export Format</label>
+                    <select id="customReportFormat" name="customReportFormat" required
+                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        <option value="">Select format</option>
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div>
+                <label class="block text-sm font-medium text-gray-300 mb-3">Include Data</label>
+                <div class="space-y-2">
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" name="includeCharts" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                        <span class="text-gray-300">Charts and Graphs</span>
+                    </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" name="includeSummary" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                        <span class="text-gray-300">Executive Summary</span>
+                    </label>
+                    <label class="flex items-center space-x-3">
+                        <input type="checkbox" name="includeDetails" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                        <span class="text-gray-300">Detailed Data</span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="flex justify-end space-x-4">
+                <button type="button" onclick="closeCustomReportModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
+                    Cancel
+                </button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
+                    Generate Report
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Sidebar toggle functionality
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+        
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                toggleSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        if (window.innerWidth >= 768) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+
+    // Generate report function
+    function generateReport(reportType, format) {
+        const dateFrom = document.getElementById('dateFrom').value;
+        const dateTo = document.getElementById('dateTo').value;
+        const category = document.getElementById('reportCategory').value;
+        const status = document.getElementById('reportStatus').value;
+        
+        // Show loading state
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Generating...';
+        button.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+            // Here you would make an actual API call to generate the report
+            alert(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report generated successfully in ${format.toUpperCase()} format!`);
+            
+            // Reset button
+            button.textContent = originalText;
+            button.disabled = false;
+            
+            // Add to recent reports (in a real app, this would be handled by the backend)
+            addToRecentReports(reportType, format);
+        }, 2000);
+    }
+
+    // Add to recent reports
+    function addToRecentReports(reportType, format) {
+        const tableBody = document.querySelector('tbody');
+        const newRow = document.createElement('tr');
+        newRow.className = 'hover:bg-white/5 transition-colors';
+        
+        const reportName = `${reportType.charAt(0).toUpperCase() + reportType.slice(1)} Report - ${new Date().toLocaleDateString()}`;
+        const formatIcon = format === 'pdf' ? '📄' : format === 'excel' ? '📊' : '📋';
+        const formatText = format.toUpperCase();
+        
+        newRow.innerHTML = `
+            <td class="px-6 py-4 text-white">${reportName}</td>
+            <td class="px-6 py-4">
+                <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">${reportType.charAt(0).toUpperCase() + reportType.slice(1)}</span>
+            </td>
+            <td class="px-6 py-4 text-gray-300">${formatText}</td>
+            <td class="px-6 py-4 text-gray-300">Just now</td>
+            <td class="px-6 py-4">
+                <button onclick="downloadReport('${reportType}_report.${format}')" class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 text-sm">
+                    Download
+                </button>
+            </td>
+        `;
+        
+        tableBody.insertBefore(newRow, tableBody.firstChild);
+    }
+
+    // Download report
+    function downloadReport(filename) {
+        // In a real application, this would trigger a download from the server
+        alert(`Downloading ${filename}...`);
+    }
+
+    // Custom report modal functions
+    function openCustomReportModal() {
+        document.getElementById('customReportModal').classList.remove('hidden');
+    }
+
+    function closeCustomReportModal() {
+        document.getElementById('customReportModal').classList.add('hidden');
+    }
+
+    // Close modal on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeCustomReportModal();
+        }
+    });
+
+    // Set default date range (last 30 days)
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date();
+        const thirtyDaysAgo = new Date(today.getTime() - (30 * 24 * 60 * 60 * 1000));
+        
+        document.getElementById('dateTo').value = today.toISOString().split('T')[0];
+        document.getElementById('dateFrom').value = thirtyDaysAgo.toISOString().split('T')[0];
+    });
+</script>
