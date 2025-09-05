@@ -1,0 +1,388 @@
+@{
+    ViewData["Title"] = "Admin Settings";
+    Layout = "_Layout";
+}
+
+<!-- Admin Settings Page -->
+<div class="min-h-screen bg-dark-navy text-white">
+    <div class="container mx-auto px-4 py-8">
+        <!-- Page Header -->
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Admin Settings</h1>
+            <p class="text-gray-400">Configure system settings, manage platform preferences, and control access</p>
+        </div>
+
+        <!-- Settings Tabs -->
+        <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+            <div class="flex flex-wrap gap-2 mb-6">
+                <button onclick="showSettingsTab('general')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gradient-to-r from-purple-500 to-teal-500 text-white text-sm">
+                    General
+                </button>
+                <button onclick="showSettingsTab('security')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                    Security
+                </button>
+                <button onclick="showSettingsTab('notifications')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                    Notifications
+                </button>
+                <button onclick="showSettingsTab('payment')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                    Payment
+                </button>
+                <button onclick="showSettingsTab('email')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                    Email
+                </button>
+                <button onclick="showSettingsTab('backup')" class="settings-tab px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                    Backup
+                </button>
+            </div>
+
+            <!-- General Settings -->
+            <div id="general-settings" class="settings-content">
+                <h3 class="text-xl font-bold text-white mb-6">General Settings</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="siteName" class="block text-sm font-medium text-gray-300 mb-2">Site Name</label>
+                            <input type="text" id="siteName" name="siteName" value="Event Booking System"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="siteUrl" class="block text-sm font-medium text-gray-300 mb-2">Site URL</label>
+                            <input type="url" id="siteUrl" name="siteUrl" value="https://eventbooking.com"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="siteDescription" class="block text-sm font-medium text-gray-300 mb-2">Site Description</label>
+                        <textarea id="siteDescription" name="siteDescription" rows="3"
+                                  class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">Your premier destination for event booking and management</textarea>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="timezone" class="block text-sm font-medium text-gray-300 mb-2">Timezone</label>
+                            <select id="timezone" name="timezone"
+                                    class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="UTC">UTC</option>
+                                <option value="EST">Eastern Time</option>
+                                <option value="PST">Pacific Time</option>
+                                <option value="GMT">Greenwich Mean Time</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="currency" class="block text-sm font-medium text-gray-300 mb-2">Default Currency</label>
+                            <select id="currency" name="currency"
+                                    class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="USD">USD ($)</option>
+                                <option value="EUR">EUR (€)</option>
+                                <option value="GBP">GBP (£)</option>
+                                <option value="CAD">CAD (C$)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="maintenanceMode" name="maintenanceMode" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                        <label for="maintenanceMode" class="text-sm text-gray-300">Enable maintenance mode</label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div id="security-settings" class="settings-content hidden">
+                <h3 class="text-xl font-bold text-white mb-6">Security Settings</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="sessionTimeout" class="block text-sm font-medium text-gray-300 mb-2">Session Timeout (minutes)</label>
+                            <input type="number" id="sessionTimeout" name="sessionTimeout" value="30"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="maxLoginAttempts" class="block text-sm font-medium text-gray-300 mb-2">Max Login Attempts</label>
+                            <input type="number" id="maxLoginAttempts" name="maxLoginAttempts" value="5"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-semibold text-white">Password Requirements</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="requireUppercase" name="requireUppercase" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="requireUppercase" class="text-sm text-gray-300">Require uppercase letters</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="requireNumbers" name="requireNumbers" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="requireNumbers" class="text-sm text-gray-300">Require numbers</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="requireSymbols" name="requireSymbols" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="requireSymbols" class="text-sm text-gray-300">Require special characters</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="minPasswordLength" class="block text-sm font-medium text-gray-300 mb-2">Minimum Password Length</label>
+                        <input type="number" id="minPasswordLength" name="minPasswordLength" value="8"
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notification Settings -->
+            <div id="notifications-settings" class="settings-content hidden">
+                <h3 class="text-xl font-bold text-white mb-6">Notification Settings</h3>
+                <div class="space-y-6">
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-semibold text-white">Email Notifications</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="newUserNotification" name="newUserNotification" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="newUserNotification" class="text-sm text-gray-300">New user registrations</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="newEventNotification" name="newEventNotification" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="newEventNotification" class="text-sm text-gray-300">New event submissions</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="paymentNotification" name="paymentNotification" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="paymentNotification" class="text-sm text-gray-300">Payment confirmations</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="systemAlertNotification" name="systemAlertNotification" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="systemAlertNotification" class="text-sm text-gray-300">System alerts</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-semibold text-white">Admin Notifications</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="dailyReportNotification" name="dailyReportNotification" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="dailyReportNotification" class="text-sm text-gray-300">Daily summary reports</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="weeklyReportNotification" name="weeklyReportNotification" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="weeklyReportNotification" class="text-sm text-gray-300">Weekly analytics reports</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment Settings -->
+            <div id="payment-settings" class="settings-content hidden">
+                <h3 class="text-xl font-bold text-white mb-6">Payment Settings</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="platformFee" class="block text-sm font-medium text-gray-300 mb-2">Platform Fee (%)</label>
+                            <input type="number" id="platformFee" name="platformFee" value="5" step="0.1"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="processingFee" class="block text-sm font-medium text-gray-300 mb-2">Processing Fee (%)</label>
+                            <input type="number" id="processingFee" name="processingFee" value="2.9" step="0.1"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-semibold text-white">Payment Methods</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="stripeEnabled" name="stripeEnabled" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="stripeEnabled" class="text-sm text-gray-300">Stripe</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="paypalEnabled" name="paypalEnabled" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="paypalEnabled" class="text-sm text-gray-300">PayPal</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="bankTransferEnabled" name="bankTransferEnabled" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="bankTransferEnabled" class="text-sm text-gray-300">Bank Transfer</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label for="payoutSchedule" class="block text-sm font-medium text-gray-300 mb-2">Payout Schedule</label>
+                        <select id="payoutSchedule" name="payoutSchedule"
+                                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly" selected>Monthly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Email Settings -->
+            <div id="email-settings" class="settings-content hidden">
+                <h3 class="text-xl font-bold text-white mb-6">Email Settings</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="smtpHost" class="block text-sm font-medium text-gray-300 mb-2">SMTP Host</label>
+                            <input type="text" id="smtpHost" name="smtpHost" value="smtp.gmail.com"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="smtpPort" class="block text-sm font-medium text-gray-300 mb-2">SMTP Port</label>
+                            <input type="number" id="smtpPort" name="smtpPort" value="587"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="smtpUsername" class="block text-sm font-medium text-gray-300 mb-2">SMTP Username</label>
+                            <input type="email" id="smtpUsername" name="smtpUsername"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                        
+                        <div>
+                            <label for="smtpPassword" class="block text-sm font-medium text-gray-300 mb-2">SMTP Password</label>
+                            <input type="password" id="smtpPassword" name="smtpPassword"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="smtpSsl" name="smtpSsl" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                        <label for="smtpSsl" class="text-sm text-gray-300">Use SSL/TLS</label>
+                    </div>
+                    
+                    <div>
+                        <label for="fromEmail" class="block text-sm font-medium text-gray-300 mb-2">From Email Address</label>
+                        <input type="email" id="fromEmail" name="fromEmail" value="noreply@eventbooking.com"
+                               class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Backup Settings -->
+            <div id="backup-settings" class="settings-content hidden">
+                <h3 class="text-xl font-bold text-white mb-6">Backup Settings</h3>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="backupFrequency" class="block text-sm font-medium text-gray-300 mb-2">Backup Frequency</label>
+                            <select id="backupFrequency" name="backupFrequency"
+                                    class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <option value="daily">Daily</option>
+                                <option value="weekly" selected>Weekly</option>
+                                <option value="monthly">Monthly</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label for="backupRetention" class="block text-sm font-medium text-gray-300 mb-2">Retention Period (days)</label>
+                            <input type="number" id="backupRetention" name="backupRetention" value="30"
+                                   class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h4 class="text-lg font-semibold text-white">Backup Options</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="backupDatabase" name="backupDatabase" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="backupDatabase" class="text-sm text-gray-300">Database</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="backupFiles" name="backupFiles" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="backupFiles" class="text-sm text-gray-300">Files and Media</label>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <input type="checkbox" id="backupConfig" name="backupConfig" checked class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                                <label for="backupConfig" class="text-sm text-gray-300">Configuration</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex space-x-4">
+                        <button onclick="createBackup()" class="px-6 py-3 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-xl hover:bg-blue-500/30 transition-all duration-200 font-medium">
+                            Create Backup Now
+                        </button>
+                        <button onclick="restoreBackup()" class="px-6 py-3 bg-orange-500/20 border border-orange-500/30 text-orange-400 rounded-xl hover:bg-orange-500/30 transition-all duration-200 font-medium">
+                            Restore from Backup
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div class="mt-8 flex justify-end">
+                <button onclick="saveSettings()" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
+                    Save Settings
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Settings tab functionality
+    function showSettingsTab(tabName) {
+        // Hide all content
+        const contents = document.querySelectorAll('.settings-content');
+        contents.forEach(content => content.classList.add('hidden'));
+        
+        // Remove active class from all tabs
+        const tabs = document.querySelectorAll('.settings-tab');
+        tabs.forEach(tab => {
+            tab.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+            tab.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        });
+        
+        // Show selected content
+        document.getElementById(tabName + '-settings').classList.remove('hidden');
+        
+        // Add active class to selected tab
+        event.target.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
+        event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
+    }
+
+    // Save settings
+    function saveSettings() {
+        // Show loading state
+        const button = event.target;
+        const originalText = button.textContent;
+        button.textContent = 'Saving...';
+        button.disabled = true;
+        
+        // Simulate API call
+        setTimeout(() => {
+            alert('Settings saved successfully!');
+            button.textContent = originalText;
+            button.disabled = false;
+        }, 1500);
+    }
+
+    // Backup functions
+    function createBackup() {
+        if (confirm('Are you sure you want to create a backup now? This may take a few minutes.')) {
+            alert('Backup creation started. You will be notified when it\'s complete.');
+        }
+    }
+
+    function restoreBackup() {
+        if (confirm('Are you sure you want to restore from a backup? This will overwrite current data.')) {
+            alert('Please select a backup file to restore from.');
+        }
+    }
+
+    // Initialize first tab as active
+    document.addEventListener('DOMContentLoaded', function() {
+        showSettingsTab('general');
+    });
+</script>
