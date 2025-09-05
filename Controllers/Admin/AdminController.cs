@@ -192,5 +192,60 @@ namespace online_event_booking_system.Controllers.Admin
         //    }
         //    return RedirectToAction(nameof(Index));
         //}
+
+        // Users Management
+        public async Task<IActionResult> Users()
+        {
+            try
+            {
+                var users = await _adminService.GetAllUsers();
+                return View(users);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return View(new List<ApplicationUser>());
+            }
+        }
+
+        // Events Management
+        public IActionResult Events()
+        {
+            // For now, return a view with sample data
+            // In a real application, you would fetch events from a service
+            return View();
+        }
+
+        // Organizers Management
+        public IActionResult Organizers()
+        {
+            // For now, return a view with sample data
+            // In a real application, you would fetch organizers from a service
+            return View();
+        }
+
+        // Venues Management
+        public IActionResult Venues()
+        {
+            // For now, return a view with sample data
+            // In a real application, you would fetch venues from a service
+            return View();
+        }
+
+        // Reports
+        public IActionResult Reports()
+        {
+            // For now, return a view with sample data
+            // In a real application, you would fetch report data from a service
+            return View();
+        }
+
+        // Settings
+        public IActionResult Settings()
+        {
+            // For now, return a view with sample data
+            // In a real application, you would fetch settings from a service
+            return View();
+        }
     }
 }

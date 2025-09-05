@@ -5,8 +5,8 @@
 
 <!-- Reports & Analytics Page -->
 <div class="min-h-screen bg-dark-navy text-white">
-    <div class="container mx-auto px-4 py-8">
-            <!-- Sidebar Navigation -->
+    <div class="flex">
+        <!-- Sidebar Navigation -->
         <aside id="sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
             <nav class="p-6">
                 <ul class="space-y-2">
@@ -53,8 +53,8 @@
                     
                     <!-- Reports -->
                     <li>
-                        <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <a asp-controller="Admin" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
+                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
                             </svg>
                             <span>Reports</span>
@@ -63,7 +63,7 @@
                     
                     <!-- Settings -->
                     <li>
-                        <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
+                        <a asp-controller="Admin" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
@@ -75,11 +75,20 @@
             </nav>
         </aside>
 
-        <!-- Page Header -->
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Reports & Analytics</h1>
-            <p class="text-gray-400">Generate comprehensive reports and export data in various formats</p>
-        </div>
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Mobile Toggle Button -->
+            <button onclick="toggleSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 border border-white/20 rounded-lg text-white hover:bg-white/20 transition-all duration-200">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+
+            <!-- Page Header -->
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Reports & Analytics</h1>
+                <p class="text-gray-400">Generate comprehensive reports and export data in various formats</p>
+            </div>
 
         <!-- Report Types -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
@@ -334,8 +343,12 @@
                 </table>
             </div>
         </div>
+        </main>
     </div>
 </div>
+
+<!-- Mobile Overlay -->
+<div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
 
 <!-- Custom Report Modal -->
 <div id="customReportModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
@@ -419,6 +432,41 @@
 </div>
 
 <script>
+    // Sidebar toggle functionality
+    function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        sidebar.classList.toggle('-translate-x-full');
+        overlay.classList.toggle('hidden');
+        
+        if (!sidebar.classList.contains('-translate-x-full')) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+    
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            if (!sidebar.classList.contains('-translate-x-full')) {
+                toggleSidebar();
+            }
+        }
+    });
+    
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobile-overlay');
+        
+        if (window.innerWidth >= 768) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
+        }
+    });
+
     // Generate report function
     function generateReport(reportType, format) {
         const dateFrom = document.getElementById('dateFrom').value;
