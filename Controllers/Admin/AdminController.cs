@@ -18,6 +18,7 @@ namespace online_event_booking_system.Controllers.Admin
             _userManager = userManager;
         }
 
+        [HttpGet("admin")]
         public async Task<IActionResult> Index()
         {
             try
@@ -193,7 +194,9 @@ namespace online_event_booking_system.Controllers.Admin
         //    return RedirectToAction(nameof(Index));
         //}
 
+
         // Users Management
+        [HttpGet("admin/users")]
         public async Task<IActionResult> Users()
         {
             try
@@ -208,43 +211,33 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
-        // Events Management
+        [HttpGet("admin/events")]
         public IActionResult Events()
         {
-            // For now, return a view with sample data
-            // In a real application, you would fetch events from a service
             return View();
         }
 
-        // Organizers Management
+        [HttpGet("admin/organizers")]
         public IActionResult Organizers()
         {
-            // For now, return a view with sample data
-            // In a real application, you would fetch organizers from a service
             return View();
         }
 
-        // Venues Management
+        [HttpGet("admin/venues")]
         public IActionResult Venues()
         {
-            // For now, return a view with sample data
-            // In a real application, you would fetch venues from a service
             return View();
         }
 
-        // Reports
+        [HttpGet("admin/reports")]
         public IActionResult Reports()
         {
-            // For now, return a view with sample data
-            // In a real application, you would fetch report data from a service
             return View();
         }
 
-        // Settings
+        [HttpGet("admin/settings")]
         public IActionResult Settings()
         {
-            // For now, return a view with sample data
-            // In a real application, you would fetch settings from a service
             return View();
         }
     }
