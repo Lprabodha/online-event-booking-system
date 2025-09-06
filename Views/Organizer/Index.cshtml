@@ -1,13 +1,13 @@
-﻿@{
+@{
     ViewData["Title"] = "Organizer Dashboard";
-    Layout = "_Layout";
+    Layout = "_DashboardLayout";
 }
 
 <!-- Organizer Dashboard Container -->
 <div class="min-h-screen bg-dark-navy text-white">
     <div class="flex">
         <!-- Sidebar Navigation (collapsible on mobile) -->
-        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed lg:relative z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <nav class="p-6">
                 <ul class="space-y-2">
                     <!-- Dashboard -->
@@ -80,9 +80,9 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6">
+        <main class="flex-1 p-4 lg:p-6">
             <!-- Mobile Menu Button -->
-            <button onclick="toggleOrganizerSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
+            <button onclick="toggleOrganizerSidebar()" class="lg:hidden fixed top-20 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -95,19 +95,19 @@
 
             <!-- Filters -->
             <section aria-label="Filters" class="mb-8">
-                <div class="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4">
-                    <div class="flex items-center space-x-4 w-full md:w-auto">
-                        <select aria-label="Event filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full md:w-56">
+                <div class="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
+                        <select aria-label="Event filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full sm:w-56">
                             <option>All Events</option>
                             <option>Live Events</option>
                             <option>Drafts</option>
                             <option>Past Events</option>
                         </select>
-                        <select aria-label="Date range" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full md:w-48">
+                        <select aria-label="Date range" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full sm:w-48">
                             <option>This Week</option>
                             <option>This Month</option>
                         </select>
-                        <select aria-label="Venue filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full md:w-48">
+                        <select aria-label="Venue filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm w-full sm:w-48">
                             <option>All Venues</option>
                             <option>Concert Hall</option>
                             <option>Expo Center</option>
@@ -119,7 +119,7 @@
             </section>
 
             <!-- KPI Cards -->
-            <section aria-label="KPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <section aria-label="KPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
                     <p class="text-gray-400 text-sm">Revenue (This Month)</p>
                     <p class="text-3xl font-bold mt-2">$12,450</p>
@@ -142,7 +142,7 @@
                 </div>
             </section>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
                 <!-- Sales Trend -->
                 <section aria-label="Sales Trend" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-6">
@@ -228,7 +228,7 @@
             </section>
 
             <!-- Bottom Sections: Upcoming Check-in and Discounts -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mt-8">
                 <!-- Upcoming Events Check-in -->
                 <section aria-label="Upcoming Events Check-in" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-6">
@@ -280,7 +280,7 @@
 
 
 <!-- Mobile Overlay for Sidebar -->
-<div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+<div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" aria-hidden="true"></div>
 
 <!-- Chart.js CDN with fallback -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="loadChartFallback()"></script>
@@ -321,6 +321,18 @@
             if (!sidebar.classList.contains('-translate-x-full')) {
                 toggleOrganizerSidebar();
             }
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('org-sidebar');
+        const overlay = document.getElementById('org-overlay');
+        
+        if (window.innerWidth >= 1024) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
         }
     });
 
