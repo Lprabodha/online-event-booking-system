@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Star Events | Where Every Event Becomes a Memory</title>
+    <link rel="stylesheet" href="~/css/app.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
+</head>
+<body class="min-h-screen bg-dark-navy text-foreground font-sans">
+    <header class="fixed top-0 left-0 right-0 z-50 bg-dark-navy/80 backdrop-blur-xl border-b border-primary/30">
+        <nav class="container mx-auto px-4 py-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <img src="~/images/logo-main.png" alt="Star Events Logo" class="h-16 w-16 object-contain">
+                    <div class="flex flex-col">
+                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Star - Events</span>
+                        <span class="text-xs text-gray-400">Where Every Event Becomes a Memory</span>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <!-- Admin Dashboard Elements -->
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <div class="flex items-center space-x-4">
+                            <div class="relative">
+                                <input type="text" 
+                                       placeholder="Search events, users, venues..." 
+                                       class="w-80 px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
+                            </div>
+                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Create Event</span>
+                            </a>
+                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span>Add Venue</span>
+                            </a>
+                        </div>
+                    }
+
+                    <!-- Organizer Quick Action -->
+                    @if (User.IsInRole("Organizer"))
+                    {
+                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
+                            Create Event
+                        </a>
+                    }
+                    
+                    <div class="flex items-center space-x-4 ml-6 pl-6 border-l border-white/20">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button class="md:hidden p-3 rounded-xl hover:bg-white/10 transition-all duration-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <!-- Mobile Menu -->
+            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-white/20 pt-4">
+                <div class="mb-6">
+                    <div class="relative">
+                        <input type="text" 
+                               placeholder="Search events..." 
+                               class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm text-base">
+                        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                </div>
+                
+                <!-- Admin Mobile Elements -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <div class="mb-6">
+                        <div class="flex flex-col space-y-3">
+                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                                <span>Create Event</span>
+                            </a>
+                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                                <span>Add Venue</span>
+                            </a>
+                        </div>
+                    </div>
+                }
+
+                <!-- Organizer Mobile Elements -->
+                @if (User.IsInRole("Organizer"))
+                {
+                    <div class="mb-6">
+                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg w-full block text-center">Create Event</a>
+                    </div>
+                }
+                
+                <div class="flex flex-col space-y-4">
+                    <div class="flex justify-center">
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="flex-1 pt-20">
+        @RenderBody()
+    </main>
+
+    <script>
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+            
+            menu.classList.toggle('hidden');
+            
+            // Update button aria-expanded for accessibility
+            const isExpanded = !menu.classList.contains('hidden');
+            button.setAttribute('aria-expanded', isExpanded);
+            
+            // Prevent body scroll when menu is open on mobile
+            if (isExpanded) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobile-menu');
+            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+            
+            if (!menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        // Close mobile menu on escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                const menu = document.getElementById('mobile-menu');
+                if (!menu.classList.contains('hidden')) {
+                    toggleMobileMenu();
+                }
+            }
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const menu = document.getElementById('mobile-menu');
+            if (window.innerWidth >= 768 && !menu.classList.contains('hidden')) {
+                toggleMobileMenu();
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        target.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                });
+            });
+            
+            // Touch-friendly interactions for mobile
+            if ('ontouchstart' in window) {
+                // Add touch feedback for interactive elements
+                document.querySelectorAll('button, a[href], .category-tab').forEach(element => {
+                    element.addEventListener('touchstart', function() {
+                        this.style.transform = 'scale(0.95)';
+                    });
+                    
+                    element.addEventListener('touchend', function() {
+                        this.style.transform = '';
+                    });
+                });
+            }
+        });
+    </script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

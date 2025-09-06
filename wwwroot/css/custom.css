@@ -1,5 +1,82 @@
 /* Custom CSS for Online Event Booking System */
 
+/* Dashboard Responsive Styles */
+@media (max-width: 1023px) {
+  .dashboard-sidebar {
+    transform: translateX(-100%);
+  }
+  
+  .dashboard-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .dashboard-main {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-sidebar {
+    transform: translateX(0);
+  }
+  
+  .dashboard-main {
+    margin-left: 16rem; /* 256px - sidebar width */
+  }
+}
+
+/* Mobile Menu Button Positioning */
+.mobile-menu-btn {
+  position: fixed;
+  top: 5rem; /* Below header */
+  left: 1rem;
+  z-index: 40;
+}
+
+/* Ensure proper z-index stacking */
+.dashboard-sidebar {
+  z-index: 30;
+}
+
+.dashboard-overlay {
+  z-index: 20;
+}
+
+.mobile-menu-btn {
+  z-index: 40;
+}
+
+/* Smooth transitions for all dashboard elements */
+.dashboard-sidebar,
+.dashboard-overlay,
+.dashboard-main {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Prevent body scroll when sidebar is open on mobile */
+body.sidebar-open {
+  overflow: hidden;
+}
+
+/* Responsive padding adjustments */
+@media (max-width: 640px) {
+  .dashboard-main {
+    padding: 1rem;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1023px) {
+  .dashboard-main {
+    padding: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .dashboard-main {
+    padding: 1.5rem;
+  }
+}
+
 /* Custom Color Variables */
 :root {
   --dark-navy: #181f2f;

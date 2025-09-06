@@ -1,13 +1,13 @@
-﻿@{
+@{
     ViewData["Title"] = "Organizer Dashboard";
-    Layout = "_Layout";
+    Layout = "_DashboardLayout";
 }
 
 <!-- Organizer Dashboard Container -->
 <div class="min-h-screen bg-dark-navy text-white">
     <div class="flex">
         <!-- Sidebar Navigation (collapsible on mobile) -->
-        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
+        <aside id="org-sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed lg:relative z-30 transform -translate-x-full lg:translate-x-0 transition-transform duration-300">
             <nav class="p-6">
                 <ul class="space-y-2">
                     <!-- Dashboard -->
@@ -80,9 +80,9 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6">
+        <main class="flex-1 p-4 lg:p-6">
             <!-- Mobile Menu Button -->
-            <button onclick="toggleOrganizerSidebar()" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
+            <button onclick="toggleOrganizerSidebar()" class="lg:hidden fixed top-20 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                 </svg>
@@ -280,7 +280,7 @@
 
 
 <!-- Mobile Overlay for Sidebar -->
-<div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" aria-hidden="true"></div>
+<div id="org-overlay" class="fixed inset-0 bg-black/50 z-20 hidden lg:hidden" aria-hidden="true"></div>
 
 <!-- Chart.js CDN with fallback -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="loadChartFallback()"></script>
@@ -321,6 +321,18 @@
             if (!sidebar.classList.contains('-translate-x-full')) {
                 toggleOrganizerSidebar();
             }
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        const sidebar = document.getElementById('org-sidebar');
+        const overlay = document.getElementById('org-overlay');
+        
+        if (window.innerWidth >= 1024) {
+            sidebar.classList.remove('-translate-x-full');
+            overlay.classList.add('hidden');
+            document.body.style.overflow = '';
         }
     });
 
