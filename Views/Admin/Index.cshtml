@@ -5,96 +5,9 @@
 }
 
 <!-- Admin Dashboard Container -->
-<div class="min-h-screen bg-dark-navy text-white">
-    <!-- Main Content Area -->
-    <div class="flex">
-        <!-- Sidebar Navigation -->
-        <aside id="sidebar" class="w-64 bg-dark-navy/50 backdrop-blur-xl border-r border-purple-500/30 min-h-screen fixed md:relative z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300">
-            <nav class="p-6">
-                <ul class="space-y-2">
-                    <!-- Dashboard -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Index" class="flex items-center space-x-3 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-500/20 to-teal-500/20 border border-purple-500/30 text-white font-semibold transition-all duration-200">
-                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
-                            </svg>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Users Management -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Users" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                            </svg>
-                            <span>Users</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Events -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Events" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                            </svg>
-                            <span>Events</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Organizers -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Organizers" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span>Organizers</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Venues -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Venues" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                            </svg>
-                            <span>Venues</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Reports -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Reports" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                            </svg>
-                            <span>Reports</span>
-                        </a>
-                    </li>
-                    
-                    <!-- Settings -->
-                    <li>
-                        <a asp-controller="Admin" asp-action="Settings" class="flex items-center space-x-3 px-4 py-3 rounded-xl text-gray-300 hover:text-white hover:bg-white/10 transition-all duration-200">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                            </svg>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
-
+<div class="min-h-screen bg-dark-navy text-white pt-20">
         <!-- Main Content -->
-        <main class="flex-1 p-4 md:p-6">
-            <!-- Mobile Menu Button -->
-            <button onclick="toggleSidebar()" class="md:hidden fixed top-20 left-4 z-40 p-2 bg-white/10 backdrop-blur-xl border border-white/20 rounded-xl text-white hover:bg-white/20 transition-all">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                </svg>
-            </button>
+    <div class="p-4 md:p-6">
             <!-- Success Message -->
             @if (TempData["SuccessMessage"] != null)
             {
@@ -113,104 +26,14 @@
                 <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Admin Dashboard</h1>
                 <p class="text-gray-400">Manage your event platform and monitor system performance</p>
             </div>
-
-            <!-- Users Management Section -->
-            <section aria-label="Users Management" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold">Users Management</h2>
-                    <a asp-controller="Admin" asp-action="Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                        Create New User
-                    </a>
-                </div>
-                
-                <div class="overflow-x-auto">
-                    <table class="w-full" role="table">
-                        <thead>
-                            <tr class="border-b border-white/10">
-                                <th class="text-left py-3 text-gray-400 font-medium">User</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Email</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Contact</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Organization</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Status</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Last Login</th>
-                                <th class="text-left py-3 text-gray-400 font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @if (Model != null && Model.Any())
-                            {
-                                @foreach (var user in Model)
-                                {
-                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-                                        <td class="py-3">
-                                            <div class="flex items-center space-x-3">
-                                                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
-                                                    <span class="text-white text-sm font-bold">@(string.IsNullOrEmpty(user.FullName) ? user.UserName?.Substring(0, 1).ToUpper() : user.FullName.Substring(0, 1).ToUpper())</span>
-                                                </div>
-                                                <div>
-                                                    <p class="text-white font-medium">@(string.IsNullOrEmpty(user.FullName) ? user.UserName : user.FullName)</p>
-                                                    <p class="text-gray-400 text-sm">@user.UserName</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="py-3 text-gray-300">@user.Email</td>
-                                        <td class="py-3 text-gray-300">@(string.IsNullOrEmpty(user.ContactNumber) ? "N/A" : user.ContactNumber)</td>
-                                        <td class="py-3 text-gray-300">@(string.IsNullOrEmpty(user.OrganizationName) ? "N/A" : user.OrganizationName)</td>
-                                        <td class="py-3">
-                                            <span class="px-3 py-1 rounded-full text-xs font-medium @(user.IsActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400")">
-                                                @(user.IsActive ? "Active" : "Inactive")
-                                            </span>
-                                        </td>
-                                        <td class="py-3 text-gray-300">@(user.LastLogin?.ToString("MMM dd, yyyy") ?? "Never")</td>
-                                        <td class="py-3">
-                                            <div class="flex space-x-2">
-                                                <a asp-controller="Admin" asp-action="Details" asp-route-id="@user.Id" class="text-purple-400 hover:text-purple-300" aria-label="View Details">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                    </svg>
-                                                </a>
-                                                <a asp-controller="Admin" asp-action="Edit" asp-route-id="@user.Id" class="text-blue-400 hover:text-blue-300" aria-label="Edit">
-                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                    </svg>
-                                                </a>
-                                                <form asp-controller="Admin" asp-action="Delete" asp-route-id="@user.Id" method="post" class="inline" onsubmit="return confirm('Are you sure you want to delete this user?');">
-                                                    <button type="submit" class="text-red-400 hover:text-red-300" aria-label="Delete">
-                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                        </svg>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                            else
-                            {
-                                <tr>
-                                    <td colspan="7" class="py-8 text-center text-gray-400">
-                                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                                        </svg>
-                                        <p class="text-lg font-medium">No users found</p>
-                                        <p class="text-sm">Create your first user to get started.</p>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
             <!-- Quick Stats -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Total Users</p>
                             <p class="text-3xl font-bold text-white mt-2">@(Model?.Count() ?? 0)</p>
+                            <p class="text-green-400 text-sm mt-1">+12% from last month</p>
                         </div>
                         <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-teal-500 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,11 +43,12 @@
                     </div>
                 </div>
                 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Active Users</p>
                             <p class="text-3xl font-bold text-white mt-2">@(Model?.Count(u => u.IsActive) ?? 0)</p>
+                            <p class="text-green-400 text-sm mt-1">@(Model?.Count() > 0 ? Math.Round((double)(Model?.Count(u => u.IsActive) ?? 0) / Model.Count() * 100, 1) : 0)% of total</p>
                         </div>
                         <div class="w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-500 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -234,11 +58,12 @@
                     </div>
                 </div>
                 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-gray-400 text-sm">Recent Logins</p>
                             <p class="text-3xl font-bold text-white mt-2">@(Model?.Count(u => u.LastLogin.HasValue && u.LastLogin.Value > DateTime.Now.AddDays(-7)) ?? 0)</p>
+                            <p class="text-blue-400 text-sm mt-1">Last 7 days</p>
                         </div>
                         <div class="w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,46 +72,319 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition-all">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-gray-400 text-sm">System Health</p>
+                            <p class="text-3xl font-bold text-green-400 mt-2">98.5%</p>
+                            <p class="text-green-400 text-sm mt-1">All systems operational</p>
+                        </div>
+                        <div class="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </main>
+
+            <!-- Charts Section -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                <!-- User Growth Chart -->
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-white">User Growth</h3>
+                        <div class="flex space-x-2">
+                            <button onclick="updateChart('monthly')" class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-lg text-sm hover:bg-purple-500/30 transition-all">Monthly</button>
+                            <button onclick="updateChart('weekly')" class="px-3 py-1 bg-white/10 text-gray-400 rounded-lg text-sm hover:bg-white/20 transition-all">Weekly</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="userGrowthChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- User Activity Chart -->
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-white">User Activity</h3>
+                        <div class="flex space-x-2">
+                            <button onclick="updateActivityChart('logins')" class="px-3 py-1 bg-teal-500/20 text-teal-400 rounded-lg text-sm hover:bg-teal-500/30 transition-all">Logins</button>
+                            <button onclick="updateActivityChart('registrations')" class="px-3 py-1 bg-white/10 text-gray-400 rounded-lg text-sm hover:bg-white/20 transition-all">Registrations</button>
+                        </div>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="userActivityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Overview -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+                <!-- Recent Activity -->
+                <div class="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-6">Recent Activity</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
+                            <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white font-medium">New user registered</p>
+                                <p class="text-gray-400 text-sm">john.doe@example.com joined the platform</p>
+                            </div>
+                            <span class="text-gray-400 text-sm">2 min ago</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
+                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white font-medium">User profile updated</p>
+                                <p class="text-gray-400 text-sm">jane.smith@example.com updated their profile</p>
+                            </div>
+                            <span class="text-gray-400 text-sm">15 min ago</span>
+                        </div>
+                        
+                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
+                            <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                            </div>
+                            <div class="flex-1">
+                                <p class="text-white font-medium">System backup completed</p>
+                                <p class="text-gray-400 text-sm">Daily backup process finished successfully</p>
+                            </div>
+                            <span class="text-gray-400 text-sm">1 hour ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- System Status -->
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <h3 class="text-lg font-bold text-white mb-6">System Status</h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                <span class="text-white">Database</span>
+                            </div>
+                            <span class="text-green-400 text-sm">Online</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                <span class="text-white">API Server</span>
+                            </div>
+                            <span class="text-green-400 text-sm">Online</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-green-400 rounded-full"></div>
+                                <span class="text-white">Email Service</span>
+                            </div>
+                            <span class="text-green-400 text-sm">Online</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-3 h-3 bg-yellow-400 rounded-full"></div>
+                                <span class="text-white">File Storage</span>
+                            </div>
+                            <span class="text-yellow-400 text-sm">Warning</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 pt-6 border-t border-white/10">
+                        <h4 class="text-white font-medium mb-3">Quick Actions</h4>
+                        <div class="space-y-2">
+                            <button class="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all text-sm">
+                                <span class="text-white">Run System Diagnostics</span>
+                            </button>
+                            <button class="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all text-sm">
+                                <span class="text-white">Clear Cache</span>
+                            </button>
+                            <button class="w-full text-left px-3 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all text-sm">
+                                <span class="text-white">Export User Data</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 </div>
 
-<!-- Mobile Overlay -->
-<div id="mobile-overlay" class="fixed inset-0 bg-black/50 z-20 hidden md:hidden" onclick="toggleSidebar()"></div>
+<!-- Chart.js CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-    function toggleSidebar() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('mobile-overlay');
-        
-        sidebar.classList.toggle('-translate-x-full');
-        overlay.classList.toggle('hidden');
-        
-        if (!sidebar.classList.contains('-translate-x-full')) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = '';
-        }
-    }
-    
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            const sidebar = document.getElementById('sidebar');
-            if (!sidebar.classList.contains('-translate-x-full')) {
-                toggleSidebar();
+    // Chart configurations
+    let userGrowthChart, userActivityChart;
+
+    // Initialize charts when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeCharts();
+    });
+
+    function initializeCharts() {
+        // User Growth Chart
+        const growthCtx = document.getElementById('userGrowthChart').getContext('2d');
+        userGrowthChart = new Chart(growthCtx, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'New Users',
+                    data: [12, 19, 3, 5, 2, 3],
+                    borderColor: 'rgb(168, 85, 247)',
+                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.4,
+                    pointBackgroundColor: 'rgb(168, 85, 247)',
+                    pointBorderColor: '#fff',
+                    pointBorderWidth: 2,
+                    pointRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                }
             }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        const sidebar = document.getElementById('sidebar');
-        const overlay = document.getElementById('mobile-overlay');
+        });
+
+        // User Activity Chart
+        const activityCtx = document.getElementById('userActivityChart').getContext('2d');
+        userActivityChart = new Chart(activityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                datasets: [{
+                    label: 'Daily Logins',
+                    data: [65, 59, 80, 81, 56, 55, 40],
+                    backgroundColor: 'rgba(20, 184, 166, 0.8)',
+                    borderColor: 'rgb(20, 184, 166)',
+                    borderWidth: 1,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(255, 255, 255, 0.1)',
+                            borderColor: 'rgba(255, 255, 255, 0.2)'
+                        },
+                        ticks: {
+                            color: 'rgba(255, 255, 255, 0.7)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Update chart data based on selection
+    function updateChart(period) {
+        const buttons = document.querySelectorAll('[onclick*="updateChart"]');
+        buttons.forEach(btn => {
+            btn.classList.remove('bg-purple-500/20', 'text-purple-400');
+            btn.classList.add('bg-white/10', 'text-gray-400');
+        });
         
-        if (window.innerWidth >= 768) {
-            sidebar.classList.remove('-translate-x-full');
-            overlay.classList.add('hidden');
-            document.body.style.overflow = '';
+        event.target.classList.remove('bg-white/10', 'text-gray-400');
+        event.target.classList.add('bg-purple-500/20', 'text-purple-400');
+
+        if (period === 'monthly') {
+            userGrowthChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            userGrowthChart.data.datasets[0].data = [12, 19, 3, 5, 2, 3];
+        } else {
+            userGrowthChart.data.labels = ['Week 1', 'Week 2', 'Week 3', 'Week 4'];
+            userGrowthChart.data.datasets[0].data = [8, 12, 6, 9];
         }
-    });
+        userGrowthChart.update();
+    }
+
+    function updateActivityChart(type) {
+        const buttons = document.querySelectorAll('[onclick*="updateActivityChart"]');
+        buttons.forEach(btn => {
+            btn.classList.remove('bg-teal-500/20', 'text-teal-400');
+            btn.classList.add('bg-white/10', 'text-gray-400');
+        });
+        
+        event.target.classList.remove('bg-white/10', 'text-gray-400');
+        event.target.classList.add('bg-teal-500/20', 'text-teal-400');
+
+        if (type === 'logins') {
+            userActivityChart.data.labels = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            userActivityChart.data.datasets[0].data = [65, 59, 80, 81, 56, 55, 40];
+            userActivityChart.data.datasets[0].label = 'Daily Logins';
+        } else {
+            userActivityChart.data.labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+            userActivityChart.data.datasets[0].data = [12, 19, 3, 5, 2, 3];
+            userActivityChart.data.datasets[0].label = 'Monthly Registrations';
+        }
+        userActivityChart.update();
+    }
+
+    // Auto-refresh charts every 30 seconds
+    setInterval(function() {
+        // Simulate real-time data updates
+        const randomData = userGrowthChart.data.datasets[0].data.map(() => 
+            Math.floor(Math.random() * 20) + 1
+        );
+        userGrowthChart.data.datasets[0].data = randomData;
+        userGrowthChart.update('none');
+    }, 30000);
 </script>

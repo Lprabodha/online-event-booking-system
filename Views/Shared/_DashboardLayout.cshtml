@@ -8,178 +8,325 @@
     <link rel="stylesheet" href="~/css/custom.css" asp-append-version="true" />
 </head>
 <body class="min-h-screen bg-dark-navy text-foreground font-sans">
-    <header class="fixed top-0 left-0 right-0 z-50 bg-dark-navy/80 backdrop-blur-xl border-b border-primary/30">
-        <nav class="container mx-auto px-4 py-3">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
-                    <img src="~/images/logo-main.png" alt="Star Events Logo" class="h-16 w-16 object-contain">
-                    <div class="flex flex-col">
-                        <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Star - Events</span>
-                        <span class="text-xs text-gray-400">Where Every Event Becomes a Memory</span>
-                    </div>
+    <!-- Dashboard Sidebar -->
+    <aside id="dashboard-sidebar" class="dashboard-sidebar">
+        <!-- Sidebar Header -->
+        <div class="sidebar-header">
+            <a href="/" class="sidebar-logo">
+                <img src="~/images/logo-main.png" alt="Star Events Logo">
+                <div>
+                    <div class="sidebar-logo-text">Star Events</div>
+                    <div class="text-xs text-gray-400">Dashboard</div>
                 </div>
-                
-                <div class="hidden md:flex items-center space-x-8">
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Home</a>
-                        <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 hover:scale-105">Events</a>
-                    }
-                    
-                    <!-- Admin Dashboard Elements -->
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <div class="flex items-center space-x-4">
-                            <div class="relative">
-                                <input type="text" 
-                                       placeholder="Search events, users, venues..." 
-                                       class="w-80 px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                                </svg>
-                            </div>
-                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                                <span>Create Event</span>
-                            </a>
-                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px] flex items-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                <span>Add Venue</span>
-                            </a>
-                        </div>
-                    }
+            </a>
+        </div>
 
-                    <!-- Organizer Quick Action -->
-                    @if (User.IsInRole("Organizer"))
-                    {
-                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
-                            Create Event
+        <!-- Sidebar Navigation -->
+        <nav class="px-2">
+            <ul class="space-y-1">
+                <!-- Admin Navigation -->
+                @if (User.IsInRole("Admin"))
+                {
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Index" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                            </svg>
+                            <span>Admin</span>
                         </a>
-                    }
-                    
-                    <div class="flex items-center space-x-4 ml-6 pl-6 border-l border-white/20">
-                        <partial name="_LoginPartial" />
-                    </div>
-                </div>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Users" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
+                            </svg>
+                            <span>Users</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Events" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>Events</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Venues" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>Venues</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Organizers" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                            </svg>
+                            <span>Organizers</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Reports" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Reports</span>
+                        </a>
+                    </li>
+
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Admin" asp-action="Settings" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                }
+
+                <!-- Organizer Navigation -->
+                @if (User.IsInRole("Organizer"))
+                {
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Index" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5a2 2 0 012-2h4a2 2 0 012 2v6H8V5z"></path>
+                            </svg>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                     <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Events" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                            <span>My Events</span>
+                        </a>
+                    </li>
+                      <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Reports" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                            </svg>
+                            <span>Sales & Reports</span>
+                        </a>
+                    </li>
+                      <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Discounts" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                            </svg>
+                            <span>Discounts</span>
+                        </a>
+                    </li>
+                     <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Payouts" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                            <span>Payouts</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Organizer" asp-action="Settings" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                }
+
+                <!-- Customer Navigation -->
+                @if (User.IsInRole("Customer"))
+                {
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Customer" asp-action="Index" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                            <span>My Profile</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Customer" asp-action="Events" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <span>Browse Events</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-nav-item">
+                        <a asp-controller="Customer" asp-action="Bookings" class="flex items-center">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
+                            </svg>
+                            <span>My Bookings</span>
+                        </a>
+                    </li>
+                }
+
                 
-                <button class="md:hidden p-3 rounded-xl hover:bg-white/10 transition-all duration-300 text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50" onclick="toggleMobileMenu()" aria-label="Toggle mobile menu">
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Dashboard Navbar -->
+    <header class="dashboard-navbar">
+        <div class="navbar-content">
+            <div class="navbar-left">
+                <button class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Toggle sidebar">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
                     </svg>
                 </button>
+                
+                <div class="navbar-search">
+                    <input type="text" placeholder="Search events, users, venues..." />
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
             </div>
             
-            <div id="mobile-menu" class="hidden md:hidden mt-4 pb-4 border-t border-white/20 pt-4">
-                <div class="mb-6">
-                    <div class="relative">
-                        <input type="text" 
-                               placeholder="Search events..." 
-                               class="w-full px-4 py-4 pl-12 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm text-base">
-                        <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                        </svg>
-                    </div>
-                </div>
-                
-                <!-- Admin Mobile Elements -->
-                @if (User.IsInRole("Admin"))
-                {
-                    <div class="mb-6">
-                        <div class="flex flex-col space-y-3">
-                            <a asp-page="/Admin/Events/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                                <span>Create Event</span>
-                            </a>
-                            <a asp-page="/Admin/Venues/Create" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center justify-center space-x-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
-                                </svg>
-                                <span>Add Venue</span>
-                            </a>
-                        </div>
-                    </div>
-                }
-
-                <!-- Organizer Mobile Elements -->
-                @if (User.IsInRole("Organizer"))
-                {
-                    <div class="mb-6">
-                        <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg w-full block text-center">Create Event</a>
-                    </div>
-                }
-                
-                <div class="flex flex-col space-y-4">
-                    @if (!User.Identity.IsAuthenticated)
-                    {
-                        <a href="/" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Home</a>
-                        <a href="/Events" class="text-gray-300 hover:text-white font-medium transition-all duration-300 py-4 px-4 rounded-xl hover:bg-white/10 text-center text-lg">Events</a>
-                    }
-                    <div class="flex justify-center">
-                        <partial name="_LoginPartial" />
-                    </div>
-                </div>
+            <div class="navbar-right">
+                <partial name="_LoginPartial" />
             </div>
-        </nav>
+        </div>
     </header>
 
-    <main class="flex-1 pt-20">
+    <!-- Main Content -->
+    <main class="dashboard-main">
         @RenderBody()
     </main>
 
+    <!-- Mobile Overlay -->
+    <div id="mobile-overlay" class="mobile-overlay" onclick="toggleSidebar()"></div>
+
     <script>
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+        // Dashboard Sidebar Toggle Function
+        function toggleSidebar() {
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            const main = document.querySelector('.dashboard-main');
+            const navbar = document.querySelector('.dashboard-navbar');
             
-            menu.classList.toggle('hidden');
-            
-            // Update button aria-expanded for accessibility
-            const isExpanded = !menu.classList.contains('hidden');
-            button.setAttribute('aria-expanded', isExpanded);
-            
-            // Prevent body scroll when menu is open on mobile
-            if (isExpanded) {
-                document.body.style.overflow = 'hidden';
+            if (window.innerWidth <= 768) {
+                // Mobile behavior
+                sidebar.classList.toggle('mobile-open');
+                overlay.classList.toggle('active');
+                
+                if (sidebar.classList.contains('mobile-open')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
             } else {
-                document.body.style.overflow = '';
+                // Desktop behavior - toggle sidebar collapse
+                sidebar.classList.toggle('sidebar-collapsed');
+                main.classList.toggle('sidebar-collapsed');
+                navbar.classList.toggle('sidebar-collapsed');
+                
+                // Save preference to localStorage
+                const isCollapsed = sidebar.classList.contains('sidebar-collapsed');
+                localStorage.setItem('sidebar-collapsed', isCollapsed);
             }
         }
-        
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const menu = document.getElementById('mobile-menu');
-            const button = document.querySelector('[onclick="toggleMobileMenu()"]');
+
+        // Initialize sidebar state from localStorage
+        function initializeSidebar() {
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const main = document.querySelector('.dashboard-main');
+            const navbar = document.querySelector('.dashboard-navbar');
             
-            if (!menu.contains(event.target) && !button.contains(event.target) && !menu.classList.contains('hidden')) {
-                toggleMobileMenu();
+            if (window.innerWidth > 768) {
+                const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    main.classList.add('sidebar-collapsed');
+                    navbar.classList.add('sidebar-collapsed');
+                }
+            }
+        }
+
+        // Set active navigation item
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navItems = document.querySelectorAll('.sidebar-nav-item a');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (href && currentPath.includes(href.replace(/^\//, ''))) {
+                    item.parentElement.classList.add('active');
+                }
+            });
+        }
+
+        // Close mobile sidebar when clicking outside
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            const menuBtn = document.querySelector('.mobile-menu-btn');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !menuBtn.contains(event.target) && 
+                sidebar.classList.contains('mobile-open')) {
+                toggleSidebar();
             }
         });
-        
-        // Close mobile menu on escape key
+
+        // Close mobile sidebar on escape key
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
-                const menu = document.getElementById('mobile-menu');
-                if (!menu.classList.contains('hidden')) {
-                    toggleMobileMenu();
+                const sidebar = document.getElementById('dashboard-sidebar');
+                if (window.innerWidth <= 768 && sidebar.classList.contains('mobile-open')) {
+                    toggleSidebar();
                 }
             }
         });
-        
+
         // Handle window resize
         window.addEventListener('resize', function() {
-            const menu = document.getElementById('mobile-menu');
-            if (window.innerWidth >= 768 && !menu.classList.contains('hidden')) {
-                toggleMobileMenu();
+            const sidebar = document.getElementById('dashboard-sidebar');
+            const overlay = document.getElementById('mobile-overlay');
+            const main = document.querySelector('.dashboard-main');
+            const navbar = document.querySelector('.dashboard-navbar');
+            
+            if (window.innerWidth > 768) {
+                // Desktop view
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+                document.body.style.overflow = '';
+                
+                // Restore sidebar state
+                const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+                if (isCollapsed) {
+                    sidebar.classList.add('sidebar-collapsed');
+                    main.classList.add('sidebar-collapsed');
+                    navbar.classList.add('sidebar-collapsed');
+                } else {
+                    sidebar.classList.remove('sidebar-collapsed');
+                    main.classList.remove('sidebar-collapsed');
+                    navbar.classList.remove('sidebar-collapsed');
+                }
+            } else {
+                // Mobile view
+                sidebar.classList.remove('sidebar-collapsed');
+                main.classList.remove('sidebar-collapsed');
+                navbar.classList.remove('sidebar-collapsed');
             }
         });
-        
+
+        // Initialize dashboard when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
+            initializeSidebar();
+            setActiveNavItem();
+            
             // Smooth scrolling for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function (e) {
@@ -197,7 +344,7 @@
             // Touch-friendly interactions for mobile
             if ('ontouchstart' in window) {
                 // Add touch feedback for interactive elements
-                document.querySelectorAll('button, a[href], .category-tab').forEach(element => {
+                document.querySelectorAll('button, a[href], .sidebar-nav-item a').forEach(element => {
                     element.addEventListener('touchstart', function() {
                         this.style.transform = 'scale(0.95)';
                     });
@@ -207,7 +354,39 @@
                     });
                 });
             }
+
+            // Add loading animation to sidebar
+            const sidebar = document.getElementById('dashboard-sidebar');
+            sidebar.style.opacity = '0';
+            sidebar.style.transform = 'translateX(-20px)';
+            
+            setTimeout(() => {
+                sidebar.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+                sidebar.style.opacity = '1';
+                sidebar.style.transform = 'translateX(0)';
+            }, 100);
         });
+
+        // Search functionality
+        function initializeSearch() {
+            const searchInput = document.querySelector('.navbar-search input');
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            // Implement search functionality here
+                            console.log('Searching for:', query);
+                            // You can redirect to search results or perform AJAX search
+                            window.location.href = `/Events?search=${encodeURIComponent(query)}`;
+                        }
+                    }
+                });
+            }
+        }
+
+        // Initialize search when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeSearch);
     </script>
 
     @await RenderSectionAsync("Scripts", required: false)
