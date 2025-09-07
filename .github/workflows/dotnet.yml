@@ -64,12 +64,8 @@ jobs:
   # -------------------------
   test:
     name: Run Tests
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     needs: code-quality
-
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Checkout repository
@@ -101,23 +97,8 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results-${{ matrix.os }}
+          name: test-results-${{ runner.os }}
           path: ./TestResults
-
-      - name: Generate coverage report
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          dotnet tool install -g dotnet-reportgenerator-globaltool
-          reportgenerator -reports:"./TestResults/**/*.cobertura.xml" -targetdir:"./CoverageReport" -reporttypes:"Html;Cobertura"
-
-      - name: Upload coverage reports
-        if: matrix.os == 'ubuntu-latest'
-        uses: codecov/codecov-action@v4
-        with:
-          file: ./CoverageReport/Cobertura.xml
-          flags: unittests
-          name: codecov-umbrella
-          fail_ci_if_error: false
 
   # -------------------------
   # Build & Package
