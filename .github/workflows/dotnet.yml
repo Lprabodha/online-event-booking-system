@@ -2,18 +2,17 @@ name: .NET MVC CI/CD Pipeline
 
 on:
   push:
-    branches: ["main", "develop"]
+    branches: ["main"]
   pull_request:
-    branches: ["main", "develop"]
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       environment:
         description: 'Deployment environment'
         required: true
-        default: 'staging'
+        default: 'production'
         type: choice
         options:
-          - staging
           - production
 
 env:
@@ -28,7 +27,7 @@ jobs:
   code-quality:
     name: Code Quality & Security
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,11 +66,11 @@ jobs:
     name: Run Tests
     runs-on: ubuntu-latest
     needs: code-quality
-    
+
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -127,7 +126,7 @@ jobs:
     name: Build & Package
     runs-on: ubuntu-latest
     needs: [code-quality, test]
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -163,7 +162,7 @@ jobs:
     name: Security Scan
     runs-on: ubuntu-latest
     needs: build
-    
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -189,7 +188,7 @@ jobs:
     needs: [build, security-scan]
     if: github.ref == 'refs/heads/main' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
     environment: production
-    
+
     steps:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
@@ -213,9 +212,9 @@ jobs:
   cleanup:
     name: Cleanup
     runs-on: ubuntu-latest
-    needs: [deploy-staging, deploy-production]
+    needs: [deploy-production]
     if: always()
-    
+
     steps:
       - name: Cleanup old artifacts
         run: echo "Cleaning up old artifacts..."
