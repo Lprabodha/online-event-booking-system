@@ -20,7 +20,7 @@ namespace online_event_booking_system.Models
         public decimal Value { get; set; }
 
         [Display(Name = "Apply To Event")]
-        public int? EventId { get; set; }
+        public Guid? EventId { get; set; }
 
         [Display(Name = "Apply To All Events")]
         public bool ApplyToAllEvents { get; set; } = true;
@@ -51,7 +51,7 @@ namespace online_event_booking_system.Models
 
     public class EventOption
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public DateTime EventDate { get; set; }
     }

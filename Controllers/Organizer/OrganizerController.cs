@@ -77,7 +77,7 @@ namespace online_event_booking_system.Controllers.Organizer
         }
 
         [HttpGet("organizer/edit-event/{id}")]
-        public IActionResult EditEvent(int id)
+        public IActionResult EditEvent(Guid id)
         {
             return View();
         }
@@ -87,11 +87,11 @@ namespace online_event_booking_system.Controllers.Organizer
             // In a real application, this would come from your database
             return new List<EventOption>
             {
-                new EventOption { Id = 1, Name = "Summer Music Festival", EventDate = DateTime.Now.AddDays(30) },
-                new EventOption { Id = 2, Name = "Tech Conference 2024", EventDate = DateTime.Now.AddDays(45) },
-                new EventOption { Id = 3, Name = "Art Exhibition", EventDate = DateTime.Now.AddDays(60) },
-                new EventOption { Id = 4, Name = "Food & Wine Tasting", EventDate = DateTime.Now.AddDays(75) },
-                new EventOption { Id = 5, Name = "Comedy Night", EventDate = DateTime.Now.AddDays(90) }
+                new EventOption { Id = Guid.NewGuid(), Name = "Summer Music Festival", EventDate = DateTime.Now.AddDays(30) },
+                new EventOption { Id = Guid.NewGuid(), Name = "Tech Conference 2024", EventDate = DateTime.Now.AddDays(45) },
+                new EventOption { Id = Guid.NewGuid(), Name = "Art Exhibition", EventDate = DateTime.Now.AddDays(60) },
+                new EventOption { Id = Guid.NewGuid(), Name = "Food & Wine Tasting", EventDate = DateTime.Now.AddDays(75) },
+                new EventOption { Id = Guid.NewGuid(), Name = "Comedy Night", EventDate = DateTime.Now.AddDays(90) }
             };
         }
     }

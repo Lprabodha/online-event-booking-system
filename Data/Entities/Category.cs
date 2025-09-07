@@ -1,21 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace online_event_booking_system.Data.Entities
 {
-    public class Venue
+    public class Category
     {
         public Guid Id { get; set; } = Guid.NewGuid();
         
-        [Required, MaxLength(200)]
+        [Required, MaxLength(100)]
         public string Name { get; set; } = default!;
         
-        [Required, MaxLength(500)]
-        public string Location { get; set; } = default!;
-        
-        public int Capacity { get; set; }
+        [MaxLength(500)]
         public string? Description { get; set; }
-        public string? Image { get; set; }
-        public string? ContactInfo { get; set; }
+        
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

@@ -1,28 +1,37 @@
-﻿namespace online_event_booking_system.Data.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace online_event_booking_system.Data.Entities
 {
     public class Ticket
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; } = Guid.NewGuid();
+        
+        [Required, MaxLength(50)]
         public string TicketNumber { get; set; } = default!;
+        
         public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
+        
+        [Required, MaxLength(500)]
         public string QRCode { get; set; } = default!;
+        
         public bool IsPaid { get; set; } = false;
         public bool IsUsed { get; set; } = false;
+        public DateTime? UsedAt { get; set; }
 
+        // Foreign Keys
         public string CustomerId { get; set; } = default!;
         public ApplicationUser Customer { get; set; } = default!;
 
-        public int BookingId { get; set; }
+        public Guid BookingId { get; set; }
         public Booking Booking { get; set; } = default!;
 
-        public int EventId { get; set; }
+        public Guid EventId { get; set; }
         public Event Event { get; set; } = default!;
 
-        public int EventPriceId { get; set; }
+        public Guid EventPriceId { get; set; }
         public EventPrice EventPrice { get; set; } = default!;
 
-        public int PaymentId { get; set; }
+        public Guid PaymentId { get; set; }
         public Payment Payment { get; set; } = default!;
-
     }
 }

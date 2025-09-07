@@ -7,7 +7,7 @@ namespace online_event_booking_system.Controllers.Public
     {
         // [Authorize(Roles = "Customer")]
         [HttpGet("checkout/{id}")]
-        public IActionResult Index(string id)
+        public IActionResult Index(Guid id)
         {
             return View();
         }

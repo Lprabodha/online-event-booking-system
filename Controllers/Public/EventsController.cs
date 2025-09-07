@@ -13,7 +13,7 @@ namespace online_event_booking_system.Controllers.Public
         }
 
         [HttpGet("events/{id}")]
-        public IActionResult Details(string id)
+        public IActionResult Details(Guid id)
         {
             return View();
         }
