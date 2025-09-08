@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Models;
 
 namespace online_event_booking_system.Controllers.Admin
 {
@@ -22,61 +23,65 @@ namespace online_event_booking_system.Controllers.Admin
             try
             {
                 var categories = await _categoryService.GetAllCategoriesAsync();
-                return View(categories);
+                var viewModels = categories.Select(c => new CategoryViewModel
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    Description = c.Description,
+                    IsActive = c.IsActive,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                    EventsCount = c.Events?.Count ?? 0
+                }).ToList();
+                
+                return View("~/Views/Admin/Category/Index.cshtml", viewModels);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"An error occurred while loading categories: {ex.Message}";
-                return View(new List<Category>());
+                return View("~/Views/Admin/Category/Index.cshtml", new List<CategoryViewModel>());
             }
         }
 
-        // GET: Admin/Category/Details/5
-        [HttpGet("admin/categories/details/{id}")]
-        public async Task<IActionResult> Details(Guid id)
-        {
-            if (id == Guid.Empty)
-            {
-                return NotFound();
-            }
 
-            try
-            {
-                var category = await _categoryService.GetCategoryByIdAsync(id);
-                if (category == null)
-                {
-                    return NotFound();
-                }
-                return View(category);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"An error occurred while loading category details: {ex.Message}";
-                return RedirectToAction(nameof(Index));
-            }
-        }
 
         // GET: Admin/Category/Create
         [HttpGet("admin/categories/create")]
         public IActionResult Create()
         {
-            return View();
+            return View("~/Views/Admin/Category/Create.cshtml", new CategoryCreateViewModel());
         }
+
 
         // POST: Admin/Category/Create
         [HttpPost("admin/categories/create")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Category category)
+        public async Task<IActionResult> Create(CategoryCreateViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Check if category name is unique
+                    var isUnique = await _categoryService.IsCategoryNameUniqueAsync(viewModel.Name);
+                    if (!isUnique)
+                    {
+                        ModelState.AddModelError(nameof(viewModel.Name), "A category with this name already exists.");
+                        return View("~/Views/Admin/Category/Create.cshtml", viewModel);
+                    }
+
+                    var category = new Category
+                    {
+                        Name = viewModel.Name,
+                        Description = viewModel.Description,
+                        IsActive = viewModel.IsActive
+                    };
+
                     var (success, message, createdCategory) = await _categoryService.CreateCategoryAsync(category);
                     if (success)
                     {
                         TempData["SuccessMessage"] = message;
-                        return RedirectToAction(nameof(Index));
+                        return Redirect("/admin/categories");
                     }
                     else
                     {
@@ -88,8 +93,10 @@ namespace online_event_booking_system.Controllers.Admin
                     ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 }
             }
-            return View(category);
+            
+            return View("~/Views/Admin/Category/Create.cshtml", viewModel);
         }
+
 
         // GET: Admin/Category/Edit/5
         [HttpGet("admin/categories/edit/{id}")]
@@ -107,21 +114,32 @@ namespace online_event_booking_system.Controllers.Admin
                 {
                     return NotFound();
                 }
-                return View(category);
+
+                var viewModel = new CategoryEditViewModel
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    Description = category.Description,
+                    IsActive = category.IsActive,
+                    CreatedAt = category.CreatedAt
+                };
+
+                return View("~/Views/Admin/Category/Edit.cshtml", viewModel);
             }
             catch (Exception ex)
             {
                 TempData["ErrorMessage"] = $"An error occurred while loading category: {ex.Message}";
-                return RedirectToAction(nameof(Index));
+                return Redirect("/admin/categories");
             }
         }
+
 
         // POST: Admin/Category/Edit/5
         [HttpPost("admin/categories/edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Category category)
+        public async Task<IActionResult> Edit(Guid id, CategoryEditViewModel viewModel)
         {
-            if (id != category.Id)
+            if (id != viewModel.Id)
             {
                 return NotFound();
             }
@@ -130,11 +148,28 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 try
                 {
+                    // Check if category name is unique (excluding current category)
+                    var isUnique = await _categoryService.IsCategoryNameUniqueAsync(viewModel.Name, viewModel.Id);
+                    if (!isUnique)
+                    {
+                        ModelState.AddModelError(nameof(viewModel.Name), "A category with this name already exists.");
+                        return View("~/Views/Admin/Category/Edit.cshtml", viewModel);
+                    }
+
+                    var category = new Category
+                    {
+                        Id = viewModel.Id,
+                        Name = viewModel.Name,
+                        Description = viewModel.Description,
+                        IsActive = viewModel.IsActive,
+                        CreatedAt = viewModel.CreatedAt
+                    };
+
                     var (success, message, updatedCategory) = await _categoryService.UpdateCategoryAsync(category);
                     if (success)
                     {
                         TempData["SuccessMessage"] = message;
-                        return RedirectToAction(nameof(Index));
+                        return Redirect("/admin/categories");
                     }
                     else
                     {
@@ -146,33 +181,10 @@ namespace online_event_booking_system.Controllers.Admin
                     ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
                 }
             }
-            return View(category);
+            
+            return View("~/Views/Admin/Category/Edit.cshtml", viewModel);
         }
 
-        // GET: Admin/Category/Delete/5
-        [HttpGet("admin/categories/delete/{id}")]
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            if (id == Guid.Empty)
-            {
-                return NotFound();
-            }
-
-            try
-            {
-                var category = await _categoryService.GetCategoryByIdAsync(id);
-                if (category == null)
-                {
-                    return NotFound();
-                }
-                return View(category);
-            }
-            catch (Exception ex)
-            {
-                TempData["ErrorMessage"] = $"An error occurred while loading category: {ex.Message}";
-                return RedirectToAction(nameof(Index));
-            }
-        }
 
         // POST: Admin/Category/Delete/5
         [HttpPost("admin/categories/delete/{id}")]
@@ -181,7 +193,8 @@ namespace online_event_booking_system.Controllers.Admin
         {
             if (id == Guid.Empty)
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Invalid category ID.";
+                return Redirect("/admin/categories");
             }
 
             try
@@ -201,21 +214,32 @@ namespace online_event_booking_system.Controllers.Admin
                 TempData["ErrorMessage"] = $"An error occurred while deleting category: {ex.Message}";
             }
 
-            return RedirectToAction(nameof(Index));
+            return Redirect("/admin/categories");
         }
 
-        // AJAX endpoint to check if category name is unique
-        [HttpGet("admin/categories/check-name")]
-        public async Task<IActionResult> CheckNameUnique(string name, Guid? excludeId = null)
+
+        // AJAX endpoint to get category statistics
+        [HttpGet("admin/categories/statistics")]
+        public async Task<IActionResult> GetStatistics()
         {
             try
             {
-                var isUnique = await _categoryService.IsCategoryNameUniqueAsync(name, excludeId);
-                return Json(new { isUnique });
+                var categories = await _categoryService.GetAllCategoriesAsync();
+                var activeCategories = await _categoryService.GetActiveCategoriesAsync();
+                
+                var statistics = new
+                {
+                    TotalCategories = categories.Count(),
+                    ActiveCategories = activeCategories.Count(),
+                    InactiveCategories = categories.Count() - activeCategories.Count(),
+                    TotalEvents = categories.Sum(c => c.Events?.Count ?? 0)
+                };
+
+                return Json(statistics);
             }
-            catch
+            catch (Exception ex)
             {
-                return Json(new { isUnique = false });
+                return Json(new { error = ex.Message });
             }
         }
     }
