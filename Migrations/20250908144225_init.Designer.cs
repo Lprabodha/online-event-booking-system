@@ -11,7 +11,7 @@ using online_event_booking_system.Data;
 namespace online_event_booking_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250907171307_init")]
+    [Migration("20250908144225_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -168,6 +168,9 @@ namespace online_event_booking_system.Migrations
                     b.Property<string>("ContactNumber")
                         .IsRequired()
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(256)

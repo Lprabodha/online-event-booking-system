@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Models.View_Models;
 
 namespace online_event_booking_system.Controllers.Admin
 {
@@ -28,7 +29,6 @@ namespace online_event_booking_system.Controllers.Admin
             }
             catch (Exception ex)
             {
-                // Log the exception
                 return View(new List<ApplicationUser>());
             }
         }
@@ -201,13 +201,12 @@ namespace online_event_booking_system.Controllers.Admin
         {
             try
             {
-                var users = await _adminService.GetAllUsers();
+                var users = await _adminService.GetAllUsersWithRoles();
                 return View(users);
             }
             catch (Exception ex)
             {
-                // Log the exception
-                return View(new List<ApplicationUser>());
+                return View(new List<UserWithRoleViewModel>());
             }
         }
 

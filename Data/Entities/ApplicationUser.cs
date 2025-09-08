@@ -15,6 +15,7 @@ namespace online_event_booking_system.Data.Entities
         public string? OrganizationName { get; set; }
         public bool IsActive { get; set; } = true;
         public DateTime? LastLogin { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
         public ICollection<Payment> Payments { get; set; } = new List<Payment>();

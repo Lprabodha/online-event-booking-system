@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Models.View_Models;
 using online_event_booking_system.Repository.Interface;
 
 namespace online_event_booking_system.Business.Service
@@ -8,10 +9,12 @@ namespace online_event_booking_system.Business.Service
     public class AdminService : IAdminService
     {
         private readonly IAdminRepository _adminRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public AdminService(IAdminRepository adminRepository)
+        public AdminService(IAdminRepository adminRepository, UserManager<ApplicationUser> userManager)
         {
             _adminRepository = adminRepository;
+            _userManager = userManager;
         }
 
         public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors)> CreateUser(ApplicationUser user, string password, string role)
@@ -43,6 +46,24 @@ namespace online_event_booking_system.Business.Service
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
         {
             return await _adminRepository.GetAllUsers();
+        }
+
+        public async Task<IEnumerable<UserWithRoleViewModel>> GetAllUsersWithRoles()
+        {
+            var users = await _adminRepository.GetAllUsers();
+            var usersWithRoles = new List<UserWithRoleViewModel>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                usersWithRoles.Add(new UserWithRoleViewModel
+                {
+                    User = user,
+                    Role = roles.FirstOrDefault()
+                });
+            }
+
+            return usersWithRoles;
         }
 
         public async Task<ApplicationUser> GetUserById(string id)
