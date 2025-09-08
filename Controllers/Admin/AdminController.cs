@@ -223,6 +223,7 @@ namespace online_event_booking_system.Controllers.Admin
             return View();
         }
 
+
         [HttpGet("admin/venues")]
         public IActionResult Venues()
         {
