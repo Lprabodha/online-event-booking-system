@@ -87,5 +87,33 @@ namespace online_event_booking_system.Repository.Service
             var result = await _userManager.UpdateAsync(existingUser);
             return result.Succeeded;
         }
+
+        public async Task<string> GetUserRole(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.FirstOrDefault();
+        }
+
+        public async Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(roleName);
+            return users.ToList();
+        }
+
+        public async Task<IdentityResult> CreateOrganizerAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
+        {
+            return await _userManager.AddToRoleAsync(user, role);
+        }
     }
 }

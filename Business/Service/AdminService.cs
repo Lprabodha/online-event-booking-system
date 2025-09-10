@@ -76,20 +76,86 @@ namespace online_event_booking_system.Business.Service
             return await _adminRepository.SoftDeleteUser(id);
         }
 
-        //public async Task<bool> ToggleUserStatus(string id)
-        //{
-        //    var user = await _adminRepository.GetUserById(id);
-        //    if (user == null)
-        //    {
-        //        return false;
-        //    }
-        //    user.IsActive = !user.IsActive;
-        //    return await _adminRepository.UpdateUser(user);
-        //}
+        public async Task<bool> ToggleUserStatus(string id)
+        {
+            var user = await _adminRepository.GetUserById(id);
+            if (user == null)
+            {
+                return false;
+            }
+            user.IsActive = !user.IsActive;
+            return await _adminRepository.UpdateUser(user);
+        }
 
         public async Task<bool> UpdateUser(ApplicationUser user)
         {
             return await _adminRepository.UpdateUser(user);
+        }
+
+        public async Task<UserWithRoleViewModel> GetUserWithRoleById(string id)
+        {
+            var user = await _adminRepository.GetUserById(id);
+            if (user == null)
+            {
+                return null;
+            }
+            var role = await _adminRepository.GetUserRole(id);
+            return new UserWithRoleViewModel
+            {
+                User = user,
+                Role = role
+            };
+        }
+
+        public async Task<List<UserWithRoleViewModel>> GetUsersByRole(string roleName)
+        {
+            var usersInRole = await _adminRepository.GetUsersInRoleAsync(roleName);
+            var usersWithRoles = new List<UserWithRoleViewModel>();
+
+            foreach (var user in usersInRole)
+            {
+                var userWithRole = new UserWithRoleViewModel
+                {
+                    User = user,
+                    Role = roleName
+                };
+                usersWithRoles.Add(userWithRole);
+            }
+            return usersWithRoles;
+        }
+
+        public async Task<(bool success, IEnumerable<IdentityError>? errors)> CreateOrganizer(ApplicationUser model)
+        {
+            var user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FullName = model.FullName,
+                ContactNumber = model.PhoneNumber,
+                NIC = model.NIC,
+                Address = model.Address,
+                OrganizationName = model.OrganizationName,
+                IsActive = true,
+            };
+
+            var password = "Password@123";
+
+            var result = await _adminRepository.CreateOrganizerAsync(user, password);
+            if (!result.Succeeded)
+            {
+                return (false, result.Errors);
+            }
+
+            var roleResult = await _adminRepository.AddToRoleAsync(user, "Organizer");
+            if (!roleResult.Succeeded)
+            {
+                return (false, roleResult.Errors);
+            }
+
+            // 5. Optionally, you can send the user a welcome email with their login credentials
+            // ... email service call here
+
+            return (true, null);
         }
     }
 }

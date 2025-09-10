@@ -97,38 +97,23 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
         // GET: Admin/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        [HttpGet]
+        public async Task<IActionResult> LoadEditOrganizerModal(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            var user = await _adminService.GetUserById(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            
-            try
-            {
-                var user = await _adminService.GetUserById(id);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-                return View(user);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            // Returns the partial view with the specific user object
+            return PartialView("_EditOrganizerModal", user);
         }
 
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, ApplicationUser user)
+        public async Task<IActionResult> EditOrganizer(ApplicationUser user)
         {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-            
             if (ModelState.IsValid)
             {
                 // Validate required fields
@@ -182,17 +167,17 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> ToggleStatus(string id)
-        //{
-        //    var result = await _adminService.ToggleUserStatus(id);
-        //    if (!result)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return RedirectToAction(nameof(Index));
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(string id)
+        {
+            var result = await _adminService.ToggleUserStatus(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
+        }
 
 
         // Users Management
@@ -217,9 +202,10 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
         [HttpGet("admin/organizers")]
-        public IActionResult Organizers()
+        public async Task<IActionResult> Organizers()
         {
-            return View();
+            var organizers = await _adminService.GetUsersByRole("Organizer");
+            return View("Organizers", organizers);
         }
 
 
@@ -239,6 +225,53 @@ namespace online_event_booking_system.Controllers.Admin
         public IActionResult Settings()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var userWithRole = await _adminService.GetUserWithRoleById(id);
+            if (userWithRole == null)
+            {
+                return NotFound();
+            }
+            return Json(userWithRole);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOrganizer(ApplicationUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var (success, errors) = await _adminService.CreateOrganizer(model);
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Organizer created successfully!";
+                    return RedirectToAction(nameof(Organizers)); // Redirect to the organizers list view
+                }
+
+                // If creation failed, add errors to ModelState to display in the view
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+
+            // If ModelState is invalid or creation failed, return to the view with errors
+            // You might need to reload the page or handle this with AJAX
+            return RedirectToAction(nameof(Organizers));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrganizerData(string id)
+        {
+            var user = await _adminService.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Json(user);
         }
     }
 }

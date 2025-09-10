@@ -48,6 +48,9 @@
                     <button onclick="filterUsers('organizers')" class="user-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
                         Organizers
                     </button>
+                    <button onclick="filterUsers('admins')" class="user-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
+                        Admins
+                    </button>
                 </div>
             </div>
         </div>
@@ -61,19 +64,19 @@
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">User</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Role</th>
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Joined</th>
-                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Last Login</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Address</th>
+                            @* <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">NIC</th> *@
                             <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-white/10">
                         @foreach (var userWithRole in Model)
                         {
-                            <tr class="user-row hover:bg-white/5 transition-colors" data-status="@userWithRole.User.Id" data-role="@userWithRole.Role">
+                            <tr class="user-row hover:bg-white/5 transition-colors" data-status="@(userWithRole.User.IsActive ? "active" : "inactive")" data-role="@userWithRole.Role.ToLower()">
                                 <td class="px-6 py-4">
                                     <div class="flex items-center space-x-3">
                                         <div class="w-10 h-10 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white font-semibold text-sm">@userWithRole.User.UserName</span>
+                                            <span class="text-white font-semibold text-sm">@userWithRole.User.UserName?.Substring(0,2).ToUpper()</span>
                                         </div>
                                         <div>
                                             <p class="text-white font-medium">@userWithRole.User.FullName</p>
@@ -85,18 +88,22 @@
                                     <span class="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-full text-sm font-medium">@userWithRole.Role</span>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">@userWithRole.User.IsActive</span>
+                                    <span class="px-3 py-1 @(@userWithRole.User.IsActive ? "bg-green-500/20 border-green-500/30 text-green-400 hover:bg-green-500/30" : "bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30") rounded-full text-sm font-medium">@(userWithRole.User.IsActive == true ? "Active" : "Deactive")</span>
                                 </td>
                                 <td class="px-6 py-4 text-gray-300">@userWithRole.User.Address</td>
-                                <td class="px-6 py-4 text-gray-300">@userWithRole.User.LastLogin</td>
+                                @* <td class="px-6 py-4 text-gray-300">@userWithRole.User.NIC</td> *@
                                 <td class="px-6 py-4">
                                     <div class="flex space-x-2">
                                         <button onclick="viewUser('@userWithRole.User.Id')" class="px-3 py-1 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 text-sm">
                                             View
                                         </button>
-                                        <button onclick="toggleUserStatus('@userWithRole.User.Id', '@userWithRole.User.IsActive')" class="px-3 py-1 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 text-sm">
-                                            @(@userWithRole.User.IsActive == true ? "Deactivate" : "Activate")
-                                        </button>
+
+                                        <form asp-controller="Admin" asp-action="ToggleStatus" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@userWithRole.User.Id" />
+                                            <button type="submit" class="px-3 py-1 @(@userWithRole.User.IsActive ? "bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30" : "bg-green-500/20 border-green-500/30 text-green-400 hover:bg-green-500/30") border rounded-lg transition-all duration-200 text-sm">
+                                                @(@userWithRole.User.IsActive ? "Deactivate" : "Activate")
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>
@@ -217,6 +224,9 @@
                 case 'organizers':
                     show = role === 'organizer';
                     break;
+                case 'admins':
+                    show = role === 'admin';
+                    break;
             }
             
             row.style.display = show ? 'table-row' : 'none';
@@ -240,109 +250,54 @@
         });
     });
 
-    // View user details
     function viewUser(userId) {
-        // Mock user data - replace with actual API call
-        const userData = {
-            1: {
-                name: 'John Doe',
-                email: 'john.doe@example.com',
-                role: 'Customer',
-                status: 'Active',
-                joined: 'Jan 15, 2024',
-                lastLogin: '2 hours ago',
-                phone: '+1 (555) 123-4567',
-                address: '123 Main St, City, State 12345',
-                totalBookings: 12,
-                totalSpent: '$450'
-            },
-            2: {
-                name: 'Jane Smith',
-                email: 'jane.smith@example.com',
-                role: 'Organizer',
-                status: 'Active',
-                joined: 'Feb 20, 2024',
-                lastLogin: '1 day ago',
-                phone: '+1 (555) 987-6543',
-                address: '456 Oak Ave, City, State 12345',
-                totalEvents: 8,
-                totalRevenue: '$2,340'
-            }
-        };
-
-        const user = userData[userId];
-        if (user) {
-            document.getElementById('userDetails').innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                        <h4 class="text-lg font-semibold text-white mb-4">Personal Information</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="text-gray-400 text-sm">Full Name</label>
-                                <p class="text-white">${user.name}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Email</label>
-                                <p class="text-white">${user.email}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Phone</label>
-                                <p class="text-white">${user.phone}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Address</label>
-                                <p class="text-white">${user.address}</p>
-                            </div>
+        fetch(`/Admin/GetUser?id=${userId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('User not found');
+                }
+                return response.json();
+            })
+            .then(data => {
+                const userDetailsDiv = document.getElementById('userDetails');
+                userDetailsDiv.innerHTML = `
+                    <div class="flex items-center space-x-4 mb-4">
+                        <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
+                            <span class="text-white font-bold text-xl">${data.user.userName.substring(0, 2).toUpperCase()}</span>
+                        </div>
+                        <div>
+                            <h4 class="text-xl font-semibold text-white">${data.user.fullName}</h4>
+                            <p class="text-gray-400">${data.user.email}</p>
                         </div>
                     </div>
-                    <div>
-                        <h4 class="text-lg font-semibold text-white mb-4">Account Information</h4>
-                        <div class="space-y-3">
-                            <div>
-                                <label class="text-gray-400 text-sm">Role</label>
-                                <p class="text-white">${user.role}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Status</label>
-                                <p class="text-white">${user.status}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Joined</label>
-                                <p class="text-white">${user.joined}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Last Login</label>
-                                <p class="text-white">${user.lastLogin}</p>
-                            </div>
-                            ${user.totalBookings ? `
-                            <div>
-                                <label class="text-gray-400 text-sm">Total Bookings</label>
-                                <p class="text-white">${user.totalBookings}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Total Spent</label>
-                                <p class="text-white">${user.totalSpent}</p>
-                            </div>
-                            ` : ''}
-                            ${user.totalEvents ? `
-                            <div>
-                                <label class="text-gray-400 text-sm">Total Events</label>
-                                <p class="text-white">${user.totalEvents}</p>
-                            </div>
-                            <div>
-                                <label class="text-gray-400 text-sm">Total Revenue</label>
-                                <p class="text-white">${user.totalRevenue}</p>
-                            </div>
-                            ` : ''}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Role</p>
+                            <p class="text-white font-medium">${data.role}</p>
                         </div>
-                    </div>
-                </div>
-            `;
-            document.getElementById('userModal').classList.remove('hidden');
-        }
+                        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Status</p>
+                            <p class="text-white font-medium">${data.user.isActive ? 'Active' : 'Inactive'}</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">Address</p>
+                            <p class="text-white font-medium">${data.user.address}</p>
+                        </div>
+                        <div class="bg-white/5 border border-white/10 p-4 rounded-lg">
+                            <p class="text-sm text-gray-400">NIC</p>
+                            <p class="text-white font-medium">${data.user.nic}</p>
+                        </div>
+                        </div>
+                `;
+                document.getElementById('userModal').classList.remove('hidden');
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+                alert('Could not fetch user details.');
+            });
     }
 
-    // Close user modal
+    // Function to close the modal
     function closeUserModal() {
         document.getElementById('userModal').classList.add('hidden');
     }
