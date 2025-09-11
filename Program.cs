@@ -24,10 +24,12 @@ builder.Services.AddRazorPages();
 // Services
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
 
 // Repositories
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IVenueRepository, VenueRepository>();
 
 var app = builder.Build();
 

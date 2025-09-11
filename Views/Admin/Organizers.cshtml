@@ -232,7 +232,6 @@
 </div>
 
 <script>
-    // This function fetches the partial view with the populated form
     function openEditOrganizerModal(userId) {
         fetch(`/Admin/LoadEditOrganizerModal?id=${userId}`)
             .then(response => {
@@ -242,7 +241,6 @@
                 return response.text();
             })
             .then(html => {
-                // Inject the fetched HTML into the container and show the modal
                 document.getElementById('editOrganizerModalContainer').innerHTML = html;
                 document.getElementById('editOrganizerModal').classList.remove('hidden');
             })
@@ -252,14 +250,12 @@
             });
     }
 
-    // Function to close the modal
     function closeEditOrganizerModal() {
         document.getElementById('editOrganizerModal').classList.add('hidden');
-        // Optionally clear the content to prevent stale data
+
         document.getElementById('editOrganizerModalContainer').innerHTML = '';
     }
 
-    // Sidebar toggle functionality
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('mobile-overlay');
@@ -294,22 +290,18 @@
         }
     });
 
-    // Organizer filtering functionality
     function filterOrganizers(filter) {
         const organizerCards = document.querySelectorAll('.organizer-card');
         const filterButtons = document.querySelectorAll('.organizer-filter');
 
-        // Update filter button styles
         filterButtons.forEach(btn => {
             btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
             btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
         });
 
-        // Highlight active filter
         event.target.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
         event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
 
-        // Filter organizers
         organizerCards.forEach(card => {
             const status = card.getAttribute('data-status');
             const verified = card.getAttribute('data-verified');
@@ -334,7 +326,6 @@
         });
     }
 
-    // Search functionality
     document.getElementById('organizerSearch').addEventListener('input', function() {
         const searchTerm = this.value.toLowerCase();
         const organizerCards = document.querySelectorAll('.organizer-card');
@@ -351,7 +342,6 @@
         });
     });
 
-    // Modal functions
     function openCreateOrganizerModal() {
         document.getElementById('createOrganizerModal').classList.remove('hidden');
     }
@@ -412,14 +402,12 @@
     }
 
     function editOrganizer(organizerId) {
-        // Redirect to edit page or open edit modal
         window.location.href = `/Admin/EditOrganizer/${organizerId}`;
     }
 
     function toggleOrganizerStatus(organizerId, currentStatus) {
         const action = currentStatus === 'active' ? 'deactivate' : 'activate';
         if (confirm(`Are you sure you want to ${action} this organizer?`)) {
-            // Here you would make an API call to update the organizer status
             alert(`Organizer ${action}d successfully!`);
             location.reload();
         }
@@ -427,13 +415,11 @@
 
     function verifyOrganizer(organizerId) {
         if (confirm('Are you sure you want to verify this organizer?')) {
-            // Here you would make an API call to verify the organizer
             alert('Organizer verified successfully!');
             location.reload();
         }
     }
 
-    // Close modals on escape key
     document.addEventListener('keydown', function(event) {
         if (event.key === 'Escape') {
             closeCreateOrganizerModal();

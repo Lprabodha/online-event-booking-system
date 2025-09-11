@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Models.View_Models;
 
@@ -12,11 +13,13 @@ namespace online_event_booking_system.Controllers.Admin
     {
         private readonly IAdminService _adminService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IVenueService _venueService;
 
-        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager)
+        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService)
         {
             _adminService = adminService;
             _userManager = userManager;
+            _venueService = venueService;
         }
 
         [HttpGet("admin")]
@@ -68,7 +71,6 @@ namespace online_event_booking_system.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                // Validate required fields
                 if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(password))
                 {
                     ModelState.AddModelError(string.Empty, "Email, Username, and Password are required.");
@@ -105,7 +107,6 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 return NotFound();
             }
-            // Returns the partial view with the specific user object
             return PartialView("_EditOrganizerModal", user);
         }
 
@@ -179,8 +180,6 @@ namespace online_event_booking_system.Controllers.Admin
             return RedirectToAction(nameof(Index));
         }
 
-
-        // Users Management
         [HttpGet("admin/users")]
         public async Task<IActionResult> Users()
         {
@@ -208,11 +207,11 @@ namespace online_event_booking_system.Controllers.Admin
             return View("Organizers", organizers);
         }
 
-
         [HttpGet("admin/venues")]
-        public IActionResult Venues()
+        public async Task<IActionResult> Venues()
         {
-            return View();
+            var venues = await _venueService.GetAllVenuesAsync();
+            return View(venues);
         }
 
         [HttpGet("admin/reports")]
@@ -248,18 +247,14 @@ namespace online_event_booking_system.Controllers.Admin
                 if (success)
                 {
                     TempData["SuccessMessage"] = "Organizer created successfully!";
-                    return RedirectToAction(nameof(Organizers)); // Redirect to the organizers list view
+                    return RedirectToAction(nameof(Organizers));
                 }
 
-                // If creation failed, add errors to ModelState to display in the view
                 foreach (var error in errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
             }
-
-            // If ModelState is invalid or creation failed, return to the view with errors
-            // You might need to reload the page or handle this with AJAX
             return RedirectToAction(nameof(Organizers));
         }
 

@@ -152,8 +152,7 @@ namespace online_event_booking_system.Business.Service
                 return (false, roleResult.Errors);
             }
 
-            // 5. Optionally, you can send the user a welcome email with their login credentials
-            // ... email service call here
+            // TODO: Need to implement the randomly created password and username send with an email here....
 
             return (true, null);
         }
