@@ -1,8 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Helper;
 using online_event_booking_system.Models.View_Models;
 using online_event_booking_system.Repository.Interface;
+using online_event_booking_system.Services;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace online_event_booking_system.Business.Service
 {
@@ -10,11 +14,13 @@ namespace online_event_booking_system.Business.Service
     {
         private readonly IAdminRepository _adminRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IEmailService _emailService;
 
-        public AdminService(IAdminRepository adminRepository, UserManager<ApplicationUser> userManager)
+        public AdminService(IAdminRepository adminRepository, UserManager<ApplicationUser> userManager, IEmailService emailService)
         {
             _adminRepository = adminRepository;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors)> CreateUser(ApplicationUser user, string password, string role)
@@ -138,7 +144,7 @@ namespace online_event_booking_system.Business.Service
                 IsActive = true,
             };
 
-            var password = "Password@123";
+            var password = GenerateRandomPassword();
 
             var result = await _adminRepository.CreateOrganizerAsync(user, password);
             if (!result.Succeeded)
@@ -152,9 +158,35 @@ namespace online_event_booking_system.Business.Service
                 return (false, roleResult.Errors);
             }
 
-            // TODO: Need to implement the randomly created password and username send with an email here....
+            Task.Run(async () =>
+            {
+                var emailSubject = "Your New Event Organizer Account Credentials";
+                var emailBody = EmailTemplates.GetOrganizerAccountCreationTemplate(
+                    user.FullName,
+                    user.Email,
+                    password
+                );
+
+                await _emailService.SendEmailAsync(user.Email, emailSubject, emailBody);
+            });
 
             return (true, null);
+        }
+
+        private string GenerateRandomPassword()
+        {
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?";
+            var sb = new StringBuilder();
+            var random = RandomNumberGenerator.Create();
+            var data = new byte[20];
+            random.GetBytes(data);
+
+            foreach (var b in data)
+            {
+                sb.Append(chars[b % chars.Length]);
+            }
+
+            return sb.ToString();
         }
     }
 }
