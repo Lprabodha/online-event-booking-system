@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
 
-namespace online_event_booking_system.Controllers.Venue
+namespace online_event_booking_system.Controllers.Admin
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -36,7 +36,7 @@ namespace online_event_booking_system.Controllers.Venue
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateVenue([FromBody] Data.Entities.Venue model)
+        public async Task<IActionResult> CreateVenue([FromBody] Venue model)
         {
             if (!ModelState.IsValid)
             {
@@ -47,7 +47,7 @@ namespace online_event_booking_system.Controllers.Venue
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateVenue(Guid id, [FromBody] Data.Entities.Venue model)
+        public async Task<IActionResult> UpdateVenue(Guid id, [FromBody] Venue model)
         {
             if (!ModelState.IsValid)
             {
