@@ -1,12 +1,24 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Models;
+using System.Security.Claims;
 
 namespace online_event_booking_system.Controllers.Organizer
 {
     [Authorize(Roles = "Organizer")]
     public class OrganizerController : Controller
     {
+        private readonly IDiscountService _discountService;
+        private readonly UserManager<ApplicationUser> _userManager;
+
+        public OrganizerController(IDiscountService discountService, UserManager<ApplicationUser> userManager)
+        {
+            _discountService = discountService;
+            _userManager = userManager;
+        }
         [HttpGet("organizer")]
         public IActionResult Index()
         {
@@ -44,30 +56,267 @@ namespace online_event_booking_system.Controllers.Organizer
         }
 
         [HttpGet("organizer/discounts")]
-        public IActionResult Discounts()
+        public async Task<IActionResult> Discounts()
         {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+            var availableEvents = await _discountService.GetAvailableEventsAsync(organizerId);
+            
             var model = new DiscountViewModel
             {
-                AvailableEvents = GetAvailableEvents()
+                AvailableEvents = availableEvents.ToList()
             };
+
+            ViewBag.Discounts = discounts;
             return View(model);
         }
 
         [HttpPost("organizer/discounts")]
         [ValidateAntiForgeryToken]
-        public IActionResult CreateDiscount(DiscountViewModel model)
+        public async Task<IActionResult> CreateDiscount(DiscountViewModel model)
         {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            // Debug logging
+            Console.WriteLine($"CreateDiscount called with EventId: {model.EventId}");
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"Request.Form keys: {string.Join(", ", Request.Form.Keys)}");
+            Console.WriteLine($"EventId from form: {Request.Form["EventId"]}");
+            
             if (!ModelState.IsValid)
             {
-                model.AvailableEvents = GetAvailableEvents();
+                Console.WriteLine("Model state is invalid:");
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Error: {error.ErrorMessage}");
+                }
+
+                model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
+                var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+                ViewBag.Discounts = discounts;
+                // Keep create modal open so user can correct validation errors
+                ViewData["OpenCreateModal"] = true;
                 return View("Discounts", model);
             }
 
-            // In a real application, you would save the discount to the database here
-            // For now, we'll just simulate success
+            // Validate event selection
+            if (!model.EventId.HasValue)
+            {
+                ModelState.AddModelError("EventId", "Please select an event.");
+            }
+
+            // Check if discount code already exists
+            var existingDiscount = await _discountService.GetDiscountByCodeAsync(model.Code);
+            if (existingDiscount != null)
+            {
+                ModelState.AddModelError("Code", "This discount code already exists.");
+            }
+
+            // Check if event already has a discount (each event may have only one discount)
+            if (model.EventId.HasValue)
+            {
+                var discountForEvent = await _discountService.GetDiscountByEventIdAsync(model.EventId.Value);
+                if (discountForEvent != null)
+                {
+                    ModelState.AddModelError("EventId", "A discount already exists for the selected event. Each event can have only one discount.");
+                }
+            }
+
+            // If there are validation errors, return to view
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
+                var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+                ViewBag.Discounts = discounts;
+                // Keep create modal open so user can correct validation errors
+                ViewData["OpenCreateModal"] = true;
+                return View("Discounts", model);
+            }
+
+            try
+            {
+                await _discountService.CreateDiscountAsync(model, organizerId);
+                TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while creating the discount. Please try again.";
+            }
             
-            TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
             return RedirectToAction("Discounts");
+        }
+
+        [HttpGet("organizer/discounts/edit/{id}")]
+        public async Task<IActionResult> EditDiscount(Guid id)
+        {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var discount = await _discountService.GetDiscountByIdAsync(id);
+            
+            if (discount == null)
+            {
+                TempData["ErrorMessage"] = "Discount not found or you don't have permission to edit it.";
+                return RedirectToAction("Discounts");
+            }
+
+            var model = new DiscountViewModel
+            {
+                Code = discount.Code,
+                Type = discount.Type == "Percent" ? DiscountType.Percentage : DiscountType.FixedAmount,
+                Value = discount.Value,
+                EventId = discount.EventId,
+                UsageLimit = discount.UsageLimit,
+                ExpiryDate = discount.ValidTo,
+                Description = discount.Description,
+                IsActive = discount.IsActive,
+                AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost("organizer/discounts/edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditDiscount(Guid id, DiscountViewModel model)
+        {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+            // Debug logging
+            Console.WriteLine($"EditDiscount called with ID: {id}, EventId: {model.EventId}");
+            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
+            Console.WriteLine($"Request.Form keys: {string.Join(", ", Request.Form.Keys)}");
+            Console.WriteLine($"EventId from form: {Request.Form["EventId"]}");
+            
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine("Model state is invalid:");
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"Error: {error.ErrorMessage}");
+                }
+
+                model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
+                var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+                ViewBag.Discounts = discounts;
+                // Keep edit modal open and pass id so view can populate fields and show validation errors
+                ViewData["OpenEditModal"] = id.ToString();
+                return View("Discounts", model);
+            }
+
+            // Validate event selection
+            if (!model.EventId.HasValue)
+            {
+                ModelState.AddModelError("EventId", "Please select an event.");
+            }
+
+            var existingDiscount = await _discountService.GetDiscountByCodeAsync(model.Code);
+            if (existingDiscount != null && existingDiscount.Id != id)
+            {
+                ModelState.AddModelError("Code", "This discount code already exists.");
+            }
+
+            // Enforce one discount per event on edit: if another discount exists for the selected event, block it
+            if (model.EventId.HasValue)
+            {
+                var discountForEvent = await _discountService.GetDiscountByEventIdAsync(model.EventId.Value);
+                if (discountForEvent != null && discountForEvent.Id != id)
+                {
+                    ModelState.AddModelError("EventId", "A discount already exists for the selected event. Each event can have only one discount.");
+                }
+            }
+
+            // If there are validation errors, return to view
+            if (!ModelState.IsValid)
+            {
+                model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
+                return View(model);
+            }
+
+            try
+            {
+                await _discountService.UpdateDiscountAsync(id, model);
+                TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been updated successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while updating the discount. Please try again.";
+            }
+            
+            return RedirectToAction("Discounts");
+        }
+
+        [HttpPost("organizer/discounts/delete/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDiscount(Guid id)
+        {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var discount = await _discountService.GetDiscountByIdAsync(id);
+            
+            if (discount == null)
+            {
+                TempData["ErrorMessage"] = "Discount not found or you don't have permission to delete it.";
+                return RedirectToAction("Discounts");
+            }
+
+            try
+            {
+                await _discountService.DeleteDiscountAsync(id);
+                TempData["SuccessMessage"] = "Discount has been deleted successfully!";
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while deleting the discount. Please try again.";
+            }
+            
+            return RedirectToAction("Discounts");
+        }
+
+        [HttpPost("organizer/discounts/toggle/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleDiscountStatus(Guid id)
+        {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var discount = await _discountService.GetDiscountByIdAsync(id);
+            
+            if (discount == null)
+            {
+                return Json(new { success = false, message = "Discount not found or you don't have permission to modify it." });
+            }
+
+            try
+            {
+                await _discountService.ToggleDiscountStatusAsync(id);
+                return Json(new { success = true, message = "Discount status updated successfully!" });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "An error occurred while updating the discount status." });
+            }
+        }
+
+        [HttpGet("organizer/discounts/get/{id}")]
+        public async Task<IActionResult> GetDiscountData(Guid id)
+        {
+            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var discount = await _discountService.GetDiscountByIdAsync(id);
+            
+            if (discount == null)
+            {
+                return Json(new { success = false, message = "Discount not found or you don't have permission to access it." });
+            }
+
+            var model = new DiscountViewModel
+            {
+                Code = discount.Code,
+                Type = discount.Type == "Percent" ? DiscountType.Percentage : DiscountType.FixedAmount,
+                Value = discount.Value,
+                EventId = discount.EventId,
+                UsageLimit = discount.UsageLimit,
+                ExpiryDate = discount.ValidTo,
+                Description = discount.Description,
+                IsActive = discount.IsActive
+            };
+
+            return Json(new { success = true, data = model });
         }
 
         [HttpGet("organizer/create-event")]
@@ -82,17 +331,5 @@ namespace online_event_booking_system.Controllers.Organizer
             return View();
         }
 
-        private List<EventOption> GetAvailableEvents()
-        {
-            // In a real application, this would come from your database
-            return new List<EventOption>
-            {
-                new EventOption { Id = Guid.NewGuid(), Name = "Summer Music Festival", EventDate = DateTime.Now.AddDays(30) },
-                new EventOption { Id = Guid.NewGuid(), Name = "Tech Conference 2024", EventDate = DateTime.Now.AddDays(45) },
-                new EventOption { Id = Guid.NewGuid(), Name = "Art Exhibition", EventDate = DateTime.Now.AddDays(60) },
-                new EventOption { Id = Guid.NewGuid(), Name = "Food & Wine Tasting", EventDate = DateTime.Now.AddDays(75) },
-                new EventOption { Id = Guid.NewGuid(), Name = "Comedy Night", EventDate = DateTime.Now.AddDays(90) }
-            };
-        }
     }
 }
