@@ -102,91 +102,7 @@
                 </div>
             </section>
 
-            <!-- Create Discount Form Section -->
-            <section aria-label="Create Discount" class="mb-8">
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-white">Create New Discount</h2>
-                        <button id="toggleCreateForm2" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
-                            <span id="toggleText2">Show Form</span>
-                        </button>
-                    </div>
-                    
-                    <div id="createDiscountForm" class="hidden">
-                        <form asp-action="CreateDiscount" method="post" class="space-y-6">
-                            @Html.AntiForgeryToken()
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="Code" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
-                                    <span asp-validation-for="Code" class="text-red-400 text-xs mt-1"></span>
-                                    <p class="text-gray-400 text-xs mt-1">Use uppercase letters and numbers only</p>
-                                </div>
-                                <div>
-                                    <label asp-for="Type" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <select asp-for="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                        <option value="@((int)online_event_booking_system.Models.DiscountType.Percentage)">Percentage</option>
-                                        <option value="@((int)online_event_booking_system.Models.DiscountType.FixedAmount)">Fixed Amount</option>
-                                    </select>
-                                    <span asp-validation-for="Type" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Value" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <div class="relative">
-                                        <input asp-for="Value" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
-                                        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="valueSuffix">%</span>
-                                    </div>
-                                    <span asp-validation-for="Value" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
-                                    <div class="space-y-3">
-                                        <label class="flex items-center space-x-3">
-                                            <input asp-for="ApplyToAllEvents" type="checkbox" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
-                                            <span class="text-gray-300">Apply to all events</span>
-                                        </label>
-                                        <div id="eventSelection" class="hidden">
-                                            <select asp-for="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                                <option value="">Select an event</option>
-                                                @foreach (var eventOption in Model.AvailableEvents)
-                                                {
-                                                    <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
-                                                }
-                                            </select>
-                                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label asp-for="UsageLimit" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="UsageLimit" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
-                                    <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1"></span>
-                                    <p class="text-gray-400 text-xs mt-1">Leave empty for unlimited usage</p>
-                                </div>
-                                <div>
-                                    <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="ExpiryDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                    <span asp-validation-for="ExpiryDate" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                            </div>
-                            <div>
-                                <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                <textarea asp-for="Description" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
-                                <span asp-validation-for="Description" class="text-red-400 text-xs mt-1"></span>
-                            </div>
-                            <div class="flex justify-end space-x-4">
-                                <button type="button" onclick="toggleCreateForm()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
-                                    Cancel
-                                </button>
-                                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
-                                    Create Discount
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
+            
             <!-- Filters and Search -->
             <section aria-label="Filters" class="mb-8">
                 <div class="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
@@ -364,6 +280,150 @@
             </section>
     </div>
 
+    <!-- Create Discount Modal -->
+    <div id="createDiscountModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Create Discount</h2>
+                    <button type="button" onclick="closeCreateDiscountModal()" class="p-2 hover:bg-white/10 rounded-lg transition-all">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form asp-action="CreateDiscount" method="post" class="space-y-6">
+                    @Html.AntiForgeryToken()
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="Code" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <span asp-validation-for="Code" class="text-red-400 text-xs mt-1"></span>
+                            <p class="text-gray-400 text-xs mt-1">Use uppercase letters and numbers only</p>
+                        </div>
+                        <div>
+                            <label asp-for="Type" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <select asp-for="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                <option value="@((int)online_event_booking_system.Models.DiscountType.Percentage)">Percentage</option>
+                                <option value="@((int)online_event_booking_system.Models.DiscountType.FixedAmount)">Fixed Amount</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                        <div>
+                            <label asp-for="Value" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <div class="relative">
+                                <input asp-for="Value" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="modalValueSuffix">%</span>
+                            </div>
+                            <span asp-validation-for="Value" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
+                            <div class="space-y-3">
+                                <label class="flex items-center space-x-3">
+                                    <input asp-for="ApplyToAllEvents" type="checkbox" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2" id="modalApplyToAllEvents">
+                                    <span class="text-gray-300">Apply to all events</span>
+                                </label>
+                                <div id="modalEventSelection" class="hidden">
+                                    <select asp-for="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                        <option value="">Select an event</option>
+                                        @foreach (var eventOption in Model.AvailableEvents)
+                                        {
+                                            <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
+                                        }
+                                    </select>
+                                    <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label asp-for="UsageLimit" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="UsageLimit" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                            <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1"></span>
+                            <p class="text-gray-400 text-xs mt-1">Leave empty for unlimited usage</p>
+                        </div>
+                        <div>
+                            <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="ExpiryDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                            <span asp-validation-for="ExpiryDate" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <textarea asp-for="Description" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-400 text-xs mt-1"></span>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="closeCreateDiscountModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                            Create Discount
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Open Create Discount Modal
+        function openCreateDiscountModal() {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        // Close Create Discount Modal
+        function closeCreateDiscountModal() {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        // Modal Discount type change handler
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeSelect = document.querySelector('#createDiscountModal select[name="Type"]');
+            const valueSuffix = document.getElementById('modalValueSuffix');
+            if (typeSelect && valueSuffix) {
+                typeSelect.addEventListener('change', function () {
+                    valueSuffix.textContent = this.value === '2' ? '$' : '%';
+                });
+            }
+            // Apply to all events checkbox handler
+            const applyToAllCheckbox = document.getElementById('modalApplyToAllEvents');
+            const eventSelection = document.getElementById('modalEventSelection');
+            if (applyToAllCheckbox && eventSelection) {
+                applyToAllCheckbox.addEventListener('change', function () {
+                    if (this.checked) {
+                        eventSelection.classList.add('hidden');
+                    } else {
+                        eventSelection.classList.remove('hidden');
+                    }
+                });
+            }
+        });
+        // Close modal on escape
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('createDiscountModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeCreateDiscountModal();
+                }
+            }
+        });
+        // Close modal when clicking outside
+        document.addEventListener('click', function (event) {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal && event.target === modal) {
+                closeCreateDiscountModal();
+            }
+        });
+    </script>
+
+
     <!-- Edit Discount Modal -->
     <div id="editDiscountModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -506,7 +566,6 @@
         function openEditModal(index) {
             const modal = document.getElementById('editDiscountModal');
             if (modal) {
-                // Sample data for editing (in real app, this would come from the server)
                 const sampleData = {
                     code: 'EARLY20',
                     type: 'Percentage',
