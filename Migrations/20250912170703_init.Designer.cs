@@ -11,7 +11,7 @@ using online_event_booking_system.Data;
 namespace online_event_booking_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250912155008_init")]
+    [Migration("20250912170703_init")]
     partial class init
     {
         /// <inheritdoc />
