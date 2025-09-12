@@ -20,7 +20,6 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                // Check if user already exists
                 var existingUser = await _userManager.FindByEmailAsync(user.Email);
                 if (existingUser != null)
                 {
@@ -47,7 +46,7 @@ namespace online_event_booking_system.Repository.Service
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
         {
-            return await _userManager.Users.Where(u => u.IsActive == true).ToListAsync();
+            return await _userManager.Users.Where(u => u.DeletedAt == null).ToListAsync();
         }
 
         public async Task<ApplicationUser> GetUserById(string id)
@@ -62,7 +61,7 @@ namespace online_event_booking_system.Repository.Service
             {
                 return false;
             }
-            user.IsActive = false;
+            user.DeletedAt = DateTime.Now;
 
             var result = await _userManager.UpdateAsync(user);
             return result.Succeeded;
@@ -70,14 +69,12 @@ namespace online_event_booking_system.Repository.Service
 
         public async Task<bool> UpdateUser(ApplicationUser user)
         {
-            // Get the existing user from the database to avoid tracking conflicts
             var existingUser = await _userManager.FindByIdAsync(user.Id);
             if (existingUser == null)
             {
                 return false;
             }
 
-            // Update the properties of the existing user
             existingUser.FullName = user.FullName;
             existingUser.UserName = user.UserName;
             existingUser.Email = user.Email;
@@ -89,6 +86,34 @@ namespace online_event_booking_system.Repository.Service
 
             var result = await _userManager.UpdateAsync(existingUser);
             return result.Succeeded;
+        }
+
+        public async Task<string> GetUserRole(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return null;
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return roles.FirstOrDefault();
+        }
+
+        public async Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName)
+        {
+            var users = await _userManager.GetUsersInRoleAsync(roleName);
+            return users.ToList();
+        }
+
+        public async Task<IdentityResult> CreateOrganizerAsync(ApplicationUser user, string password)
+        {
+            return await _userManager.CreateAsync(user, password);
+        }
+
+        public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
+        {
+            return await _userManager.AddToRoleAsync(user, role);
         }
     }
 }

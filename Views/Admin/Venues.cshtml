@@ -1,3 +1,5 @@
+@model IEnumerable<online_event_booking_system.Data.Entities.Venue>
+
 @{
     ViewData["Title"] = "Venues Management";
     Layout = "_DashboardLayout";
@@ -48,10 +50,10 @@
                         Outdoor
                     </button>
                     <button onclick="filterVenues('large')" class="venue-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Large (500+)
+                        Large
                     </button>
                     <button onclick="filterVenues('small')" class="venue-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Small (<100)
+                        Small
                     </button>
                 </div>
             </div>
@@ -59,188 +61,71 @@
 
         <!-- Venues Grid -->
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-8">
-            <!-- Venue Card 1 -->
-            <div class="venue-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-type="indoor" data-capacity="500">
-                <div class="h-48 bg-gradient-to-br from-purple-500/20 to-teal-500/20 relative">
-                    <div class="absolute top-3 right-3">
-                        <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Indoor</span>
-                    </div>
-                    <div class="absolute bottom-3 left-3">
-                        <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-2">Concert Hall</h3>
-                    <p class="text-gray-400 text-sm mb-4">Premium concert venue with excellent acoustics and modern facilities</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">123 Music Street, City</span>
+            @if (Model != null)
+            {
+                @foreach (var venue in Model)
+                {
+                    <div class="venue-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group">
+                        <div class="h-48 relative">
+                            @if (!string.IsNullOrEmpty(venue.Image))
+                            {
+                                <img src="@venue.Image" alt="@venue.Name" class="w-full h-full object-cover">
+                            }
+                            else
+                            {
+                                <div class="w-full h-full bg-gradient-to-br from-purple-500/20 to-teal-500/20 flex items-center justify-center text-gray-500">
+                                    No Image Available
+                                </div>
+                            }
+                            <div class="absolute top-3 right-3">
+                                <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">
+                                    @venue.Location
+                                </span>
+                            </div>
+                            <div class="absolute bottom-3 left-3">
+                                <span class="px-2 py-1 @(venue.IsActive ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400") rounded-full text-xs font-medium">
+                                    @(venue.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </div>
                         </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">500 Capacity</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span class="text-gray-300">$2,500/day</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-2">
-                        <button onclick="viewVenue(1)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
-                            View
-                        </button>
-                        <button onclick="editVenue(1)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
-                            Edit
-                        </button>
-                    </div>
-                </div>
-            </div>
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white mb-2">@venue.Name</h3>
+                            <p class="text-gray-400 text-sm mb-4">@venue.Description</p>
 
-            <!-- Venue Card 2 -->
-            <div class="venue-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-type="indoor" data-capacity="200">
-                <div class="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 relative">
-                    <div class="absolute top-3 right-3">
-                        <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Indoor</span>
-                    </div>
-                    <div class="absolute bottom-3 left-3">
-                        <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Booked</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-2">Expo Center</h3>
-                    <p class="text-gray-400 text-sm mb-4">Modern exhibition center perfect for conferences and trade shows</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">456 Business Ave, City</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">200 Capacity</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span class="text-gray-300">$1,800/day</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-2">
-                        <button onclick="viewVenue(2)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
-                            View
-                        </button>
-                        <button onclick="editVenue(2)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
-                            Edit
-                        </button>
-                    </div>
-                </div>
-            </div>
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                    </svg>
+                                    <span class="text-gray-300">@venue.Location</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-sm">
+                                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    <span class="text-gray-300">@venue.Capacity Capacity</span>
+                                </div>
+                            </div>
 
-            <!-- Venue Card 3 -->
-            <div class="venue-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-type="outdoor" data-capacity="1000">
-                <div class="h-48 bg-gradient-to-br from-green-500/20 to-emerald-500/20 relative">
-                    <div class="absolute top-3 right-3">
-                        <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Outdoor</span>
-                    </div>
-                    <div class="absolute bottom-3 left-3">
-                        <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-2">Sports Arena</h3>
-                    <p class="text-gray-400 text-sm mb-4">Large outdoor arena perfect for sports events and festivals</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">789 Sports Blvd, City</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">1,000 Capacity</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span class="text-gray-300">$3,500/day</span>
+                            <div class="flex space-x-2">
+                                <button onclick="viewVenue('@venue.Id')" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                                    View
+                                </button>
+                                <button onclick="editVenue('@venue.Id')" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
+                                    Edit
+                                </button>
+                                <button onclick="deleteVenue('@venue.Id')" class="flex-1 px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-lg hover:bg-red-500/30 transition-all duration-200 font-medium text-sm">
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="flex space-x-2">
-                        <button onclick="viewVenue(3)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
-                            View
-                        </button>
-                        <button onclick="editVenue(3)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
-                            Edit
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Venue Card 4 -->
-            <div class="venue-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-type="indoor" data-capacity="50">
-                <div class="h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/20 relative">
-                    <div class="absolute top-3 right-3">
-                        <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Indoor</span>
-                    </div>
-                    <div class="absolute bottom-3 left-3">
-                        <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-2">Gallery</h3>
-                    <p class="text-gray-400 text-sm mb-4">Intimate art gallery space perfect for exhibitions and small events</p>
-                    
-                    <div class="space-y-2 mb-4">
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">321 Art Street, City</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-                            </svg>
-                            <span class="text-gray-300">50 Capacity</span>
-                        </div>
-                        <div class="flex items-center space-x-2 text-sm">
-                            <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                            </svg>
-                            <span class="text-gray-300">$800/day</span>
-                        </div>
-                    </div>
-                    
-                    <div class="flex space-x-2">
-                        <button onclick="viewVenue(4)" class="flex-1 px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
-                            View
-                        </button>
-                        <button onclick="editVenue(4)" class="flex-1 px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
-                            Edit
-                        </button>
-                    </div>
-                </div>
+                }
+            }
+        </div>
+        <div class="flex items-center justify-between">
+            <div class="text-gray-400 text-sm">
+                Showing @(Model?.Count() ?? 0) venues
             </div>
         </div>
 
@@ -265,83 +150,64 @@
 </div>
 
 <!-- Create Venue Modal -->
-<div id="createVenueModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+<div id="venueModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6">
-            <h3 class="text-xl font-bold text-white">Create New Venue</h3>
-            <button onclick="closeCreateVenueModal()" class="text-gray-400 hover:text-white">
+            <h3 id="modalTitle" class="text-xl font-bold text-white">Create New Venue</h3>
+            <button onclick="closeVenueModal()" class="text-gray-400 hover:text-white">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
                 </svg>
             </button>
         </div>
-        
-        <form class="space-y-6">
+
+        <form id="venueForm" class="space-y-6">
+            <input type="hidden" id="venueId">
+
             <div>
-                <label for="venueName" class="block text-sm font-medium text-gray-300 mb-2">Venue Name</label>
-                <input type="text" id="venueName" name="venueName" required
+                <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Venue Name</label>
+                <input type="text" id="name" name="name" required
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
             </div>
-            
+
             <div>
-                <label for="venueDescription" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                <textarea id="venueDescription" name="venueDescription" rows="3" required
-                          class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                <label for="location" class="block text-sm font-medium text-gray-300 mb-2">Location</label>
+                <input type="text" id="location" name="location" required
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
             </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="venueCapacity" class="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
-                    <input type="number" id="venueCapacity" name="venueCapacity" required
+                    <label for="capacity" class="block text-sm font-medium text-gray-300 mb-2">Capacity</label>
+                    <input type="number" id="capacity" name="capacity" required
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
-                
+
                 <div>
-                    <label for="venuePrice" class="block text-sm font-medium text-gray-300 mb-2">Price per Day</label>
-                    <input type="number" id="venuePrice" name="venuePrice" required
+                    <label for="contactInfo" class="block text-sm font-medium text-gray-300 mb-2">Contact Info</label>
+                    <input type="text" id="contactInfo" name="contactInfo"
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                 </div>
             </div>
-            
+
             <div>
-                <label for="venueAddress" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
-                <textarea id="venueAddress" name="venueAddress" rows="2" required
+                <label for="description" class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                <textarea id="description" name="description" rows="3"
                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
             </div>
-            
+
             <div>
-                <label for="venueType" class="block text-sm font-medium text-gray-300 mb-2">Venue Type</label>
-                <select id="venueType" name="venueType" required
-                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <option value="">Select venue type</option>
-                    <option value="indoor">Indoor</option>
-                    <option value="outdoor">Outdoor</option>
-                    <option value="mixed">Mixed (Indoor/Outdoor)</option>
-                </select>
+                <label for="image" class="block text-sm font-medium text-gray-300 mb-2">Image URL</label>
+                <input type="url" id="image" name="image"
+                       class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
             </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                    <label for="venueAmenities" class="block text-sm font-medium text-gray-300 mb-2">Amenities</label>
-                    <textarea id="venueAmenities" name="venueAmenities" rows="3"
-                              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                              placeholder="Parking, WiFi, Sound System, etc."></textarea>
-                </div>
-                
-                <div>
-                    <label for="venueContact" class="block text-sm font-medium text-gray-300 mb-2">Contact Information</label>
-                    <textarea id="venueContact" name="venueContact" rows="3"
-                              class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                              placeholder="Phone, Email, Contact Person"></textarea>
-                </div>
-            </div>
-            
+
             <div class="flex justify-end space-x-4">
-                <button type="button" onclick="closeCreateVenueModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
+                <button type="button" onclick="closeVenueModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
                     Cancel
                 </button>
                 <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
-                    Create Venue
+                    <span id="submitButtonText">Create Venue</span>
                 </button>
             </div>
         </form>
@@ -462,15 +328,6 @@
         });
     });
 
-    // Modal functions
-    function openCreateVenueModal() {
-        document.getElementById('createVenueModal').classList.remove('hidden');
-    }
-
-    function closeCreateVenueModal() {
-        document.getElementById('createVenueModal').classList.add('hidden');
-    }
-
     function viewVenue(venueId) {
         // Mock venue data - replace with actual API call
         const venueData = {
@@ -529,21 +386,102 @@
             document.getElementById('venueModal').classList.remove('hidden');
         }
     }
+</script>
+<script>
+    // General modal functions
+    function openVenueModal(isEdit = false) {
+        document.getElementById('venueModal').classList.remove('hidden');
+        document.getElementById('modalTitle').textContent = isEdit ? 'Edit Venue' : 'Create New Venue';
+        document.getElementById('submitButtonText').textContent = isEdit ? 'Update Venue' : 'Create Venue';
+    }
 
     function closeVenueModal() {
         document.getElementById('venueModal').classList.add('hidden');
+        // Reset form
+        document.getElementById('venueForm').reset();
+        document.getElementById('venueId').value = '';
     }
 
-    function editVenue(venueId) {
-        // Redirect to edit page or open edit modal
-        window.location.href = `/Admin/EditVenue/${venueId}`;
+    // CRUD Operations
+    async function openCreateVenueModal() {
+        closeVenueModal();
+        openVenueModal();
     }
 
-    // Close modals on escape key
-    document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeCreateVenueModal();
-            closeVenueModal();
+    async function editVenue(id) {
+        try {
+            const response = await fetch(`/api/Venues/${id}`);
+            if (!response.ok) throw new Error('Venue not found');
+            const venue = await response.json();
+
+            document.getElementById('venueId').value = venue.id;
+            document.getElementById('name').value = venue.name;
+            document.getElementById('location').value = venue.location;
+            document.getElementById('capacity').value = venue.capacity;
+            document.getElementById('description').value = venue.description || '';
+            document.getElementById('image').value = venue.image || '';
+            document.getElementById('contactInfo').value = venue.contactInfo || '';
+
+            openVenueModal(true);
+        } catch (error) {
+            console.error('Error fetching venue for edit:', error);
+            alert('Failed to load venue data.');
+        }
+    }
+
+    async function deleteVenue(id) {
+        if (!confirm('Are you sure you want to delete this venue?')) return;
+
+        try {
+            const response = await fetch(`/api/Venues/${id}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Failed to delete venue.');
+            }
+        } catch (error) {
+            console.error('Error deleting venue:', error);
+            alert('An error occurred.');
+        }
+    }
+
+    document.getElementById('venueForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const id = document.getElementById('venueId').value;
+        const url = id ? `/api/Venues/${id}` : '/api/Venues';
+        const method = id ? 'PUT' : 'POST';
+
+        const venueData = {
+            name: document.getElementById('name').value,
+            location: document.getElementById('location').value,
+            capacity: parseInt(document.getElementById('capacity').value),
+            description: document.getElementById('description').value,
+            image: document.getElementById('image').value,
+            contactInfo: document.getElementById('contactInfo').value
+        };
+
+        try {
+            const response = await fetch(url, {
+                method: method,
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(venueData)
+            });
+
+            if (response.ok) {
+                closeVenueModal();
+                window.location.reload();
+            } else {
+                const error = await response.text();
+                alert(`Operation failed: ${error}`);
+            }
+        } catch (error) {
+            console.error('Submission error:', error);
+            alert('An error occurred. Please try again.');
         }
     });
 </script>

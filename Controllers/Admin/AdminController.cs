@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Models.View_Models;
 
 namespace online_event_booking_system.Controllers.Admin
 {
@@ -11,11 +13,13 @@ namespace online_event_booking_system.Controllers.Admin
     {
         private readonly IAdminService _adminService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IVenueService _venueService;
 
-        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager)
+        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService)
         {
             _adminService = adminService;
             _userManager = userManager;
+            _venueService = venueService;
         }
 
         [HttpGet("admin")]
@@ -28,7 +32,6 @@ namespace online_event_booking_system.Controllers.Admin
             }
             catch (Exception ex)
             {
-                // Log the exception
                 return View(new List<ApplicationUser>());
             }
         }
@@ -68,7 +71,6 @@ namespace online_event_booking_system.Controllers.Admin
         {
             if (ModelState.IsValid)
             {
-                // Validate required fields
                 if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName) || string.IsNullOrEmpty(password))
                 {
                     ModelState.AddModelError(string.Empty, "Email, Username, and Password are required.");
@@ -97,38 +99,22 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
         // GET: Admin/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        [HttpGet]
+        public async Task<IActionResult> LoadEditOrganizerModal(string id)
         {
-            if (string.IsNullOrEmpty(id))
+            var user = await _adminService.GetUserById(id);
+            if (user == null)
             {
                 return NotFound();
             }
-            
-            try
-            {
-                var user = await _adminService.GetUserById(id);
-                if (user == null)
-                {
-                    return NotFound();
-                }
-                return View(user);
-            }
-            catch
-            {
-                return NotFound();
-            }
+            return PartialView("_EditOrganizerModal", user);
         }
 
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, ApplicationUser user)
+        public async Task<IActionResult> EditOrganizer(ApplicationUser user)
         {
-            if (id != user.Id)
-            {
-                return NotFound();
-            }
-            
             if (ModelState.IsValid)
             {
                 // Validate required fields
@@ -182,32 +168,29 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> ToggleStatus(string id)
-        //{
-        //    var result = await _adminService.ToggleUserStatus(id);
-        //    if (!result)
-        //    {
-        //        return NotFound();
-        //    }
-        //    return RedirectToAction(nameof(Index));
-        //}
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ToggleStatus(string id)
+        {
+            var result = await _adminService.ToggleUserStatus(id);
+            if (!result)
+            {
+                return NotFound();
+            }
+            return RedirectToAction(nameof(Index));
+        }
 
-
-        // Users Management
         [HttpGet("admin/users")]
         public async Task<IActionResult> Users()
         {
             try
             {
-                var users = await _adminService.GetAllUsers();
+                var users = await _adminService.GetAllUsersWithRoles();
                 return View(users);
             }
             catch (Exception ex)
             {
-                // Log the exception
-                return View(new List<ApplicationUser>());
+                return View(new List<UserWithRoleViewModel>());
             }
         }
 
@@ -218,16 +201,17 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
         [HttpGet("admin/organizers")]
-        public IActionResult Organizers()
+        public async Task<IActionResult> Organizers()
         {
-            return View();
+            var organizers = await _adminService.GetUsersByRole("Organizer");
+            return View("Organizers", organizers);
         }
 
-
         [HttpGet("admin/venues")]
-        public IActionResult Venues()
+        public async Task<IActionResult> Venues()
         {
-            return View();
+            var venues = await _venueService.GetAllVenuesAsync();
+            return View(venues);
         }
 
         [HttpGet("admin/reports")]
@@ -240,6 +224,49 @@ namespace online_event_booking_system.Controllers.Admin
         public IActionResult Settings()
         {
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var userWithRole = await _adminService.GetUserWithRoleById(id);
+            if (userWithRole == null)
+            {
+                return NotFound();
+            }
+            return Json(userWithRole);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateOrganizer(ApplicationUser model)
+        {
+            if (ModelState.IsValid)
+            {
+                var (success, errors) = await _adminService.CreateOrganizer(model);
+                if (success)
+                {
+                    TempData["SuccessMessage"] = "Organizer created successfully!";
+                    return RedirectToAction(nameof(Organizers));
+                }
+
+                foreach (var error in errors)
+                {
+                    ModelState.AddModelError(string.Empty, error.Description);
+                }
+            }
+            return RedirectToAction(nameof(Organizers));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetOrganizerData(string id)
+        {
+            var user = await _adminService.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            return Json(user);
         }
     }
 }
