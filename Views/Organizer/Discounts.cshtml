@@ -356,10 +356,13 @@
                 <form id="editDiscountForm" method="post" class="space-y-6">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="editDiscountId" name="id" />
+                    @* Validation summary for server-side errors when returning the Discounts view *@
+                    <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-2"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Code</label>
                             <input type="text" id="editCode" name="Code" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <span asp-validation-for="Code" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Type</label>
@@ -367,6 +370,7 @@
                                 <option value="1">Percentage</option>
                                 <option value="2">Fixed Amount</option>
                             </select>
+                            <span asp-validation-for="Type" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Value</label>
@@ -374,6 +378,7 @@
                                 <input type="number" id="editValue" name="Value" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
                                 <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="editValueSuffix">%</span>
                             </div>
+                            <span asp-validation-for="Value" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Event</label>
@@ -384,10 +389,12 @@
                                     <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
                                 }
                             </select>
+                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Usage Limit</label>
                             <input type="number" id="editLimit" name="UsageLimit" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                            <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
@@ -397,6 +404,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
                         <textarea rows="3" id="editDescription" name="Description" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-400 text-xs mt-1 block"></span>
                     </div>
                     <div class="flex items-center space-x-3">
                         <input type="checkbox" id="editIsActive" name="IsActive" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
@@ -497,8 +505,8 @@
                         }
 
                         var modal = document.getElementById('editDiscountModal');
-                        if (modal) {
-                            // set form action to edit POST endpoint
+                        // Only open the modal if it's hidden to avoid reopening after a redirect
+                        if (modal && modal.classList.contains('hidden')) {
                             var editFormEl = document.getElementById('editDiscountForm');
                             if (editFormEl) {
                                 var editBase = '@Url.Action("EditDiscount", "Organizer", new { id = "__ID__" })';
@@ -663,17 +671,19 @@
 
         
         function openEditModal(discountId) {
-            console.log('Opening edit modal for discount ID:', discountId);
-            
-            const modal = document.getElementById('editDiscountModal');
-            if (modal) {
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-            }
+            // Clear previous values before fetching new data
+            document.getElementById('editDiscountId').value = '';
+            document.getElementById('editCode').value = '';
+            document.getElementById('editType').value = '1';
+            document.getElementById('editValue').value = '';
+            document.getElementById('editLimit').value = '';
+            document.getElementById('editExpiry').value = '';
+            document.getElementById('editDescription').value = '';
+            document.getElementById('editIsActive').checked = false;
+            var eventSelect = document.getElementById('editEvent');
+            if (eventSelect) eventSelect.value = '';
 
-
-            document.getElementById('editDiscountId').value = discountId;
-            // set form action to include id so normal form POST works with antiforgery token
+            // Set up form action
             const editFormEl = document.getElementById('editDiscountForm');
             if (editFormEl) {
                 const editBase = '@Url.Action("EditDiscount", "Organizer", new { id = "__ID__" })';
@@ -682,18 +692,10 @@
 
             const baseUrl = '@Url.Action("GetDiscountData", "Organizer", new { id = "__ID__" })';
             const url = baseUrl.replace('__ID__', discountId);
-            console.log('Fetching from URL:', url);
 
             fetch(url)
-                .then(response => {
-                    console.log('Response status:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`HTTP error! status: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    console.log('Received data:', data);
                     if (data && data.success) {
                         const raw = data.data || data;
 
@@ -702,58 +704,38 @@
                             return obj[pascal] !== undefined ? obj[pascal] : obj[camel];
                         };
 
-                        const discount = {
-                            Code: get(raw, 'Code') || '',
-                            Type: get(raw, 'Type') !== undefined ? get(raw, 'Type') : 1,
-                            Value: get(raw, 'Value') !== undefined ? get(raw, 'Value') : '',
-                            UsageLimit: get(raw, 'UsageLimit') !== undefined ? get(raw, 'UsageLimit') : '',
-                            ExpiryDate: get(raw, 'ExpiryDate') || get(raw, 'expiryDate') || null,
-                            Description: get(raw, 'Description') || '',
-                            IsActive: get(raw, 'IsActive') !== undefined ? get(raw, 'IsActive') : false,
-                            EventId: get(raw, 'EventId') || get(raw, 'eventId') || ''
-                        };
-
-                        console.log('Normalized discount data:', discount);
-
-                        document.getElementById('editCode').value = discount.Code;
-                        document.getElementById('editType').value = String(discount.Type);
-                        document.getElementById('editValue').value = discount.Value;
-                        document.getElementById('editLimit').value = discount.UsageLimit;
-
-                        if (discount.ExpiryDate) {
-                            const date = new Date(discount.ExpiryDate);
+                        document.getElementById('editDiscountId').value = discountId;
+                        document.getElementById('editCode').value = get(raw, 'Code') || '';
+                        document.getElementById('editType').value = String(get(raw, 'Type') !== undefined ? get(raw, 'Type') : 1);
+                        document.getElementById('editValue').value = get(raw, 'Value') !== undefined ? get(raw, 'Value') : '';
+                        document.getElementById('editLimit').value = get(raw, 'UsageLimit') !== undefined ? get(raw, 'UsageLimit') : '';
+                        if (get(raw, 'ExpiryDate')) {
+                            const date = new Date(get(raw, 'ExpiryDate'));
                             if (!isNaN(date)) {
                                 document.getElementById('editExpiry').value = date.toISOString().split('T')[0];
-                            } else {
-                                document.getElementById('editExpiry').value = '';
                             }
-                        } else {
-                            document.getElementById('editExpiry').value = '';
                         }
-
-                        document.getElementById('editDescription').value = discount.Description;
-                        document.getElementById('editIsActive').checked = !!discount.IsActive;
-
-                        const eventSelect = document.getElementById('editEvent');
-                        if (eventSelect) eventSelect.value = discount.EventId || '';
+                        document.getElementById('editDescription').value = get(raw, 'Description') || '';
+                        document.getElementById('editIsActive').checked = !!get(raw, 'IsActive');
+                        if (eventSelect) eventSelect.value = get(raw, 'EventId') || '';
 
                         const editValueSuffix = document.getElementById('editValueSuffix');
                         if (editValueSuffix) {
-                            const t = Number(discount.Type);
+                            const t = Number(get(raw, 'Type'));
                             editValueSuffix.textContent = t === 2 ? '$' : '%';
                         }
 
-                        console.log('Form populated successfully');
+                        const modal = document.getElementById('editDiscountModal');
+                        if (modal) {
+                            modal.classList.remove('hidden');
+                            document.body.style.overflow = 'hidden';
+                        }
                     } else {
-                        console.error('Error from server:', data && data.message ? data.message : data);
                         alert('Error loading discount data: ' + (data && data.message ? data.message : 'Unknown error'));
-                        closeEditModal();
                     }
                 })
                 .catch(error => {
-                    console.error('Fetch error:', error);
                     alert('Error loading discount data. Please try again.');
-                    closeEditModal();
                 });
         }
 

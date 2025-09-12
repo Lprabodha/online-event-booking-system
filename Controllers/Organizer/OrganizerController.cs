@@ -77,15 +77,8 @@ namespace online_event_booking_system.Controllers.Organizer
         {
             var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            // Debug logging
-            Console.WriteLine($"CreateDiscount called with EventId: {model.EventId}");
-            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
-            Console.WriteLine($"Request.Form keys: {string.Join(", ", Request.Form.Keys)}");
-            Console.WriteLine($"EventId from form: {Request.Form["EventId"]}");
-            
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("Model state is invalid:");
                 foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
                 {
                     Console.WriteLine($"Error: {error.ErrorMessage}");
@@ -94,25 +87,21 @@ namespace online_event_booking_system.Controllers.Organizer
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
                 var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
                 ViewBag.Discounts = discounts;
-                // Keep create modal open so user can correct validation errors
                 ViewData["OpenCreateModal"] = true;
                 return View("Discounts", model);
             }
 
-            // Validate event selection
             if (!model.EventId.HasValue)
             {
                 ModelState.AddModelError("EventId", "Please select an event.");
             }
 
-            // Check if discount code already exists
             var existingDiscount = await _discountService.GetDiscountByCodeAsync(model.Code);
             if (existingDiscount != null)
             {
                 ModelState.AddModelError("Code", "This discount code already exists.");
             }
 
-            // Check if event already has a discount (each event may have only one discount)
             if (model.EventId.HasValue)
             {
                 var discountForEvent = await _discountService.GetDiscountByEventIdAsync(model.EventId.Value);
@@ -122,13 +111,11 @@ namespace online_event_booking_system.Controllers.Organizer
                 }
             }
 
-            // If there are validation errors, return to view
             if (!ModelState.IsValid)
             {
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
                 var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
                 ViewBag.Discounts = discounts;
-                // Keep create modal open so user can correct validation errors
                 ViewData["OpenCreateModal"] = true;
                 return View("Discounts", model);
             }
@@ -166,6 +153,7 @@ namespace online_event_booking_system.Controllers.Organizer
                 EventId = discount.EventId,
                 UsageLimit = discount.UsageLimit,
                 ExpiryDate = discount.ValidTo,
+            
                 Description = discount.Description,
                 IsActive = discount.IsActive,
                 AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList()
@@ -180,12 +168,6 @@ namespace online_event_booking_system.Controllers.Organizer
         {
             var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             
-            // Debug logging
-            Console.WriteLine($"EditDiscount called with ID: {id}, EventId: {model.EventId}");
-            Console.WriteLine($"ModelState.IsValid: {ModelState.IsValid}");
-            Console.WriteLine($"Request.Form keys: {string.Join(", ", Request.Form.Keys)}");
-            Console.WriteLine($"EventId from form: {Request.Form["EventId"]}");
-            
             if (!ModelState.IsValid)
             {
                 Console.WriteLine("Model state is invalid:");
@@ -197,12 +179,10 @@ namespace online_event_booking_system.Controllers.Organizer
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
                 var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
                 ViewBag.Discounts = discounts;
-                // Keep edit modal open and pass id so view can populate fields and show validation errors
                 ViewData["OpenEditModal"] = id.ToString();
                 return View("Discounts", model);
             }
 
-            // Validate event selection
             if (!model.EventId.HasValue)
             {
                 ModelState.AddModelError("EventId", "Please select an event.");
@@ -214,7 +194,6 @@ namespace online_event_booking_system.Controllers.Organizer
                 ModelState.AddModelError("Code", "This discount code already exists.");
             }
 
-            // Enforce one discount per event on edit: if another discount exists for the selected event, block it
             if (model.EventId.HasValue)
             {
                 var discountForEvent = await _discountService.GetDiscountByEventIdAsync(model.EventId.Value);
@@ -224,11 +203,13 @@ namespace online_event_booking_system.Controllers.Organizer
                 }
             }
 
-            // If there are validation errors, return to view
             if (!ModelState.IsValid)
             {
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
-                return View(model);
+                var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+                ViewBag.Discounts = discounts;
+                ViewData["OpenEditModal"] = id.ToString();
+                return View("Discounts", model);
             }
 
             try
