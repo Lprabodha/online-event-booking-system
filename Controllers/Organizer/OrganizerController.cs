@@ -133,34 +133,6 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Discounts");
         }
 
-        [HttpGet("organizer/discounts/edit/{id}")]
-        public async Task<IActionResult> EditDiscount(Guid id)
-        {
-            var organizerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var discount = await _discountService.GetDiscountByIdAsync(id);
-            
-            if (discount == null)
-            {
-                TempData["ErrorMessage"] = "Discount not found or you don't have permission to edit it.";
-                return RedirectToAction("Discounts");
-            }
-
-            var model = new DiscountViewModel
-            {
-                Code = discount.Code,
-                Type = discount.Type == "Percent" ? DiscountType.Percentage : DiscountType.FixedAmount,
-                Value = discount.Value,
-                EventId = discount.EventId,
-                UsageLimit = discount.UsageLimit,
-                ExpiryDate = discount.ValidTo,
-            
-                Description = discount.Description,
-                IsActive = discount.IsActive,
-                AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList()
-            };
-
-            return View(model);
-        }
 
         [HttpPost("organizer/discounts/edit/{id}")]
         [ValidateAntiForgeryToken]
