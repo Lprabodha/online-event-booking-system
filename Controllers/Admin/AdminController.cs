@@ -107,39 +107,69 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 return NotFound();
             }
-            return PartialView("_EditOrganizerModal", user);
+
+            // Convert ApplicationUser to OrganizerViewModel
+            var model = new OrganizerViewModel
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                PhoneNumber = user.ContactNumber,
+                NIC = user.NIC ?? string.Empty,
+                OrganizationName = user.OrganizationName ?? string.Empty,
+                Address = user.Address ?? string.Empty,
+                IsActive = user.IsActive
+            };
+
+            return PartialView("_EditOrganizerModal", model);
         }
 
         // POST: Admin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditOrganizer(ApplicationUser user)
+        public async Task<IActionResult> EditOrganizer(OrganizerViewModel model)
         {
-            if (ModelState.IsValid)
+            Console.WriteLine("EditOrganizer method called");
+            if (!ModelState.IsValid)
             {
-                // Validate required fields
-                if (string.IsNullOrEmpty(user.Email) || string.IsNullOrEmpty(user.UserName))
+                Console.WriteLine("ModelState is not valid");
+                TempData["ErrorMessage"] = "Please correct the validation errors and try again.";
+                return RedirectToAction("Organizers", "Admin");
+            }
+
+            try
+            {
+                // Get existing user
+                var existingUser = await _adminService.GetUserById(model.Id);
+                if (existingUser == null)
                 {
-                    ModelState.AddModelError(string.Empty, "Email and Username are required.");
-                    return View(user);
+                    TempData["ErrorMessage"] = "Organizer not found.";
+                    return RedirectToAction("Organizers", "Admin");
                 }
 
-                try
+                // Update user properties
+                existingUser.FullName = model.FullName;
+                existingUser.ContactNumber = model.PhoneNumber;
+                existingUser.OrganizationName = model.OrganizationName;
+                existingUser.Address = model.Address;
+                existingUser.IsActive = model.IsActive;
+
+                var result = await _adminService.UpdateUser(existingUser);
+                if (result)
                 {
-                    var result = await _adminService.UpdateUser(user);
-                    if (result)
-                    {
-                        TempData["SuccessMessage"] = "User updated successfully.";
-                        return RedirectToAction(nameof(Index));
-                    }
-                    ModelState.AddModelError(string.Empty, "Failed to update user.");
+                    Console.WriteLine("Organizer updated successfully, redirecting...");
+                    TempData["SuccessMessage"] = "Organizer updated successfully!";
+                    return RedirectToAction("Organizers", "Admin");
                 }
-                catch (Exception ex)
-                {
-                    ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
-                }
+                
+                TempData["ErrorMessage"] = "Failed to update organizer. Please try again.";
             }
-            return View(user);
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while updating the organizer: {ex.Message}";
+            }
+
+            return RedirectToAction("Organizers", "Admin");
         }
 
         // POST: Admin/Delete/5
@@ -239,23 +269,54 @@ namespace online_event_booking_system.Controllers.Admin
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateOrganizer(ApplicationUser model)
+        public async Task<IActionResult> CreateOrganizer(OrganizerViewModel model)
         {
-            if (ModelState.IsValid)
+            Console.WriteLine("CreateOrganizer method called");
+            if (!ModelState.IsValid)
             {
-                var (success, errors) = await _adminService.CreateOrganizer(model);
+                Console.WriteLine("ModelState is not valid");
+                TempData["ErrorMessage"] = "Please correct the validation errors and try again.";
+                return RedirectToAction("Organizers", "Admin");
+            }
+
+            try
+            {
+                // Convert ViewModel to ApplicationUser
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FullName = model.FullName,
+                    PhoneNumber = model.PhoneNumber,
+                    ContactNumber = model.PhoneNumber,
+                    NIC = model.NIC,
+                    Address = model.Address,
+                    OrganizationName = model.OrganizationName,
+                    IsActive = model.IsActive
+                };
+
+                var (success, errors) = await _adminService.CreateOrganizer(user);
                 if (success)
                 {
-                    TempData["SuccessMessage"] = "Organizer created successfully!";
-                    return RedirectToAction(nameof(Organizers));
+                    Console.WriteLine("Organizer created successfully, redirecting...");
+                    TempData["SuccessMessage"] = "Organizer created successfully! An email with login credentials has been sent to the organizer.";
+                    return RedirectToAction("Organizers", "Admin");
                 }
 
-                foreach (var error in errors)
+                // Add validation errors to ModelState
+                foreach (var error in errors ?? Enumerable.Empty<IdentityError>())
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                
+                TempData["ErrorMessage"] = "Failed to create organizer. Please check the information and try again.";
             }
-            return RedirectToAction(nameof(Organizers));
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = $"An error occurred while creating the organizer: {ex.Message}";
+            }
+
+            return RedirectToAction("Organizers", "Admin");
         }
 
         [HttpGet]

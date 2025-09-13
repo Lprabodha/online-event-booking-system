@@ -6,12 +6,34 @@
     Layout = "_DashboardLayout";
 }
 
-<!-- Organizers Management Page -->
 <div class="min-h-screen bg-dark-navy text-white pt-20">
-        <!-- Main Content -->
     <div class="p-4 md:p-6">
 
-            <!-- Page Header -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    @TempData["SuccessMessage"]
+                </div>
+            </div>
+        }
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                    @TempData["ErrorMessage"]
+                </div>
+            </div>
+        }
+
+        <!-- Page Header -->
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
                 <div>
                     <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Organizers Management</h1>
@@ -156,54 +178,62 @@
             </button>
         </div>
         
-        <form asp-controller="Admin" asp-action="CreateOrganizer" method="post" class="space-y-6">
+        <form asp-controller="Admin" asp-action="CreateOrganizer" method="post" class="space-y-6" id="createOrganizerForm">
             @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4"></div>
+            
             <div>
-                <label for="fullName" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                <input type="text" id="fullName" name="FullName" required
+                <label asp-for="FullName" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="FullName" 
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="FullName" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
-                <input type="email" id="email" name="Email" required
+                <label asp-for="Email" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="Email" 
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="Email" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="nic" class="block text-sm font-medium text-gray-300 mb-2">NIC Number</label>
-                <input type="text" id="nic" name="NIC" required
+                <label asp-for="NIC" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="NIC" 
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="NIC" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="phone" class="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
-                <input type="tel" id="phone" name="PhoneNumber" required
+                <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="PhoneNumber" 
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="PhoneNumber" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="organization" class="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
-                <input type="text" id="organization" name="OrganizationName" required
+                <label asp-for="OrganizationName" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="OrganizationName" 
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="OrganizationName" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
-                <textarea id="address" name="Address" rows="3" required
+                <label asp-for="Address" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <textarea asp-for="Address" rows="3"
                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                <span asp-validation-for="Address" class="text-red-400 text-sm"></span>
             </div>
 
             <div class="flex items-center space-x-3">
-                <input type="checkbox" id="verified" name="IsVerified" value="true" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
-                <label for="verified" class="text-sm text-gray-300">Mark as verified organizer</label>
+                <input asp-for="IsVerified" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                <label asp-for="IsVerified" class="text-sm text-gray-300"></label>
             </div>
 
             <div class="flex justify-end space-x-4">
                 <button type="button" onclick="closeCreateOrganizerModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
                     Cancel
                 </button>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200" onclick="submitCreateForm()">
                     Create Organizer
                 </button>
             </div>
@@ -243,6 +273,8 @@
             .then(html => {
                 document.getElementById('editOrganizerModalContainer').innerHTML = html;
                 document.getElementById('editOrganizerModal').classList.remove('hidden');
+                
+                // Edit form will submit normally
             })
             .catch(error => {
                 console.error('Error loading edit modal:', error);
@@ -344,10 +376,53 @@
 
     function openCreateOrganizerModal() {
         document.getElementById('createOrganizerModal').classList.remove('hidden');
+        // Clear any previous validation errors
+        clearValidationErrors();
     }
 
     function closeCreateOrganizerModal() {
         document.getElementById('createOrganizerModal').classList.add('hidden');
+        // Clear form and validation errors
+        document.querySelector('#createOrganizerModal form').reset();
+        clearValidationErrors();
+    }
+
+    function clearValidationErrors() {
+        // Clear validation summary
+        const validationSummary = document.querySelector('.validation-summary-errors');
+        if (validationSummary) {
+            validationSummary.innerHTML = '';
+        }
+        
+        // Clear field validation errors
+        const fieldErrors = document.querySelectorAll('.field-validation-error');
+        fieldErrors.forEach(error => {
+            error.textContent = '';
+        });
+        
+        // Remove validation error classes
+        const inputs = document.querySelectorAll('input, textarea');
+        inputs.forEach(input => {
+            input.classList.remove('input-validation-error');
+        });
+    }
+
+    function submitCreateForm() {
+        console.log('Submit create form clicked');
+        const form = document.getElementById('createOrganizerForm');
+        if (form) {
+            console.log('Submitting create form...');
+            form.submit();
+        }
+    }
+
+    function submitEditForm() {
+        console.log('Submit edit form clicked');
+        const form = document.getElementById('editOrganizerForm');
+        if (form) {
+            console.log('Submitting edit form...');
+            form.submit();
+        }
     }
 
         function viewOrganizer(userId) {
@@ -426,4 +501,32 @@
             closeOrganizerModal();
         }
     });
+
+    // Auto-dismiss success/error messages after 5 seconds
+    document.addEventListener('DOMContentLoaded', function() {
+        const successMessage = document.querySelector('.bg-green-500\\/20');
+        const errorMessage = document.querySelector('.bg-red-500\\/20');
+        
+        if (successMessage) {
+            setTimeout(() => {
+                successMessage.style.transition = 'opacity 0.5s ease-out';
+                successMessage.style.opacity = '0';
+                setTimeout(() => successMessage.remove(), 500);
+            }, 5000);
+        }
+        
+        if (errorMessage) {
+            setTimeout(() => {
+                errorMessage.style.transition = 'opacity 0.5s ease-out';
+                errorMessage.style.opacity = '0';
+                setTimeout(() => errorMessage.remove(), 500);
+            }, 5000);
+        }
+
+        // Forms will submit normally - no need for special handling
+    });
 </script>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

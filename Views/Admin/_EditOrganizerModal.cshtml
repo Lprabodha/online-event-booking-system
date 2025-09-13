@@ -1,4 +1,4 @@
-﻿@model online_event_booking_system.Data.Entities.ApplicationUser
+﻿@model online_event_booking_system.Models.View_Models.OrganizerViewModel
 
 <div id="editOrganizerModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
@@ -11,51 +11,53 @@
             </button>
         </div>
 
-        <form asp-controller="Admin" asp-action="EditOrganizer" method="post" class="space-y-6">
+        <form asp-controller="Admin" asp-action="EditOrganizer" method="post" class="space-y-6" id="editOrganizerForm">
             @Html.AntiForgeryToken()
+            <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4"></div>
+            
             <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="UserName" />
             <input type="hidden" asp-for="Email" />
-            <input type="hidden" asp-for="IsActive" />
-            <input type="hidden" asp-for="Tickets" />
-            <input type="hidden" asp-for="Payments" />
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label for="fullName" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                    <input type="text" asp-for="FullName" required
+                    <label asp-for="FullName" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                    <input asp-for="FullName"
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <span asp-validation-for="FullName" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div>
-                    <label for="contactNumber" class="block text-sm font-medium text-gray-300 mb-2">Contact Number</label>
-                    <input type="tel" asp-for="ContactNumber" required
+                    <label asp-for="PhoneNumber" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                    <input asp-for="PhoneNumber"
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <span asp-validation-for="PhoneNumber" class="text-red-400 text-sm"></span>
                 </div>
             </div>
 
             <div>
-                <label for="organizationName" class="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
-                <input type="text" asp-for="OrganizationName"
+                <label asp-for="OrganizationName" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                <input asp-for="OrganizationName"
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="OrganizationName" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
-                <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
+                <label asp-for="Address" class="block text-sm font-medium text-gray-300 mb-2"></label>
                 <textarea asp-for="Address" rows="3"
                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                <span asp-validation-for="Address" class="text-red-400 text-sm"></span>
             </div>
 
-            @* <div class="flex items-center space-x-3">
-                <input type="checkbox" asp-for="IsVerified" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
-                <label asp-for="IsVerified" class="text-sm text-gray-300">Mark as verified organizer</label>
-            </div> *@
+            <div class="flex items-center space-x-3">
+                <input asp-for="IsActive" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500">
+                <label asp-for="IsActive" class="text-sm text-gray-300">Mark as active organizer</label>
+            </div>
 
             <div class="flex justify-end space-x-4">
                 <button type="button" onclick="closeEditOrganizerModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
                     Cancel
                 </button>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200" onclick="submitEditForm()">
                     Update Organizer
                 </button>
             </div>
