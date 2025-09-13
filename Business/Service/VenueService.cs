@@ -25,14 +25,29 @@ public class VenueService : IVenueService
 
     public async Task<Venue> CreateVenueAsync(Venue model)
     {
+        // Additional business validation
+        if (string.IsNullOrWhiteSpace(model.Name))
+            throw new ArgumentException("Venue name cannot be empty");
+        
+        if (string.IsNullOrWhiteSpace(model.Location))
+            throw new ArgumentException("Location cannot be empty");
+        
+        if (model.Capacity <= 0)
+            throw new ArgumentException("Capacity must be greater than 0");
+
+        // Check for duplicate venue names
+        var existingVenues = await _venueRepository.GetAllAsync();
+        if (existingVenues.Any(v => v.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase)))
+            throw new InvalidOperationException("A venue with this name already exists");
+
         var venue = new Venue
         {
-            Name = model.Name,
-            Location = model.Location,
+            Name = model.Name.Trim(),
+            Location = model.Location.Trim(),
             Capacity = model.Capacity,
-            Description = model.Description,
-            ContactInfo = model.ContactInfo,
-            Image = model.Image // Assuming this is a URL or file path
+            Description = model.Description?.Trim(),
+            ContactInfo = model.ContactInfo?.Trim(),
+            Image = model.Image?.Trim()
         };
         return await _venueRepository.AddAsync(venue);
     }
@@ -45,12 +60,27 @@ public class VenueService : IVenueService
             return null;
         }
 
-        venue.Name = model.Name;
-        venue.Location = model.Location;
+        // Additional business validation
+        if (string.IsNullOrWhiteSpace(model.Name))
+            throw new ArgumentException("Venue name cannot be empty");
+        
+        if (string.IsNullOrWhiteSpace(model.Location))
+            throw new ArgumentException("Location cannot be empty");
+        
+        if (model.Capacity <= 0)
+            throw new ArgumentException("Capacity must be greater than 0");
+
+        // Check for duplicate venue names (excluding current venue)
+        var existingVenues = await _venueRepository.GetAllAsync();
+        if (existingVenues.Any(v => v.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase) && v.Id != id))
+            throw new InvalidOperationException("A venue with this name already exists");
+
+        venue.Name = model.Name.Trim();
+        venue.Location = model.Location.Trim();
         venue.Capacity = model.Capacity;
-        venue.Description = model.Description;
-        venue.ContactInfo = model.ContactInfo;
-        venue.Image = model.Image;
+        venue.Description = model.Description?.Trim();
+        venue.ContactInfo = model.ContactInfo?.Trim();
+        venue.Image = model.Image?.Trim();
         venue.UpdatedAt = DateTime.UtcNow;
 
         return await _venueRepository.UpdateAsync(venue);

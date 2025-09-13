@@ -310,12 +310,192 @@ namespace online_event_booking_system.Controllers.Admin
         /// <summary>
         /// Admin venues management page
         /// </summary>
+        /// <param name="page">Page number</param>
+        /// <param name="pageSize">Number of items per page</param>
         /// <returns></returns>
         [HttpGet("admin/venues")]
-        public async Task<IActionResult> Venues()
+        public async Task<IActionResult> Venues(int page = 1, int pageSize = 6)
         {
-            var venues = await _venueService.GetAllVenuesAsync();
-            return View(venues);
+            try
+            {
+                var allVenues = await _venueService.GetAllVenuesAsync();
+                var venuesList = allVenues.ToList();
+                
+                // Calculate pagination
+                var totalItems = venuesList.Count;
+                var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                var skip = (page - 1) * pageSize;
+                var paginatedVenues = venuesList.Skip(skip).Take(pageSize).ToList();
+                
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalItems = totalItems;
+                ViewBag.StartItem = skip + 1;
+                ViewBag.EndItem = Math.Min(skip + pageSize, totalItems);
+                
+                return View(paginatedVenues);
+            }
+            catch (Exception ex)
+            {
+                return View(new List<Venue>());
+            }
+        }
+
+        /// <summary>
+        /// Create a new venue
+        /// </summary>
+        /// <param name="venue"></param>
+        /// <returns></returns>
+        [HttpPost("admin/venues/create")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateVenue(Venue venue)
+        {
+            // For create operation, ensure Id is set to new Guid
+            venue.Id = Guid.NewGuid();
+
+            // Handle empty capacity field
+            if (string.IsNullOrEmpty(Request.Form["Capacity"]) || !int.TryParse(Request.Form["Capacity"], out int capacity))
+            {
+                ModelState.AddModelError("Capacity", "Capacity is required and must be a valid number.");
+            }
+            else
+            {
+                venue.Capacity = capacity;
+            }
+
+            // Clear any existing capacity and id errors and re-validate
+            ModelState.Remove("Capacity");
+            ModelState.Remove("Id");
+            TryValidateModel(venue);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var createdVenue = await _venueService.CreateVenueAsync(venue);
+                    TempData["SuccessMessage"] = "Venue created successfully!";
+                    return RedirectToAction(nameof(Venues));
+                }
+                catch (ArgumentException ex)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "An error occurred while creating the venue. Please try again.";
+                }
+            }
+            else
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                TempData["ErrorMessage"] = "Validation failed: " + string.Join(", ", errors);
+            }
+
+            return RedirectToAction(nameof(Venues));
+        }
+
+        /// <summary>
+        /// Update an existing venue
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="venue"></param>
+        /// <returns></returns>
+        [HttpPost("admin/venues/edit/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditVenue(Guid id, Venue venue)
+        {
+            // For edit operation, set the Id from the route parameter
+            venue.Id = id;
+
+            // Handle empty capacity field
+            if (string.IsNullOrEmpty(Request.Form["Capacity"]) || !int.TryParse(Request.Form["Capacity"], out int capacity))
+            {
+                ModelState.AddModelError("Capacity", "Capacity is required and must be a valid number.");
+            }
+            else
+            {
+                venue.Capacity = capacity;
+            }
+
+            // Clear any existing capacity and id errors and re-validate
+            ModelState.Remove("Capacity");
+            ModelState.Remove("Id");
+            TryValidateModel(venue);
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    var updatedVenue = await _venueService.UpdateVenueAsync(id, venue);
+                    if (updatedVenue != null)
+                    {
+                        TempData["SuccessMessage"] = "Venue updated successfully!";
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "Venue not found.";
+                    }
+                }
+                catch (ArgumentException ex)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
+                catch (InvalidOperationException ex)
+                {
+                    TempData["ErrorMessage"] = ex.Message;
+                }
+                catch (Exception ex)
+                {
+                    TempData["ErrorMessage"] = "An error occurred while updating the venue. Please try again.";
+                }
+            }
+            else
+            {
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                TempData["ErrorMessage"] = "Validation failed: " + string.Join(", ", errors);
+            }
+
+            return RedirectToAction(nameof(Venues));
+        }
+
+        /// <summary>
+        /// Delete a venue
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost("admin/venues/delete/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVenue(Guid id)
+        {
+            try
+            {
+                var result = await _venueService.DeleteVenueAsync(id);
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Venue deleted successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Venue not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "An error occurred while deleting the venue. Please try again.";
+            }
+
+            return RedirectToAction(nameof(Venues));
         }
 
         [HttpGet("admin/reports")]
