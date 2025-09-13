@@ -123,8 +123,8 @@ jobs:
       - name: Build solution
         run: dotnet build --no-restore --configuration Release --verbosity normal
 
-      - name: Publish application
-        run: dotnet publish -c Release -o ./publish --self-contained false
+      - name: Publish application (Windows self-contained)
+        run: dotnet publish -c Release -o ./publish -r win-x86 --self-contained true
 
       - name: Create deployment package
         run: zip -r online-event-booking-system-${{ github.sha }}.zip ./publish/*
@@ -136,6 +136,8 @@ jobs:
           path: online-event-booking-system-${{ github.sha }}.zip
           retention-days: 30
 
+  # -------------------------
+  # Deploy to Production
   # -------------------------
   deploy-production:
     name: Deploy to Production
@@ -160,7 +162,6 @@ jobs:
       - name: Notify deployment success
         if: success()
         run: echo "✅ Production deployment completed successfully!"
-        
 
   # -------------------------
   # Cleanup
