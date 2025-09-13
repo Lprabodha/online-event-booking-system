@@ -9,67 +9,224 @@ namespace online_event_booking_system.Controllers.Admin
     [Route("api/[controller]")]
     public class VenuesController : Controller
     {
-
         private readonly IVenueService _venueService;
+        private readonly ILogger<VenuesController> _logger;
 
-        public VenuesController(IVenueService venueService)
+        public VenuesController(IVenueService venueService, ILogger<VenuesController> logger)
         {
             _venueService = venueService;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAllVenues()
         {
-            var venues = await _venueService.GetAllVenuesAsync();
-            return Ok(venues);
+            try
+            {
+                var venues = await _venueService.GetAllVenuesAsync();
+                return Ok(new { success = true, data = venues });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving venues");
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving venues" });
+            }
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVenueById(Guid id)
         {
-            var venue = await _venueService.GetVenueByIdAsync(id);
-            if (venue == null)
+            try
             {
-                return NotFound();
+                if (id == Guid.Empty)
+                {
+                    return BadRequest(new { success = false, message = "Invalid venue ID" });
+                }
+
+                var venue = await _venueService.GetVenueByIdAsync(id);
+                if (venue == null)
+                {
+                    return NotFound(new { success = false, message = "Venue not found" });
+                }
+                return Ok(new { success = true, data = venue });
             }
-            return Ok(venue);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving venue with ID: {VenueId}", id);
+                return StatusCode(500, new { success = false, message = "An error occurred while retrieving the venue" });
+            }
         }
 
         [HttpPost]
         public async Task<IActionResult> CreateVenue([FromBody] Venue model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (model == null)
+                {
+                    return BadRequest(new { success = false, message = "Venue data is required" });
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    return BadRequest(new { success = false, message = "Validation failed", errors = errors });
+                }
+
+                // Additional business validation
+                var validationResult = await ValidateVenueBusinessRules(model);
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Validation failed", errors = validationResult.Errors });
+                }
+
+                var venue = await _venueService.CreateVenueAsync(model);
+                return CreatedAtAction(nameof(GetVenueById), new { id = venue.Id }, 
+                    new { success = true, message = "Venue created successfully", data = venue });
             }
-            var venue = await _venueService.CreateVenueAsync(model);
-            return CreatedAtAction(nameof(GetVenueById), new { id = venue.Id }, venue);
+            catch (ArgumentException ex)
+            {
+                _logger.LogWarning(ex, "Validation error creating venue");
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business rule violation creating venue");
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating venue");
+                return StatusCode(500, new { success = false, message = "An error occurred while creating the venue" });
+            }
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVenue(Guid id, [FromBody] Venue model)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
+                if (id == Guid.Empty)
+                {
+                    return BadRequest(new { success = false, message = "Invalid venue ID" });
+                }
+
+                if (model == null)
+                {
+                    return BadRequest(new { success = false, message = "Venue data is required" });
+                }
+
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values
+                        .SelectMany(v => v.Errors)
+                        .Select(e => e.ErrorMessage)
+                        .ToList();
+                    return BadRequest(new { success = false, message = "Validation failed", errors = errors });
+                }
+
+                // Additional business validation
+                var validationResult = await ValidateVenueBusinessRules(model, id);
+                if (!validationResult.IsValid)
+                {
+                    return BadRequest(new { success = false, message = "Validation failed", errors = validationResult.Errors });
+                }
+
+                var venue = await _venueService.UpdateVenueAsync(id, model);
+                if (venue == null)
+                {
+                    return NotFound(new { success = false, message = "Venue not found" });
+                }
+
+                return Ok(new { success = true, message = "Venue updated successfully", data = venue });
             }
-            var venue = await _venueService.UpdateVenueAsync(id, model);
-            if (venue == null)
+            catch (ArgumentException ex)
             {
-                return NotFound();
+                _logger.LogWarning(ex, "Validation error updating venue with ID: {VenueId}", id);
+                return BadRequest(new { success = false, message = ex.Message });
             }
-            return Ok(venue);
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Business rule violation updating venue with ID: {VenueId}", id);
+                return BadRequest(new { success = false, message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating venue with ID: {VenueId}", id);
+                return StatusCode(500, new { success = false, message = "An error occurred while updating the venue" });
+            }
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVenue(Guid id)
         {
-            var result = await _venueService.DeleteVenueAsync(id);
-            if (!result)
+            try
             {
-                return NotFound();
+                if (id == Guid.Empty)
+                {
+                    return BadRequest(new { success = false, message = "Invalid venue ID" });
+                }
+
+                var result = await _venueService.DeleteVenueAsync(id);
+                if (!result)
+                {
+                    return NotFound(new { success = false, message = "Venue not found" });
+                }
+
+                return Ok(new { success = true, message = "Venue deleted successfully" });
             }
-            return NoContent();
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting venue with ID: {VenueId}", id);
+                return StatusCode(500, new { success = false, message = "An error occurred while deleting the venue" });
+            }
+        }
+
+        private async Task<(bool IsValid, List<string> Errors)> ValidateVenueBusinessRules(Venue model, Guid? existingId = null)
+        {
+            var errors = new List<string>();
+
+            try
+            {
+                // Check if venue name already exists (excluding current venue for updates)
+                var existingVenues = await _venueService.GetAllVenuesAsync();
+                var duplicateName = existingVenues.Any(v => 
+                    v.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase) && 
+                    (!existingId.HasValue || v.Id != existingId.Value));
+
+                if (duplicateName)
+                {
+                    errors.Add("A venue with this name already exists");
+                }
+
+                // Check if location and name combination already exists
+                var duplicateLocation = existingVenues.Any(v => 
+                    v.Name.Equals(model.Name, StringComparison.OrdinalIgnoreCase) &&
+                    v.Location.Equals(model.Location, StringComparison.OrdinalIgnoreCase) &&
+                    (!existingId.HasValue || v.Id != existingId.Value));
+
+                if (duplicateLocation)
+                {
+                    errors.Add("A venue with this name and location combination already exists");
+                }
+
+                // Additional capacity validation
+                if (model.Capacity <= 0)
+                {
+                    errors.Add("Capacity must be greater than 0");
+                }
+
+                return (errors.Count == 0, errors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error validating venue business rules");
+                errors.Add("An error occurred during validation");
+                return (false, errors);
+            }
         }
     }
 }
