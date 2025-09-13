@@ -11,6 +11,31 @@
     <!-- Main Content -->
     <div class="p-4 md:p-6">
 
+            <!-- Success/Error Messages -->
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        @TempData["SuccessMessage"]
+                    </div>
+                </div>
+            }
+
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                        @TempData["ErrorMessage"]
+                    </div>
+                </div>
+            }
+
             <!-- Page Header -->
             <div class="mb-8">
                 <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Users Management</h1>
@@ -100,6 +125,7 @@
 
                                         <form asp-controller="Admin" asp-action="ToggleStatus" method="post" style="display:inline;">
                                             <input type="hidden" name="id" value="@userWithRole.User.Id" />
+                                            <input type="hidden" name="page" value="@ViewBag.CurrentPage" />
                                             <button type="submit" class="px-3 py-1 @(@userWithRole.User.IsActive ? "bg-red-500/20 border-red-500/30 text-red-400 hover:bg-red-500/30" : "bg-green-500/20 border-green-500/30 text-green-400 hover:bg-green-500/30") border rounded-lg transition-all duration-200 text-sm">
                                                 @(@userWithRole.User.IsActive ? "Deactivate" : "Activate")
                                             </button>
@@ -114,22 +140,61 @@
         </div>
 
         <!-- Pagination -->
-        <div class="flex items-center justify-between mt-8">
-            <div class="text-gray-400 text-sm">
-                Showing 1-4 of 124 users
+        @if (ViewBag.TotalPages > 1)
+        {
+            <div class="flex items-center justify-between mt-8">
+                <div class="text-gray-400 text-sm">
+                    Showing @ViewBag.StartItem-@ViewBag.EndItem of @ViewBag.TotalItems users
+                </div>
+                <div class="flex space-x-2">
+                    @if (ViewBag.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Users", new { page = ViewBag.CurrentPage - 1 })" 
+                           class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
+                            Previous
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="px-3 py-2 bg-white/5 border border-white/10 text-gray-500 rounded-lg text-sm cursor-not-allowed">
+                            Previous
+                        </span>
+                    }
+
+                    @{
+                        int startPage = Math.Max(1, ViewBag.CurrentPage - 2);
+                        int endPage = Math.Min(ViewBag.TotalPages, ViewBag.CurrentPage + 2);
+                    }
+
+                    @for (int i = startPage; i <= endPage; i++)
+                    {
+                        if (i == ViewBag.CurrentPage)
+                        {
+                            <span class="px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg text-sm">@i</span>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("Users", new { page = i })" 
+                               class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">@i</a>
+                        }
+                    }
+
+                    @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+                    {
+                        <a href="@Url.Action("Users", new { page = ViewBag.CurrentPage + 1 })" 
+                           class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
+                            Next
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="px-3 py-2 bg-white/5 border border-white/10 text-gray-500 rounded-lg text-sm cursor-not-allowed">
+                            Next
+                        </span>
+                    }
+                </div>
             </div>
-            <div class="flex space-x-2">
-                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
-                    Previous
-                </button>
-                <button class="px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg text-sm">1</button>
-                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">2</button>
-                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">3</button>
-                <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 text-sm">
-                    Next
-                </button>
-            </div>
-        </div>
+        }
     </div>
 </div>
 
