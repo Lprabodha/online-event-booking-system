@@ -10,8 +10,14 @@ using System.Text;
 
 namespace online_event_booking_system.Business.Service
 {
+    /// <summary>
+    /// Service class for admin-related operations, implementing IAdminService interface.
+    /// </summary>
     public class AdminService : IAdminService
     {
+        /// <summary>
+        /// Repository for admin-related data operations.
+        /// </summary>
         private readonly IAdminRepository _adminRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IEmailService _emailService;
@@ -23,6 +29,13 @@ namespace online_event_booking_system.Business.Service
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Create a new user with the specified role.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public async Task<(bool Succeeded, IEnumerable<IdentityError> Errors)> CreateUser(ApplicationUser user, string password, string role)
         {
             try
@@ -48,12 +61,20 @@ namespace online_event_booking_system.Business.Service
                 });
             }
         }
+        /// <summary>
+        /// Get all users in the system.
+        /// </summary>
+        /// <returns></returns>
 
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
         {
             return await _adminRepository.GetAllUsers();
         }
 
+        /// <summary>
+        /// Get all users along with their assigned roles.
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<UserWithRoleViewModel>> GetAllUsersWithRoles()
         {
             var users = await _adminRepository.GetAllUsers();
@@ -72,16 +93,31 @@ namespace online_event_booking_system.Business.Service
             return usersWithRoles;
         }
 
+        /// <summary>
+        /// Get user by their unique identifier.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ApplicationUser> GetUserById(string id)
         {
             return await _adminRepository.GetUserById(id);
         }
 
+        /// <summary>
+        /// Soft delete a user by setting their IsActive status to false.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> SoftDeleteUser(string id)
         {
             return await _adminRepository.SoftDeleteUser(id);
         }
 
+        /// <summary>
+        /// Toggle a user's active status.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> ToggleUserStatus(string id)
         {
             var user = await _adminRepository.GetUserById(id);
@@ -93,11 +129,21 @@ namespace online_event_booking_system.Business.Service
             return await _adminRepository.UpdateUser(user);
         }
 
+        /// <summary>
+        /// Update an existing user's details.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<bool> UpdateUser(ApplicationUser user)
         {
             return await _adminRepository.UpdateUser(user);
         }
 
+        /// <summary>
+        /// Get a user along with their role by user ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<UserWithRoleViewModel> GetUserWithRoleById(string id)
         {
             var user = await _adminRepository.GetUserById(id);
@@ -113,6 +159,11 @@ namespace online_event_booking_system.Business.Service
             };
         }
 
+        /// <summary>
+        /// Get users by their assigned role.
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         public async Task<List<UserWithRoleViewModel>> GetUsersByRole(string roleName)
         {
             var usersInRole = await _adminRepository.GetUsersInRoleAsync(roleName);
@@ -130,14 +181,35 @@ namespace online_event_booking_system.Business.Service
             return usersWithRoles;
         }
 
+        /// <summary>
+        /// Create a new event organizer with a generated password and send credentials via email.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         public async Task<(bool success, IEnumerable<IdentityError>? errors)> CreateOrganizer(ApplicationUser model)
         {
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(model.Email))
+            {
+                return (false, new List<IdentityError> { new IdentityError { Description = "Email is required." } });
+            }
+
+            if (string.IsNullOrWhiteSpace(model.FullName))
+            {
+                return (false, new List<IdentityError> { new IdentityError { Description = "Full Name is required." } });
+            }
+
+            if (string.IsNullOrWhiteSpace(model.ContactNumber))
+            {
+                return (false, new List<IdentityError> { new IdentityError { Description = "Contact Number is required." } });
+            }
+
             var user = new ApplicationUser
             {
                 UserName = model.Email,
                 Email = model.Email,
                 FullName = model.FullName,
-                ContactNumber = model.PhoneNumber,
+                ContactNumber = model.ContactNumber,
                 NIC = model.NIC,
                 Address = model.Address,
                 OrganizationName = model.OrganizationName,
@@ -173,6 +245,10 @@ namespace online_event_booking_system.Business.Service
             return (true, null);
         }
 
+        /// <summary>
+        /// Generate a secure random password.
+        /// </summary>
+        /// <returns></returns>
         private string GenerateRandomPassword()
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>/?";

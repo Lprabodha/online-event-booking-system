@@ -5,6 +5,9 @@ using online_event_booking_system.Repository.Interface;
 
 namespace online_event_booking_system.Business.Service
 {
+    /// <summary>
+    /// Service class for category-related operations, implementing ICategoryService interface.
+    /// </summary>
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
@@ -16,15 +19,29 @@ namespace online_event_booking_system.Business.Service
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all categories in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
             return await _categoryRepository.GetAllCategoriesAsync();
         }
 
+        /// <summary>
+        /// Get category by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Category?> GetCategoryByIdAsync(Guid id)
         {
             return await _categoryRepository.GetCategoryByIdAsync(id);
         }
+        /// <summary>
+        /// Create a new category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
 
         public async Task<(bool Success, string Message, Category? Category)> CreateCategoryAsync(Category category)
         {
@@ -69,6 +86,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Update an existing category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public async Task<(bool Success, string Message, Category? Category)> UpdateCategoryAsync(Category category)
         {
             try
@@ -119,6 +141,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Soft delete a category by setting its IsActive status to false
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<(bool Success, string Message)> DeleteCategoryAsync(Guid id)
         {
             try
@@ -159,16 +186,31 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Check if a category exists by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> CategoryExistsAsync(Guid id)
         {
             return await _categoryRepository.CategoryExistsAsync(id);
         }
 
+        /// <summary>
+        /// Get all active categories
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Category>> GetActiveCategoriesAsync()
         {
             return await _categoryRepository.GetActiveCategoriesAsync();
         }
 
+        /// <summary>
+        /// Check if a category name is unique, optionally excluding a specific category by ID
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="excludeId"></param>
+        /// <returns></returns>
         public async Task<bool> IsCategoryNameUniqueAsync(string name, Guid? excludeId = null)
         {
             return await _categoryRepository.IsCategoryNameUniqueAsync(name, excludeId);

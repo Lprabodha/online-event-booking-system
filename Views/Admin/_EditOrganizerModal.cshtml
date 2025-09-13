@@ -1,5 +1,14 @@
 ﻿@model online_event_booking_system.Data.Entities.ApplicationUser
 
+<style>
+    .validation-summary-valid {
+        display: none !important;
+    }
+    .validation-summary-errors {
+        display: block !important;
+    }
+</style>
+
 <div id="editOrganizerModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
     <div class="bg-dark-navy border border-white/10 rounded-2xl p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div class="flex items-center justify-between mb-6">
@@ -11,7 +20,7 @@
             </button>
         </div>
 
-        <form asp-controller="Admin" asp-action="EditOrganizer" method="post" class="space-y-6">
+        <form asp-controller="Admin" asp-action="EditOrganizer" method="post" class="space-y-6" id="editOrganizerForm">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="UserName" />
@@ -20,17 +29,38 @@
             <input type="hidden" asp-for="Tickets" />
             <input type="hidden" asp-for="Payments" />
 
+            <!-- Validation Summary -->
+            <div asp-validation-summary="All" class="text-red-400 text-sm mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"></div>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="fullName" class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
                     <input type="text" asp-for="FullName" required
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <span asp-validation-for="FullName" class="text-red-400 text-sm"></span>
                 </div>
 
                 <div>
                     <label for="contactNumber" class="block text-sm font-medium text-gray-300 mb-2">Contact Number</label>
                     <input type="tel" asp-for="ContactNumber" required
                            class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <span asp-validation-for="ContactNumber" class="text-red-400 text-sm"></span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                    <input type="email" asp-for="Email" readonly
+                           class="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-gray-400 cursor-not-allowed">
+                    <p class="text-xs text-gray-500 mt-1">Email cannot be changed</p>
+                </div>
+
+                <div>
+                    <label for="nic" class="block text-sm font-medium text-gray-300 mb-2">NIC Number</label>
+                    <input type="text" asp-for="NIC"
+                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                    <span asp-validation-for="NIC" class="text-red-400 text-sm"></span>
                 </div>
             </div>
 
@@ -38,12 +68,14 @@
                 <label for="organizationName" class="block text-sm font-medium text-gray-300 mb-2">Organization Name</label>
                 <input type="text" asp-for="OrganizationName"
                        class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                <span asp-validation-for="OrganizationName" class="text-red-400 text-sm"></span>
             </div>
 
             <div>
                 <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Address</label>
                 <textarea asp-for="Address" rows="3"
                           class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"></textarea>
+                <span asp-validation-for="Address" class="text-red-400 text-sm"></span>
             </div>
 
             @* <div class="flex items-center space-x-3">
