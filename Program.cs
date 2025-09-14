@@ -5,8 +5,10 @@ using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Data.Seeders;
+using online_event_booking_system.Models;
 using online_event_booking_system.Repository.Interface;
 using online_event_booking_system.Repository.Service;
+using online_event_booking_system.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,24 +23,34 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => options.S
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
+// Get the SMTP settings from appsettings.json file
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SmtpSettings"));
+
+// Email Service
+builder.Services.AddTransient<IEmailService, EmailService>();
+
 // Services
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
+builder.Services.AddScoped<IVenueService, VenueService>();
 
 // Repositories
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
+builder.Services.AddScoped<IVenueRepository, VenueRepository>();
 
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
     await UserRoleSeeder.SeedRoles(serviceProvider);
     await UserRoleSeeder.SeedInitialUsers(serviceProvider);
+    await CategorySeeder.SeedCategoriesAsync(context);
 }
 
 

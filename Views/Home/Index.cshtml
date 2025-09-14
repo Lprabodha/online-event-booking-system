@@ -1,4 +1,5 @@
-﻿@{
+﻿@model IEnumerable<online_event_booking_system.Data.Entities.Category>
+@{
     ViewData["Title"] = "Home";
     ViewData["Description"] = "Discover and book tickets for the best events in your area. From concerts to sports, theater to festivals - find your next experience.";
 }
@@ -522,52 +523,48 @@
         
         <div class="flex flex-wrap justify-center gap-3 md:gap-4 mb-12 px-4">
             <button class="category-tab active bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg transition-all hover:scale-105 shadow-lg" onclick="showCategory('all')">All Events</button>
-            <button class="category-tab bg-slate-800/80 text-gray-300 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-teal-500 transition-all hover:scale-105 border border-gray-600" onclick="showCategory('music')">Music</button>
-            <button class="category-tab bg-slate-800/80 text-gray-300 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-teal-500 transition-all hover:scale-105 border border-gray-600" onclick="showCategory('sports')">Sports</button>
-            <button class="category-tab bg-slate-800/80 text-gray-300 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-teal-500 transition-all hover:scale-105 border border-gray-600" onclick="showCategory('theater')">Theater</button>
-            <button class="category-tab bg-slate-800/80 text-gray-300 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-teal-500 transition-all hover:scale-105 border border-gray-600" onclick="showCategory('comedy')">Comedy</button>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var category in Model)
+                {
+                    <button class="category-tab bg-slate-800/80 text-gray-300 hover:text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-bold text-base sm:text-lg hover:bg-gradient-to-r hover:from-purple-500 hover:to-teal-500 transition-all hover:scale-105 border border-gray-600" onclick="showCategory('@category.Id')">@category.Name</button>
+                }
+            }
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4">
-            <div class="category-item music group bg-slate-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl text-center hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-gray-700 hover:border-purple-500/50">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var category in Model)
+                {
+                    <div class="category-item @category.Id.ToString().ToLower() group bg-slate-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl text-center hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-gray-700 hover:border-purple-500/50" onclick="location.href='@Url.Action("Index", "Events", new { categoryId = category.Id })'">
                 <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-teal-500 group-hover:scale-110 transition-all duration-300">
+                            @if (!string.IsNullOrEmpty(category.Icon))
+                            {
+                                <span class="text-2xl sm:text-3xl">@category.Icon</span>
+                            }
+                            else
+                            {
                     <svg class="w-8 h-8 sm:w-10 sm:h-10 text-purple-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.971 7.971 0 0017 12c0-2.21-.895-4.21-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 12a5.983 5.983 0 01-.757 2.829 1 1 0 11-1.415-1.415A3.987 3.987 0 0013 12a3.987 3.987 0 00-.172-1.414 1 1 0 010-1.415z" clip-rule="evenodd"></path>
                     </svg>
+                            }
                 </div>
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-2">Concerts</h3>
-                <p class="text-gray-300 font-medium text-sm sm:text-base">24 events</p>
+                        <h3 class="font-bold text-lg sm:text-xl text-white mb-2">@category.Name</h3>
+                        <p class="text-gray-300 font-medium text-sm sm:text-base">@category.Events.Count() events</p>
+                        @if (!string.IsNullOrEmpty(category.Description))
+                        {
+                            <p class="text-gray-400 text-xs mt-2 line-clamp-2">@category.Description</p>
+                        }
             </div>
-            
-            <div class="category-item sports group bg-slate-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl text-center hover:shadow-xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-gray-700 hover:border-blue-500/50">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-blue-500/20 to-teal-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:bg-gradient-to-r group-hover:from-blue-500 group-hover:to-teal-500 group-hover:scale-110 transition-all duration-300">
-                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-blue-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5z"></path>
-                    </svg>
+                }
+            }
+            else
+            {
+                <div class="col-span-full text-center py-12">
+                    <div class="text-gray-400 text-lg">No categories available at the moment.</div>
                 </div>
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-2">Sports</h3>
-                <p class="text-gray-300 font-medium text-sm sm:text-base">18 events</p>
-            </div>
-            
-            <div class="category-item theater group bg-slate-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl text-center hover:shadow-xl hover:shadow-purple-500/25 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-gray-700 hover:border-purple-500/50">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:bg-gradient-to-r group-hover:from-purple-500 group-hover:to-pink-500 group-hover:scale-110 transition-all duration-300">
-                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-purple-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-2">Theater</h3>
-                <p class="text-gray-300 font-medium text-sm sm:text-base">12 events</p>
-            </div>
-            
-            <div class="category-item comedy group bg-slate-800/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl text-center hover:shadow-xl hover:shadow-yellow-500/25 transition-all duration-300 transform hover:-translate-y-2 cursor-pointer border border-gray-700 hover:border-yellow-500/50">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-r from-yellow-500/20 to-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:bg-gradient-to-r group-hover:from-yellow-500 group-hover:to-orange-500 group-hover:scale-110 transition-all duration-300">
-                    <svg class="w-8 h-8 sm:w-10 sm:h-10 text-yellow-400 group-hover:text-white transition-colors" fill="currentColor" viewBox="0 0 20 20">
-                        <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                    </svg>
-                </div>
-                <h3 class="font-bold text-lg sm:text-xl text-white mb-2">Comedy</h3>
-                <p class="text-gray-300 font-medium text-sm sm:text-base">8 events</p>
-            </div>
+            }
         </div>
     </div>
 </section>
@@ -729,7 +726,7 @@
         
         // Show/hide category items with animation
         document.querySelectorAll('.category-item').forEach(item => {
-            if (category === 'all' || item.classList.contains(category)) {
+            if (category === 'all' || item.classList.contains(category.toLowerCase())) {
                 item.style.display = 'block';
                 item.style.opacity = '0';
                 setTimeout(() => {

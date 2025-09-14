@@ -43,7 +43,10 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
-
+        /// <summary>
+        /// Display the form to create a new category
+        /// </summary>
+        /// <returns></returns>
 
         // GET: Admin/Category/Create
         [HttpGet("admin/categories/create")]
@@ -52,6 +55,11 @@ namespace online_event_booking_system.Controllers.Admin
             return View("~/Views/Admin/Category/Create.cshtml", new CategoryCreateViewModel());
         }
 
+        /// <summary>
+        /// Handle the submission of the new category form
+        /// </summary>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
 
         // POST: Admin/Category/Create
         [HttpPost("admin/categories/create")]
@@ -97,6 +105,11 @@ namespace online_event_booking_system.Controllers.Admin
             return View("~/Views/Admin/Category/Create.cshtml", viewModel);
         }
 
+        /// <summary>
+        /// Display the form to edit an existing category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         // GET: Admin/Category/Edit/5
         [HttpGet("admin/categories/edit/{id}")]
@@ -133,6 +146,12 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Handle the submission of the edit category form
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="viewModel"></param>
+        /// <returns></returns>
 
         // POST: Admin/Category/Edit/5
         [HttpPost("admin/categories/edit/{id}")]
@@ -186,6 +205,12 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
 
+        /// <summary>
+        /// Handle the deletion of a category
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        
         // POST: Admin/Category/Delete/5
         [HttpPost("admin/categories/delete/{id}")]
         [ValidateAntiForgeryToken]
@@ -217,8 +242,11 @@ namespace online_event_booking_system.Controllers.Admin
             return Redirect("/admin/categories");
         }
 
+        /// <summary>
+        /// Get statistics about categories
+        /// </summary>
+        /// <returns></returns>
 
-        // AJAX endpoint to get category statistics
         [HttpGet("admin/categories/statistics")]
         public async Task<IActionResult> GetStatistics()
         {
