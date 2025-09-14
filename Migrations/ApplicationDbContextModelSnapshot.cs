@@ -294,6 +294,10 @@ namespace online_event_booking_system.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("varchar(500)");
 
+                    b.Property<string>("Icon")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)");
+
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 

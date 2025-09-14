@@ -11,7 +11,10 @@ namespace online_event_booking_system.Data.Entities
         
         [MaxLength(500)]
         public string? Description { get; set; }
-        
+
+        [MaxLength(10)]
+        public string? Icon { get; set; }
+
         public bool IsActive { get; set; } = true;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

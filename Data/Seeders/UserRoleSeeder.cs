@@ -46,6 +46,7 @@ namespace online_event_booking_system.Data.Seeders
                 {
                     var newUser = new ApplicationUser
                     {
+                        FullName = fullName,
                         UserName = email,
                         Email = email,
                         EmailConfirmed = true,

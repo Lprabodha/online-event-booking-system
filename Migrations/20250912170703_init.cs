@@ -93,6 +93,8 @@ namespace online_event_booking_system.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "varchar(500)", maxLength: 500, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    Icon = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     IsActive = table.Column<bool>(type: "tinyint(1)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: true)

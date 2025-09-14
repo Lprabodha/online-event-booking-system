@@ -44,9 +44,11 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
+    var context = serviceProvider.GetRequiredService<ApplicationDbContext>();
 
     await UserRoleSeeder.SeedRoles(serviceProvider);
     await UserRoleSeeder.SeedInitialUsers(serviceProvider);
+    await CategorySeeder.SeedCategoriesAsync(context);
 }
 
 
