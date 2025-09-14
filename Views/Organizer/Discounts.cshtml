@@ -2,13 +2,11 @@
 @{
     ViewData["Title"] = "Discounts";
     Layout = "_DashboardLayout";
+    var discounts = ViewBag.Discounts as IEnumerable<online_event_booking_system.Data.Entities.Discount> ?? new List<online_event_booking_system.Data.Entities.Discount>();
 }
 
-<!-- Organizer Discounts Container -->
-<div class="min-h-screen bg-dark-navy text-white pt-16">
-    <!-- Main Content -->
+<div class="min-h-screen bg-dark-navy text-white pt-20">
     <div class="p-4 md:p-6 pt-8">
-            <!-- Success Message -->
             @if (TempData["SuccessMessage"] != null)
             {
                 <div class="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400 flex items-center space-x-3">
@@ -19,7 +17,16 @@
                 </div>
             }
 
-            <!-- Page Header -->
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 flex items-center space-x-3">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>@TempData["ErrorMessage"]</span>
+                </div>
+            }
+
             <div class="mb-8">
                 <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
                     <div>
@@ -33,18 +40,24 @@
                             </svg>
                             <span>Export</span>
                         </button>
-                        <button id="toggleCreateForm" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <button onclick="openCreateDiscountModal()" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
-                            <span id="toggleText">Create Discount</span>
+                            <span>Create Discount</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Discount Stats -->
             <section aria-label="Discount Statistics" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                @{
+                    var activeDiscounts = discounts.Count(d => d.IsActive && d.ValidTo > DateTime.UtcNow);
+                    var totalDiscounts = discounts.Count();
+                    var totalUsed = discounts.Sum(d => d.UsedCount);
+                    var expiredDiscounts = discounts.Count(d => d.ValidTo <= DateTime.UtcNow);
+                }
+                
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
                     <div class="flex items-center justify-between mb-4">
                         <div class="p-3 bg-green-500/20 rounded-xl">
@@ -55,7 +68,7 @@
                         <span class="text-green-400 text-sm font-semibold">Active</span>
                     </div>
                     <p class="text-gray-400 text-sm">Active Discounts</p>
-                    <p class="text-3xl font-bold mt-2">8</p>
+                    <p class="text-3xl font-bold mt-2">@activeDiscounts</p>
                     <p class="text-gray-400 text-xs mt-1">Currently running</p>
                 </div>
                 
@@ -66,11 +79,11 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
                             </svg>
                         </div>
-                        <span class="text-blue-400 text-sm font-semibold">$2,450</span>
+                        <span class="text-blue-400 text-sm font-semibold">@totalDiscounts</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Total Savings</p>
-                    <p class="text-3xl font-bold mt-2">$2,450</p>
-                    <p class="text-gray-400 text-xs mt-1">This month</p>
+                    <p class="text-gray-400 text-sm">Total Discounts</p>
+                    <p class="text-3xl font-bold mt-2">@totalDiscounts</p>
+                    <p class="text-gray-400 text-xs mt-1">All time</p>
                 </div>
                 
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
@@ -80,114 +93,29 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"></path>
                             </svg>
                         </div>
-                        <span class="text-purple-400 text-sm font-semibold">1,234</span>
+                        <span class="text-purple-400 text-sm font-semibold">@totalUsed</span>
                     </div>
                     <p class="text-gray-400 text-sm">Codes Used</p>
-                    <p class="text-3xl font-bold mt-2">1,234</p>
+                    <p class="text-3xl font-bold mt-2">@totalUsed</p>
                     <p class="text-gray-400 text-xs mt-1">Total redemptions</p>
                 </div>
                 
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
                     <div class="flex items-center justify-between mb-4">
-                        <div class="p-3 bg-teal-500/20 rounded-xl">
-                            <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                        <div class="p-3 bg-red-500/20 rounded-xl">
+                            <svg class="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                             </svg>
                         </div>
-                        <span class="text-teal-400 text-sm font-semibold">+15.2%</span>
+                        <span class="text-red-400 text-sm font-semibold">@expiredDiscounts</span>
                     </div>
-                    <p class="text-gray-400 text-sm">Conversion Rate</p>
-                    <p class="text-3xl font-bold mt-2">12.5%</p>
-                    <p class="text-gray-400 text-xs mt-1">vs last month</p>
+                    <p class="text-gray-400 text-sm">Expired</p>
+                    <p class="text-3xl font-bold mt-2">@expiredDiscounts</p>
+                    <p class="text-gray-400 text-xs mt-1">Past expiry date</p>
                 </div>
             </section>
 
-            <!-- Create Discount Form Section -->
-            <section aria-label="Create Discount" class="mb-8">
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-xl font-bold text-white">Create New Discount</h2>
-                        <button id="toggleCreateForm2" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
-                            <span id="toggleText2">Show Form</span>
-                        </button>
-                    </div>
-                    
-                    <div id="createDiscountForm" class="hidden">
-                        <form asp-action="CreateDiscount" method="post" class="space-y-6">
-                            @Html.AntiForgeryToken()
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="Code" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
-                                    <span asp-validation-for="Code" class="text-red-400 text-xs mt-1"></span>
-                                    <p class="text-gray-400 text-xs mt-1">Use uppercase letters and numbers only</p>
-                                </div>
-                                <div>
-                                    <label asp-for="Type" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <select asp-for="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                        <option value="@((int)online_event_booking_system.Models.DiscountType.Percentage)">Percentage</option>
-                                        <option value="@((int)online_event_booking_system.Models.DiscountType.FixedAmount)">Fixed Amount</option>
-                                    </select>
-                                    <span asp-validation-for="Type" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                                <div>
-                                    <label asp-for="Value" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <div class="relative">
-                                        <input asp-for="Value" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
-                                        <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="valueSuffix">%</span>
-                                    </div>
-                                    <span asp-validation-for="Value" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
-                                    <div class="space-y-3">
-                                        <label class="flex items-center space-x-3">
-                                            <input asp-for="ApplyToAllEvents" type="checkbox" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
-                                            <span class="text-gray-300">Apply to all events</span>
-                                        </label>
-                                        <div id="eventSelection" class="hidden">
-                                            <select asp-for="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                                <option value="">Select an event</option>
-                                                @foreach (var eventOption in Model.AvailableEvents)
-                                                {
-                                                    <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
-                                                }
-                                            </select>
-                                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1"></span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label asp-for="UsageLimit" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="UsageLimit" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
-                                    <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1"></span>
-                                    <p class="text-gray-400 text-xs mt-1">Leave empty for unlimited usage</p>
-                                </div>
-                                <div>
-                                    <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                    <input asp-for="ExpiryDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                    <span asp-validation-for="ExpiryDate" class="text-red-400 text-xs mt-1"></span>
-                                </div>
-                            </div>
-                            <div>
-                                <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                                <textarea asp-for="Description" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
-                                <span asp-validation-for="Description" class="text-red-400 text-xs mt-1"></span>
-                            </div>
-                            <div class="flex justify-end space-x-4">
-                                <button type="button" onclick="toggleCreateForm()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
-                                    Cancel
-                                </button>
-                                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
-                                    Create Discount
-                                </button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Filters and Search -->
+            
             <section aria-label="Filters" class="mb-8">
                 <div class="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0 lg:space-x-4">
                     <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full lg:w-auto">
@@ -227,7 +155,6 @@
                 </div>
             </section>
 
-            <!-- Discounts Table -->
             <section aria-label="Discounts" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden mb-8">
                 <div class="overflow-x-auto">
                     <table class="w-full">
@@ -243,57 +170,78 @@
                                 <th class="px-6 py-4 text-left text-sm font-semibold text-white">Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-white/10">
-                            @for (var i = 0; i < 15; i++)
+                        <tbody id="discountsTbody" class="divide-y divide-white/10">
+                            @if (discounts.Any())
                             {
-                                var codes = new[] { "EARLY20", "VIP15", "FLASH30", "STUDENT10", "GROUP25", "SUMMER50", "WELCOME5", "LOYALTY20", "NEWUSER10", "BULK20", "EARLYBIRD25", "FINAL10", "WEEKEND15", "MEMBER30", "SPECIAL40" };
-                                var types = new[] { "Percentage", "Fixed Amount", "Percentage", "Percentage", "Percentage", "Fixed Amount", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage", "Percentage" };
-                                var values = new[] { "20%", "$15", "30%", "10%", "25%", "$50", "5%", "20%", "10%", "20%", "25%", "10%", "15%", "30%", "40%" };
-                                var events = new[] { "Summer Music Festival", "Tech Conference 2024", "Art Exhibition", "All Events", "Food & Wine Tasting", "Comedy Night", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events", "All Events" };
-                                var usages = new[] { "45/100", "12/50", "8/25", "156/500", "23/100", "3/10", "89/200", "67/150", "34/100", "78/200", "12/50", "45/100", "23/75", "56/150", "9/25" };
-                                var expires = new[] { "Dec 31, 2024", "Jan 15, 2025", "Dec 20, 2024", "Mar 1, 2025", "Feb 14, 2025", "Dec 25, 2024", "Jun 30, 2025", "Apr 1, 2025", "Jan 31, 2025", "Feb 28, 2025", "Mar 15, 2025", "Apr 30, 2025", "May 15, 2025", "Jun 30, 2025", "Jul 15, 2025" };
-                                var statuses = new[] { "Active", "Active", "Active", "Active", "Active", "Expired", "Active", "Paused", "Active", "Active", "Active", "Active", "Active", "Active", "Active" };
-                                var statusColors = new[] { "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-red-500/20 text-red-400", "bg-green-500/20 text-green-400", "bg-yellow-500/20 text-yellow-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400", "bg-green-500/20 text-green-400" };
-                                
-                                <tr class="hover:bg-white/5 transition-all duration-200">
-                                    <td class="px-6 py-4">
-                                        <div class="flex items-center space-x-3">
-                                            <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg flex items-center justify-center">
-                                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
-                                                </svg>
+                                @foreach (var discount in discounts)
+                                {
+                                    var status = discount.IsActive && discount.ValidTo > DateTime.UtcNow ? "Active" : 
+                                                discount.ValidTo <= DateTime.UtcNow ? "Expired" : "Inactive";
+                                    var statusColor = status == "Active" ? "bg-green-500/20 text-green-400" : 
+                                                     status == "Expired" ? "bg-red-500/20 text-red-400" : "bg-yellow-500/20 text-yellow-400";
+                                    var usageText = discount.UsageLimit.HasValue ? $"{discount.UsedCount}/{discount.UsageLimit}" : $"{discount.UsedCount}/∞";
+                                    var valueText = discount.Type == "Percent" ? $"{discount.Value}%" : $"${discount.Value}";
+                                    var eventName = discount.Event?.Title ?? "All Events";
+                                    
+                                    <tr class="hover:bg-white/5 transition-all duration-200" data-discount-id="@discount.Id">
+                                        <td class="px-6 py-4">
+                                            <div class="flex items-center space-x-3">
+                                                <div class="w-8 h-8 bg-gradient-to-r from-purple-500 to-teal-500 rounded-lg flex items-center justify-center">
+                                                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                                    </svg>
+                                                </div>
+                                                <div>
+                                                    <p class="text-white font-semibold" data-field="code">@discount.Code</p>
+                                                    <p class="text-gray-400 text-sm" data-field="type">@discount.Type</p>
+                                                </div>
                                             </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-gray-300" data-field="type">@discount.Type</td>
+                                        <td class="px-6 py-4 text-white font-semibold" data-field="value">@valueText</td>
+                                        <td class="px-6 py-4 text-gray-300" data-field="event">@eventName</td>
+                                        <td class="px-6 py-4 text-gray-300" data-field="usage">@usageText</td>
+                                        <td class="px-6 py-4 text-gray-300" data-field="expiry">@discount.ValidTo.ToString("MMM dd, yyyy")</td>
+                                        <td class="px-6 py-4">
+                                            <span class="px-3 py-1 rounded-full text-xs font-medium @statusColor" data-field="status">@status</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <div class="flex space-x-2">
+                                                <button onclick="openEditModal('@discount.Id')" class="p-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-all" title="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="copyToClipboard('@discount.Code')" class="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all" title="Copy">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                                    </svg>
+                                                </button>
+                                                <button onclick="confirmDelete('@discount.Id', '@discount.Code')" class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all" title="Delete">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="8" class="px-6 py-12 text-center text-gray-400">
+                                        <div class="flex flex-col items-center space-y-4">
+                                            <svg class="w-16 h-16 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"></path>
+                                            </svg>
                                             <div>
-                                                <p class="text-white font-semibold">@codes[i % codes.Length]</p>
-                                                <p class="text-gray-400 text-sm">@types[i % types.Length]</p>
+                                                <h3 class="text-lg font-semibold text-white mb-2">No discounts found</h3>
+                                                <p class="text-gray-400 mb-4">Create your first discount code to get started</p>
+                                                <button onclick="openCreateDiscountModal()" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                                                    Create Discount
+                                                </button>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-gray-300">@types[i % types.Length]</td>
-                                    <td class="px-6 py-4 text-white font-semibold">@values[i % values.Length]</td>
-                                    <td class="px-6 py-4 text-gray-300">@events[i % events.Length]</td>
-                                    <td class="px-6 py-4 text-gray-300">@usages[i % usages.Length]</td>
-                                    <td class="px-6 py-4 text-gray-300">@expires[i % expires.Length]</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-3 py-1 rounded-full text-xs font-medium @statusColors[i % statusColors.Length]">@statuses[i % statuses.Length]</span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex space-x-2">
-                                            <button onclick="openEditModal(@i)" class="p-2 bg-purple-500/20 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-all" title="Edit">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                                </svg>
-                                            </button>
-                                            <button class="p-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all" title="Copy">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                                                </svg>
-                                            </button>
-                                            <button class="p-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-all" title="Delete">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-                                                </svg>
-                                            </button>
                                         </div>
                                     </td>
                                 </tr>
@@ -302,69 +250,97 @@
                     </table>
                 </div>
                 
-                <!-- Pagination -->
                 <div class="px-6 py-4 border-t border-white/10">
                     <div class="flex items-center justify-between">
-                        <div class="text-sm text-gray-400">
-                            Showing <span class="font-semibold text-white">1</span> to <span class="font-semibold text-white">15</span> of <span class="font-semibold text-white">47</span> results
-                        </div>
+                                <div class="text-sm text-gray-400">
+                                    Showing <span id="paginationFrom" class="font-semibold text-white">1</span> to <span id="paginationTo" class="font-semibold text-white">1</span> of <span id="paginationTotal" class="font-semibold text-white">0</span> results
+                                </div>
                         <div class="flex items-center space-x-2">
-                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                                </svg>
-                            </button>
-                            <button class="px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold">1</button>
-                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">2</button>
-                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">3</button>
-                            <span class="px-3 py-2 text-gray-400">...</span>
-                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">4</button>
-                            <button class="px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </button>
+                            <div id="paginationControls" class="flex items-center space-x-2"></div>
                         </div>
                     </div>
                 </div>
             </section>
-
-            <!-- Quick Actions -->
-            <section aria-label="Quick Actions" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
-                <h2 class="text-xl font-bold mb-6">Quick Actions</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-4 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 text-center">
-                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                        </svg>
-                        Create New Discount
-                    </button>
-                    
-                    <button class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
-                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Bulk Import
-                    </button>
-                    
-                    <button class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
-                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                        </svg>
-                        Export Codes
-                    </button>
-                    
-                    <button class="bg-white/10 border border-white/20 text-white px-6 py-4 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
-                        <svg class="w-6 h-6 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
-                        </svg>
-                        View Analytics
-                    </button>
-                </div>
-            </section>
     </div>
 
-    <!-- Edit Discount Modal -->
+    <div id="createDiscountModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <div class="p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-white">Create Discount</h2>
+                    <button type="button" onclick="closeCreateDiscountModal()" class="p-2 hover:bg-white/10 rounded-lg transition-all">
+                        <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+                <form asp-action="CreateDiscount" method="post" class="space-y-6">
+                    @Html.AntiForgeryToken()
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label asp-for="Code" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="Code" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <span asp-validation-for="Code" class="text-red-400 text-xs mt-1"></span>
+                            <p class="text-gray-400 text-xs mt-1">Use uppercase letters and numbers only</p>
+                        </div>
+                        <div>
+                            <label asp-for="Type" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <select asp-for="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                <option value="@((int)DiscountType.Percentage)">Percentage</option>
+                                <option value="@((int)DiscountType.FixedAmount)">Fixed Amount</option>
+                            </select>
+                            <span asp-validation-for="Type" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                        <div>
+                            <label asp-for="Value" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <div class="relative">
+                                <input asp-for="Value" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="modalValueSuffix">%</span>
+                            </div>
+                            <span asp-validation-for="Value" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                        <div>
+                            <label asp-for="EventId" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <select asp-for="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" required>
+                                <option value="">Select an event</option>
+                                @foreach (var eventOption in Model.AvailableEvents)
+                                {
+                                    <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
+                                }
+                            </select>
+                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1"></span>
+                            <p class="text-gray-400 text-xs mt-1">Please select an event for this discount</p>
+                        </div>
+                        <div>
+                            <label asp-for="UsageLimit" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="UsageLimit" type="number" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                            <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1"></span>
+                            <p class="text-gray-400 text-xs mt-1">Leave empty for unlimited usage</p>
+                        </div>
+                        <div>
+                            <label asp-for="ExpiryDate" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                            <input asp-for="ExpiryDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                            <span asp-validation-for="ExpiryDate" class="text-red-400 text-xs mt-1"></span>
+                        </div>
+                    </div>
+                    <div>
+                        <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <textarea asp-for="Description" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-400 text-xs mt-1"></span>
+                    </div>
+                    <div class="flex justify-end space-x-4">
+                        <button type="button" onclick="closeCreateDiscountModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all">
+                            Create Discount
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <div id="editDiscountModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
         <div class="bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <div class="p-6">
@@ -377,48 +353,62 @@
                     </button>
                 </div>
                 
-                <form class="space-y-6">
+                <form id="editDiscountForm" method="post" class="space-y-6">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" id="editDiscountId" name="id" />
+                    @* Validation summary for server-side errors when returning the Discounts view *@
+                    <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-2"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Code</label>
-                            <input type="text" id="editCode" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <input type="text" id="editCode" name="Code" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <span asp-validation-for="Code" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Type</label>
-                            <select id="editType" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                <option>Percentage</option>
-                                <option>Fixed Amount</option>
+                            <select id="editType" name="Type" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                                <option value="1">Percentage</option>
+                                <option value="2">Fixed Amount</option>
                             </select>
+                            <span asp-validation-for="Type" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Discount Value</label>
                             <div class="relative">
-                                <input type="number" id="editValue" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                <input type="number" id="editValue" name="Value" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
                                 <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="editValueSuffix">%</span>
                             </div>
+                            <span asp-validation-for="Value" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Apply To</label>
-                            <select id="editEvent" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
-                                <option>All Events</option>
-                                <option>Summer Music Festival</option>
-                                <option>Tech Conference 2024</option>
-                                <option>Art Exhibition</option>
-                                <option>Food & Wine Tasting</option>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Event</label>
+                            <select id="editEvent" name="EventId" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" required>
+                                <option value="">Select an event</option>
+                                @foreach (var eventOption in Model.AvailableEvents)
+                                {
+                                    <option value="@eventOption.Id">@eventOption.Name - @eventOption.EventDate.ToString("MMM dd, yyyy")</option>
+                                }
                             </select>
+                            <span asp-validation-for="EventId" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Usage Limit</label>
-                            <input type="number" id="editLimit" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                            <input type="number" id="editLimit" name="UsageLimit" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="100" min="1">
+                            <span asp-validation-for="UsageLimit" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Expiry Date</label>
-                            <input type="date" id="editExpiry" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
+                            <input type="date" id="editExpiry" name="ExpiryDate" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500">
                         </div>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
-                        <textarea rows="3" id="editDescription" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                        <textarea rows="3" id="editDescription" name="Description" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Describe this discount code..."></textarea>
+                        <span asp-validation-for="Description" class="text-red-400 text-xs mt-1 block"></span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <input type="checkbox" id="editIsActive" name="IsActive" class="w-4 h-4 text-purple-600 bg-white/10 border-white/20 rounded focus:ring-purple-500 focus:ring-2">
+                        <label class="text-gray-300">Active</label>
                     </div>
                     <div class="flex justify-end space-x-4">
                         <button type="button" onclick="closeEditModal()" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">
@@ -433,8 +423,108 @@
         </div>
     </div>
 
+
     <script>
-        // Close on escape
+        function openCreateDiscountModal() {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+        function closeCreateDiscountModal() {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            const typeSelect = document.querySelector('#createDiscountModal select[name="Type"]');
+            const valueSuffix = document.getElementById('modalValueSuffix');
+            if (typeSelect && valueSuffix) {
+                typeSelect.addEventListener('change', function () {
+                    valueSuffix.textContent = this.value === '2' ? '$' : '%';
+                });
+            }
+            
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('createDiscountModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    closeCreateDiscountModal();
+                }
+            }
+        });
+        document.addEventListener('click', function (event) {
+            const modal = document.getElementById('createDiscountModal');
+            if (modal && event.target === modal) {
+                closeCreateDiscountModal();
+            }
+        });
+    </script>
+
+    <script>
+        (function() {
+            var openCreate = '@(ViewData["OpenCreateModal"] != null ? "1" : "")';
+            var openEditId = '@(ViewData["OpenEditModal"] ?? "")';
+
+            if (openCreate) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    try { openCreateDiscountModal(); } catch (e) { console.error(e); }
+                });
+            }
+
+            if (openEditId) {
+                var serverModel = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model ?? new online_event_booking_system.Models.DiscountViewModel()));
+
+                document.addEventListener('DOMContentLoaded', function() {
+                    try {
+                        var m = serverModel || {};
+                        var idField = document.getElementById('editDiscountId');
+                        if (idField) idField.value = openEditId;
+
+                        var f = function(id, val) { var el = document.getElementById(id); if (el) el.value = val ?? ''; };
+
+                        f('editCode', m.Code);
+                        f('editType', (m.Type !== undefined && m.Type !== null) ? String(m.Type) : '1');
+                        f('editValue', m.Value);
+                        f('editLimit', m.UsageLimit);
+                        if (m.ExpiryDate) {
+                            var d = new Date(m.ExpiryDate);
+                            if (!isNaN(d)) document.getElementById('editExpiry').value = d.toISOString().split('T')[0];
+                        }
+                        f('editDescription', m.Description);
+                        var chk = document.getElementById('editIsActive'); if (chk) chk.checked = !!m.IsActive;
+                        var ev = document.getElementById('editEvent'); if (ev) ev.value = m.EventId || '';
+
+                        var editValueSuffix = document.getElementById('editValueSuffix');
+                        if (editValueSuffix) {
+                            editValueSuffix.textContent = (m.Type === 2) ? '$' : '%';
+                        }
+
+                        var modal = document.getElementById('editDiscountModal');
+                        // Only open the modal if it's hidden to avoid reopening after a redirect
+                        if (modal && modal.classList.contains('hidden')) {
+                            var editFormEl = document.getElementById('editDiscountForm');
+                            if (editFormEl) {
+                                var editBase = '@Url.Action("EditDiscount", "Organizer", new { id = "__ID__" })';
+                                editFormEl.action = editBase.replace('__ID__', openEditId);
+                            }
+                            modal.classList.remove('hidden');
+                            document.body.style.overflow = 'hidden';
+                        }
+                    } catch (err) {
+                        console.error('Error opening edit modal from server data:', err);
+                    }
+                });
+            }
+        })();
+    </script>
+
+
+    <script>
         document.addEventListener('keydown', function (event) {
             if (event.key === 'Escape') {
                 const modal = document.getElementById('editDiscountModal');
@@ -444,7 +534,6 @@
             }
         });
 
-        // Create Discount Form Toggle
         document.addEventListener('DOMContentLoaded', function() {
             const toggleBtn = document.getElementById('toggleCreateForm');
             const toggleBtn2 = document.getElementById('toggleCreateForm2');
@@ -452,7 +541,6 @@
             const toggleText2 = document.getElementById('toggleText2');
             const createForm = document.getElementById('createDiscountForm');
             
-            // Toggle form visibility
             function toggleForm() {
                 if (createForm) {
                     createForm.classList.toggle('hidden');
@@ -469,7 +557,6 @@
                 toggleBtn2.addEventListener('click', toggleForm);
             }
 
-            // Discount type change handler
             const typeSelect = document.querySelector('select[name="Type"]');
             const valueSuffix = document.getElementById('valueSuffix');
             const editTypeSelect = document.getElementById('editType');
@@ -477,64 +564,179 @@
             
             if (typeSelect && valueSuffix) {
                 typeSelect.addEventListener('change', function() {
-                    valueSuffix.textContent = this.value === '2' ? '$' : '%'; // 2 = FixedAmount, 1 = Percentage
+                    valueSuffix.textContent = this.value === '2' ? '$' : '%'; 
                 });
             }
             
             if (editTypeSelect && editValueSuffix) {
                 editTypeSelect.addEventListener('change', function() {
-                    editValueSuffix.textContent = this.value === 'Fixed Amount' ? '$' : '%';
+                    editValueSuffix.textContent = this.value === '2' ? '$' : '%';
                 });
             }
 
-            // Apply to all events checkbox handler
-            const applyToAllCheckbox = document.querySelector('input[name="ApplyToAllEvents"]');
-            const eventSelection = document.getElementById('eventSelection');
             
-            if (applyToAllCheckbox && eventSelection) {
-                applyToAllCheckbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        eventSelection.classList.add('hidden');
-                    } else {
-                        eventSelection.classList.remove('hidden');
-                    }
-                });
-            }
         });
 
-        // Edit Modal Functions
-        function openEditModal(index) {
-            const modal = document.getElementById('editDiscountModal');
-            if (modal) {
-                // Sample data for editing (in real app, this would come from the server)
-                const sampleData = {
-                    code: 'EARLY20',
-                    type: 'Percentage',
-                    value: '20',
-                    event: 'Summer Music Festival',
-                    limit: '100',
-                    expiry: '2024-12-31',
-                    description: 'Early bird discount for summer festival'
-                };
-                
-                // Populate form fields
-                document.getElementById('editCode').value = sampleData.code;
-                document.getElementById('editType').value = sampleData.type;
-                document.getElementById('editValue').value = sampleData.value;
-                document.getElementById('editEvent').value = sampleData.event;
-                document.getElementById('editLimit').value = sampleData.limit;
-                document.getElementById('editExpiry').value = sampleData.expiry;
-                document.getElementById('editDescription').value = sampleData.description;
-                
-                // Update suffix based on type
-                const editValueSuffix = document.getElementById('editValueSuffix');
-                if (editValueSuffix) {
-                    editValueSuffix.textContent = sampleData.type === 'Fixed Amount' ? '$' : '%';
-                }
-                
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
+        (function() {
+            const rowsPerPage = 15; // default page size
+            let currentPage = 1;
+
+            function getRows() {
+                const tbody = document.getElementById('discountsTbody');
+                if (!tbody) return [];
+                return Array.from(tbody.querySelectorAll('tr'));
             }
+
+            function renderPaginationControls(totalPages) {
+                const container = document.getElementById('paginationControls');
+                if (!container) return;
+                container.innerHTML = '';
+
+                const prev = document.createElement('button');
+                prev.className = 'px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200';
+                prev.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>';
+                prev.disabled = currentPage === 1;
+                prev.addEventListener('click', () => { if (currentPage > 1) { currentPage--; paginate(); } });
+                container.appendChild(prev);
+
+                const maxButtons = 7;
+                let start = Math.max(1, currentPage - Math.floor(maxButtons / 2));
+                let end = Math.min(totalPages, start + maxButtons - 1);
+                if (end - start < maxButtons - 1) start = Math.max(1, end - maxButtons + 1);
+
+                if (start > 1) {
+                    container.appendChild(pageButton(1));
+                    if (start > 2) container.appendChild(ellipsis());
+                }
+
+                for (let i = start; i <= end; i++) {
+                    container.appendChild(pageButton(i));
+                }
+
+                if (end < totalPages) {
+                    if (end < totalPages - 1) container.appendChild(ellipsis());
+                    container.appendChild(pageButton(totalPages));
+                }
+
+                const next = document.createElement('button');
+                next.className = 'px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200';
+                next.innerHTML = '<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>';
+                next.disabled = currentPage === totalPages;
+                next.addEventListener('click', () => { if (currentPage < totalPages) { currentPage++; paginate(); } });
+                container.appendChild(next);
+            }
+
+            function pageButton(page) {
+                const btn = document.createElement('button');
+                btn.className = page === currentPage ? 'px-3 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold' : 'px-3 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200';
+                btn.textContent = page;
+                btn.addEventListener('click', () => { currentPage = page; paginate(); });
+                return btn;
+            }
+
+            function ellipsis() {
+                const span = document.createElement('span');
+                span.className = 'px-3 py-2 text-gray-400';
+                span.textContent = '...';
+                return span;
+            }
+
+            function paginate() {
+                const rows = getRows();
+                const total = rows.length;
+                const totalPages = Math.max(1, Math.ceil(total / rowsPerPage));
+                if (currentPage > totalPages) currentPage = totalPages;
+
+                const start = (currentPage - 1) * rowsPerPage;
+                const end = Math.min(total, start + rowsPerPage);
+
+                rows.forEach((r, idx) => {
+                    r.style.display = (idx >= start && idx < end) ? '' : 'none';
+                });
+
+                document.getElementById('paginationFrom').textContent = total === 0 ? 0 : (start + 1);
+                document.getElementById('paginationTo').textContent = end;
+                document.getElementById('paginationTotal').textContent = total;
+
+                renderPaginationControls(totalPages);
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(() => {
+                    currentPage = 1;
+                    paginate();
+                }, 50);
+            });
+        })();
+
+        
+        function openEditModal(discountId) {
+            // Clear previous values before fetching new data
+            document.getElementById('editDiscountId').value = '';
+            document.getElementById('editCode').value = '';
+            document.getElementById('editType').value = '1';
+            document.getElementById('editValue').value = '';
+            document.getElementById('editLimit').value = '';
+            document.getElementById('editExpiry').value = '';
+            document.getElementById('editDescription').value = '';
+            document.getElementById('editIsActive').checked = false;
+            var eventSelect = document.getElementById('editEvent');
+            if (eventSelect) eventSelect.value = '';
+
+            // Set up form action
+            const editFormEl = document.getElementById('editDiscountForm');
+            if (editFormEl) {
+                const editBase = '@Url.Action("EditDiscount", "Organizer", new { id = "__ID__" })';
+                editFormEl.action = editBase.replace('__ID__', discountId);
+            }
+
+            const baseUrl = '@Url.Action("GetDiscountData", "Organizer", new { id = "__ID__" })';
+            const url = baseUrl.replace('__ID__', discountId);
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.success) {
+                        const raw = data.data || data;
+
+                        const get = (obj, pascal) => {
+                            const camel = pascal.charAt(0).toLowerCase() + pascal.slice(1);
+                            return obj[pascal] !== undefined ? obj[pascal] : obj[camel];
+                        };
+
+                        document.getElementById('editDiscountId').value = discountId;
+                        document.getElementById('editCode').value = get(raw, 'Code') || '';
+                        document.getElementById('editType').value = String(get(raw, 'Type') !== undefined ? get(raw, 'Type') : 1);
+                        document.getElementById('editValue').value = get(raw, 'Value') !== undefined ? get(raw, 'Value') : '';
+                        document.getElementById('editLimit').value = get(raw, 'UsageLimit') !== undefined ? get(raw, 'UsageLimit') : '';
+                        if (get(raw, 'ExpiryDate')) {
+                            const date = new Date(get(raw, 'ExpiryDate'));
+                            if (!isNaN(date)) {
+                                document.getElementById('editExpiry').value = date.toISOString().split('T')[0];
+                            }
+                        }
+                        document.getElementById('editDescription').value = get(raw, 'Description') || '';
+                        document.getElementById('editIsActive').checked = !!get(raw, 'IsActive');
+                        if (eventSelect) eventSelect.value = get(raw, 'EventId') || '';
+
+                        const editValueSuffix = document.getElementById('editValueSuffix');
+                        if (editValueSuffix) {
+                            const t = Number(get(raw, 'Type'));
+                            editValueSuffix.textContent = t === 2 ? '$' : '%';
+                        }
+
+                        const modal = document.getElementById('editDiscountModal');
+                        if (modal) {
+                            modal.classList.remove('hidden');
+                            document.body.style.overflow = 'hidden';
+                        }
+                    } else {
+                        alert('Error loading discount data: ' + (data && data.message ? data.message : 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    alert('Error loading discount data. Please try again.');
+                });
         }
 
         function closeEditModal() {
@@ -545,16 +747,91 @@
             }
         }
 
-        // Close modal when clicking outside
         document.addEventListener('click', function(event) {
             const modal = document.getElementById('editDiscountModal');
             if (modal && event.target === modal) {
                 closeEditModal();
             }
         });
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const toast = document.createElement('div');
+                toast.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                toast.textContent = 'Discount code copied to clipboard!';
+                document.body.appendChild(toast);
+                
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 3000);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        function confirmDelete(discountId, discountCode) {
+            if (!confirm(`Are you sure you want to delete the discount code "${discountCode}"? This action cannot be undone.`)) return;
+
+            try {
+                const form = document.createElement('form');
+                form.method = 'POST';
+
+                const deleteTemplate = '/organizer/discounts/delete/__ID__';
+                form.action = deleteTemplate.replace('__ID__', discountId);
+
+                console.log('Submitting delete to:', form.action);
+
+                let token = document.querySelector('input[name="__RequestVerificationToken"]');
+                if (!token) {
+                    const meta = document.querySelector('meta[name="__RequestVerificationToken"]');
+                    if (meta && meta.content) {
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = '__RequestVerificationToken';
+                        tokenInput.value = meta.content;
+                        form.appendChild(tokenInput);
+                    }
+                } else {
+                    const tokenInput = document.createElement('input');
+                    tokenInput.type = 'hidden';
+                    tokenInput.name = '__RequestVerificationToken';
+                    tokenInput.value = token.value;
+                    form.appendChild(tokenInput);
+                }
+
+                document.body.appendChild(form);
+                form.submit();
+            } catch (err) {
+                console.error('Error performing delete:', err);
+                alert('Unable to delete discount. Check console for details.');
+            }
+        }
+
     </script>
 
-    <!-- Validation Scripts -->
+    <script>
+        (function() {
+            // Use JSON serialization to safely embed the server TempData message into JS
+            var successMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"] ?? ""));
+            if (successMessage) {
+                document.addEventListener('DOMContentLoaded', function() {
+                    try {
+                        var cm = document.getElementById('createDiscountModal');
+                        var em = document.getElementById('editDiscountModal');
+                        if (cm && !cm.classList.contains('hidden')) cm.classList.add('hidden');
+                        if (em && !em.classList.contains('hidden')) em.classList.add('hidden');
+                        // restore page scroll in case a modal was open
+                        document.body.style.overflow = '';
+                        var banner = document.querySelector('[data-success-banner]');
+                        if (banner) banner.focus();
+                    } catch (e) {
+                        console.error('Error hiding modals after success:', e);
+                    }
+                });
+            }
+        })();
+    </script>
+
     @section Scripts {
         @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     }
