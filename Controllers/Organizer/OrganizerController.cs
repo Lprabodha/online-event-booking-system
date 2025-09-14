@@ -168,11 +168,8 @@ namespace online_event_booking_system.Controllers.Organizer
             
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("Model state is invalid:");
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Error: {error.ErrorMessage}");
-                }
+                _logger.LogWarning("Model state is invalid for discount edit. Errors: {Errors}", 
+                    string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
 
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
                 var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
@@ -214,9 +211,11 @@ namespace online_event_booking_system.Controllers.Organizer
             {
                 await _discountService.UpdateDiscountAsync(id, model);
                 TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been updated successfully!";
+                _logger.LogInformation("Discount {DiscountId} updated successfully by organizer {OrganizerId}", id, organizerId);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating discount {DiscountId} for organizer {OrganizerId}", id, organizerId);
                 TempData["ErrorMessage"] = "An error occurred while updating the discount. Please try again.";
             }
             

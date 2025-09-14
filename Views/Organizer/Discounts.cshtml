@@ -356,12 +356,13 @@
                 <form id="editDiscountForm" method="post" class="space-y-6">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="editDiscountId" name="id" />
-                    @* Validation summary for server-side errors when returning the Discounts view *@
-                    <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-2"></div>
+                    
+                    @* Validation summary for server-side errors *@
+                    <div asp-validation-summary="ModelOnly" class="text-red-400 text-sm mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg"></div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Code</label>
-                            <input type="text" id="editCode" name="Code" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20">
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Code *</label>
+                            <input type="text" id="editCode" name="Code" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="e.g., EARLY20" maxlength="20" required>
                             <span asp-validation-for="Code" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
@@ -373,15 +374,15 @@
                             <span asp-validation-for="Type" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Value</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Discount Value *</label>
                             <div class="relative">
-                                <input type="number" id="editValue" name="Value" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01">
+                                <input type="number" id="editValue" name="Value" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="0" min="0" step="0.01" required>
                                 <span class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400" id="editValueSuffix">%</span>
                             </div>
                             <span asp-validation-for="Value" class="text-red-400 text-xs mt-1 block"></span>
                         </div>
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Event</label>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Event *</label>
                             <select id="editEvent" name="EventId" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 cursor-pointer" required>
                                 <option value="" class="bg-dark-navy text-foreground">Select an event</option>
                                 @foreach (var eventOption in Model.AvailableEvents)
@@ -683,6 +684,10 @@
             var eventSelect = document.getElementById('editEvent');
             if (eventSelect) eventSelect.value = '';
 
+            // Clear any previous validation errors
+            const validationSummary = document.querySelector('#editDiscountModal .text-red-400');
+            if (validationSummary) validationSummary.innerHTML = '';
+
             // Set up form action
             const editFormEl = document.getElementById('editDiscountForm');
             if (editFormEl) {
@@ -746,6 +751,44 @@
                 document.body.style.overflow = '';
             }
         }
+
+        // Add form validation and submission handling
+        document.addEventListener('DOMContentLoaded', function() {
+            const editForm = document.getElementById('editDiscountForm');
+            if (editForm) {
+                editForm.addEventListener('submit', function(e) {
+                    // Basic client-side validation
+                    const code = document.getElementById('editCode').value.trim();
+                    const value = document.getElementById('editValue').value;
+                    const eventId = document.getElementById('editEvent').value;
+                    
+                    if (!code) {
+                        e.preventDefault();
+                        alert('Please enter a discount code.');
+                        return false;
+                    }
+                    
+                    if (!value || value <= 0) {
+                        e.preventDefault();
+                        alert('Please enter a valid discount value.');
+                        return false;
+                    }
+                    
+                    if (!eventId) {
+                        e.preventDefault();
+                        alert('Please select an event.');
+                        return false;
+                    }
+                    
+                    // Show loading state
+                    const submitBtn = editForm.querySelector('button[type="submit"]');
+                    if (submitBtn) {
+                        submitBtn.disabled = true;
+                        submitBtn.textContent = 'Updating...';
+                    }
+                });
+            }
+        });
 
         document.addEventListener('click', function(event) {
             const modal = document.getElementById('editDiscountModal');
@@ -813,23 +856,77 @@
         (function() {
             // Use JSON serialization to safely embed the server TempData message into JS
             var successMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"] ?? ""));
-            if (successMessage) {
+            var errorMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["ErrorMessage"] ?? ""));
+            
+            if (successMessage || errorMessage) {
                 document.addEventListener('DOMContentLoaded', function() {
                     try {
+                        // Close any open modals
                         var cm = document.getElementById('createDiscountModal');
                         var em = document.getElementById('editDiscountModal');
                         if (cm && !cm.classList.contains('hidden')) cm.classList.add('hidden');
                         if (em && !em.classList.contains('hidden')) em.classList.add('hidden');
-                        // restore page scroll in case a modal was open
+                        
+                        // Restore page scroll
                         document.body.style.overflow = '';
+                        
+                        // Show success/error message
+                        if (successMessage) {
+                            showNotification(successMessage, 'success');
+                        }
+                        if (errorMessage) {
+                            showNotification(errorMessage, 'error');
+                        }
+                        
+                        // Focus on the message banner
                         var banner = document.querySelector('[data-success-banner]');
                         if (banner) banner.focus();
                     } catch (e) {
-                        console.error('Error hiding modals after success:', e);
+                        console.error('Error handling success message:', e);
                     }
                 });
             }
         })();
+
+        // Enhanced notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 px-6 py-4 rounded-lg shadow-lg transition-all duration-300 transform translate-x-full`;
+            
+            if (type === 'success') {
+                notification.className += ' bg-green-500 text-white';
+            } else if (type === 'error') {
+                notification.className += ' bg-red-500 text-white';
+            }
+            
+            notification.innerHTML = `
+                <div class="flex items-center space-x-3">
+                    <span>${message}</span>
+                    <button onclick="this.parentElement.parentElement.remove()" class="ml-2 text-white hover:text-gray-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.classList.remove('translate-x-full');
+            }, 100);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
     </script>
 
 
