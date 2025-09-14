@@ -23,7 +23,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Venue\" />
-    <Folder Include="Migrations\" />
     <Folder Include="Views\Public\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
