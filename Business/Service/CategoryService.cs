@@ -47,8 +47,6 @@ namespace online_event_booking_system.Business.Service
         {
             try
             {
-                _logger.LogInformation("Creating new category: {CategoryName}", category.Name);
-
                 // Business validation
                 if (string.IsNullOrWhiteSpace(category.Name))
                 {
@@ -76,7 +74,6 @@ namespace online_event_booking_system.Business.Service
                 }
 
                 var createdCategory = await _categoryRepository.CreateCategoryAsync(category);
-                _logger.LogInformation("Successfully created category with ID: {CategoryId}", createdCategory.Id);
                 return (true, "Category created successfully.", createdCategory);
             }
             catch (Exception ex)
@@ -95,8 +92,6 @@ namespace online_event_booking_system.Business.Service
         {
             try
             {
-                _logger.LogInformation("Updating category with ID: {CategoryId}, Name: {CategoryName}", category.Id, category.Name);
-
                 // Business validation
                 if (string.IsNullOrWhiteSpace(category.Name))
                 {
@@ -131,7 +126,6 @@ namespace online_event_booking_system.Business.Service
                 }
 
                 var updatedCategory = await _categoryRepository.UpdateCategoryAsync(category);
-                _logger.LogInformation("Successfully updated category with ID: {CategoryId}", category.Id);
                 return (true, "Category updated successfully.", updatedCategory);
             }
             catch (Exception ex)
@@ -150,8 +144,6 @@ namespace online_event_booking_system.Business.Service
         {
             try
             {
-                _logger.LogInformation("Attempting to delete category with ID: {CategoryId}", id);
-
                 // Check if category exists
                 if (!await _categoryRepository.CategoryExistsAsync(id))
                 {
@@ -170,7 +162,6 @@ namespace online_event_booking_system.Business.Service
                         ? $"Category '{categoryName}' has been marked as inactive due to associated events."
                         : $"Category '{categoryName}' has been deleted successfully.";
                     
-                    _logger.LogInformation("Successfully deleted category with ID: {CategoryId}", id);
                     return (true, message);
                 }
                 else

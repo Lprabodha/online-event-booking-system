@@ -2,22 +2,31 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Business.Interface;
-using online_event_booking_system.Data.Entities;
-using online_event_booking_system.Models;
 using System.Security.Claims;
+using online_event_booking_system.Models;
+using online_event_booking_system.Models.View_Models;
+using online_event_booking_system.Data.Entities;
 
 namespace online_event_booking_system.Controllers.Organizer
 {
     [Authorize(Roles = "Organizer")]
     public class OrganizerController : Controller
     {
+        private readonly IEventService _eventService;
         private readonly IDiscountService _discountService;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly ILogger<OrganizerController> _logger;
 
-        public OrganizerController(IDiscountService discountService, UserManager<ApplicationUser> userManager)
+        public OrganizerController(
+            IEventService eventService, 
+            IDiscountService discountService, 
+            UserManager<ApplicationUser> userManager,
+            ILogger<OrganizerController> logger)
         {
+            _eventService = eventService;
             _discountService = discountService;
             _userManager = userManager;
+            _logger = logger;
         }
         [HttpGet("organizer")]
         public IActionResult Index()
@@ -26,9 +35,26 @@ namespace online_event_booking_system.Controllers.Organizer
         }
 
         [HttpGet("organizer/events")]
-        public IActionResult Events()
+        public async Task<IActionResult> Events(int page = 1, int pageSize = 10)
         {
-            return View();
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var (events, totalCount, totalPages) = await _eventService.GetEventsByOrganizerWithPaginationAsync(organizerId, page, pageSize);
+                
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.TotalCount = totalCount;
+                ViewBag.PageSize = pageSize;
+                
+                return View(events);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading events");
+                TempData["ErrorMessage"] = "An error occurred while loading events. Please try again.";
+                return View(new List<Data.Entities.Event>());
+            }
         }
 
         [HttpGet("organizer/reports")]
@@ -123,7 +149,7 @@ namespace online_event_booking_system.Controllers.Organizer
             try
             {
                 await _discountService.CreateDiscountAsync(model, organizerId);
-                TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
+            TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
             }
             catch (Exception ex)
             {
@@ -142,11 +168,8 @@ namespace online_event_booking_system.Controllers.Organizer
             
             if (!ModelState.IsValid)
             {
-                Console.WriteLine("Model state is invalid:");
-                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
-                {
-                    Console.WriteLine($"Error: {error.ErrorMessage}");
-                }
+                _logger.LogWarning("Model state is invalid for discount edit. Errors: {Errors}", 
+                    string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
 
                 model.AvailableEvents = (await _discountService.GetAvailableEventsAsync(organizerId)).ToList();
                 var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
@@ -188,9 +211,11 @@ namespace online_event_booking_system.Controllers.Organizer
             {
                 await _discountService.UpdateDiscountAsync(id, model);
                 TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been updated successfully!";
+                _logger.LogInformation("Discount {DiscountId} updated successfully by organizer {OrganizerId}", id, organizerId);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error updating discount {DiscountId} for organizer {OrganizerId}", id, organizerId);
                 TempData["ErrorMessage"] = "An error occurred while updating the discount. Please try again.";
             }
             
@@ -242,6 +267,7 @@ namespace online_event_booking_system.Controllers.Organizer
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while updating discount status for discount {DiscountId}", id);
                 return Json(new { success = false, message = "An error occurred while updating the discount status." });
             }
         }
@@ -273,16 +299,325 @@ namespace online_event_booking_system.Controllers.Organizer
         }
 
         [HttpGet("organizer/create-event")]
-        public IActionResult CreateEvent()
+        public async Task<IActionResult> CreateEvent()
         {
-            return View();
+            try
+            {
+                var model = await _eventService.GetCreateEventViewModelAsync();
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading create event page");
+                TempData["ErrorMessage"] = "An error occurred while loading the create event page. Please try again.";
+                return RedirectToAction("Events");
+            }
+        }
+
+        [HttpPost("organizer/create-event")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    // Reload dropdown data
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
+                // Validate event date is in the future
+                if (model.EventDate < DateTime.Today)
+                {
+                    ModelState.AddModelError("EventDate", "Event date must be in the future");
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
+                // Validate end time is after start time
+                if (model.EndTime <= model.StartTime)
+                {
+                    ModelState.AddModelError("EndTime", "End time must be after start time");
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
+                // Validate total capacity matches sum of ticket stocks
+                var totalTicketStock = model.EventPrices.Sum(ep => ep.Stock);
+                if (totalTicketStock != model.TotalCapacity)
+                {
+                    ModelState.AddModelError("TotalCapacity", "Total capacity must match the sum of all ticket stocks");
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var createdEvent = await _eventService.CreateEventAsync(model, organizerId);
+
+                TempData["SuccessMessage"] = $"Event '{createdEvent.Title}' has been created successfully!";
+                return RedirectToAction("Events");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating event");
+                TempData["ErrorMessage"] = $"An error occurred while creating the event. Please try again. Error: {ex.Message}";
+                
+                // Reload dropdown data
+                model.Categories = await _eventService.GetCategoriesAsync();
+                model.Venues = await _eventService.GetVenuesAsync();
+                return View(model);
+            }
         }
 
         [HttpGet("organizer/edit-event/{id}")]
-        public IActionResult EditEvent(Guid id)
+        public async Task<IActionResult> EditEvent(Guid id)
         {
-            return View();
+            try
+            {
+                var eventEntity = await _eventService.GetEventByIdAsync(id);
+                if (eventEntity == null)
+                {
+                    TempData["ErrorMessage"] = "Event not found.";
+                    return RedirectToAction("Events");
+                }
+
+                // Check if user owns this event
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                if (eventEntity.OrganizerId != organizerId)
+                {
+                    TempData["ErrorMessage"] = "You don't have permission to edit this event.";
+                    return RedirectToAction("Events");
+                }
+
+                var model = new CreateEventViewModel
+                {
+                    Title = eventEntity.Title,
+                    Description = eventEntity.Description,
+                    CategoryId = eventEntity.CategoryId,
+                    VenueId = eventEntity.VenueId,
+                    EventDate = eventEntity.EventDate,
+                    StartTime = eventEntity.EventTime.TimeOfDay,
+                    EndTime = eventEntity.EventTime.AddHours(2).TimeOfDay, // Assuming 2-hour default duration
+                    TotalCapacity = eventEntity.TotalCapacity,
+                    Tags = eventEntity.Tags,
+                    AgeRestriction = eventEntity.AgeRestriction,
+                    IsMultiDay = eventEntity.IsMultiDay,
+                    TicketSalesStart = eventEntity.TicketSalesStart,
+                    TicketSalesEnd = eventEntity.TicketSalesEnd,
+                    RefundPolicy = eventEntity.RefundPolicy,
+                    ImageUrl = eventEntity.Image,
+                    Categories = await _eventService.GetCategoriesAsync(),
+                    Venues = await _eventService.GetVenuesAsync(),
+                    EventPrices = eventEntity.Prices.Select(p => new EventPriceViewModel
+                    {
+                        Category = p.Category,
+                        Price = p.Price,
+                        Stock = p.Stock,
+                        IsActive = p.IsActive,
+                        Description = p.Description,
+                        PriceType = p.PriceType
+                    }).ToList()
+                };
+
+                // Calculate analytics data
+                var totalTicketsSold = eventEntity.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0;
+                var totalRevenue = eventEntity.Bookings?.SelectMany(b => b.Tickets).Sum(t => t.Payment?.Amount ?? 0) ?? 0;
+                var capacityUsedPercentage = eventEntity.TotalCapacity > 0 ? (totalTicketsSold * 100.0 / eventEntity.TotalCapacity) : 0;
+                var remainingTickets = eventEntity.TotalCapacity - totalTicketsSold;
+
+                ViewBag.EventEntity = eventEntity;
+                ViewBag.TotalTicketsSold = totalTicketsSold;
+                ViewBag.TotalRevenue = totalRevenue;
+                ViewBag.CapacityUsedPercentage = capacityUsedPercentage;
+                ViewBag.RemainingTickets = remainingTickets;
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading edit event page");
+                TempData["ErrorMessage"] = "An error occurred while loading the event. Please try again.";
+                return RedirectToAction("Events");
+            }
         }
 
+        [HttpPost("organizer/edit-event/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditEvent(Guid id, CreateEventViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                await _eventService.UpdateEventAsync(id, model, organizerId);
+
+                TempData["SuccessMessage"] = $"Event '{model.Title}' has been updated successfully!";
+                return RedirectToAction("Events");
+            }
+            catch (ArgumentException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+                return RedirectToAction("Events");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating event");
+                TempData["ErrorMessage"] = "An error occurred while updating the event. Please try again.";
+                
+                model.Categories = await _eventService.GetCategoriesAsync();
+                model.Venues = await _eventService.GetVenuesAsync();
+                return View(model);
+            }
+        }
+
+        [HttpPost("organizer/delete-event/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteEvent(Guid id)
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var result = await _eventService.DeleteEventAsync(id, organizerId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Event has been deleted successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Event not found or you don't have permission to delete it.";
+                }
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["ErrorMessage"] = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting event");
+                TempData["ErrorMessage"] = "An error occurred while deleting the event. Please try again.";
+            }
+
+            return RedirectToAction("Events");
+        }
+
+        [HttpPost("organizer/publish-event/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> PublishEvent(Guid id)
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var result = await _eventService.PublishEventAsync(id, organizerId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Event has been published successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Event not found or you don't have permission to publish it.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error publishing event");
+                TempData["ErrorMessage"] = "An error occurred while publishing the event. Please try again.";
+            }
+
+            return RedirectToAction("Events");
+        }
+
+        [HttpPost("organizer/unpublish-event/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UnpublishEvent(Guid id)
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var result = await _eventService.UnpublishEventAsync(id, organizerId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Event has been unpublished successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Event not found or you don't have permission to unpublish it.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unpublishing event");
+                TempData["ErrorMessage"] = "An error occurred while unpublishing the event. Please try again.";
+            }
+
+            return RedirectToAction("Events");
+        }
+
+        [HttpPost("organizer/cancel-event/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CancelEvent(Guid id)
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var result = await _eventService.CancelEventAsync(id, organizerId);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = "Event has been cancelled successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Event not found, you don't have permission to cancel it, or it cannot be cancelled.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cancelling event");
+                TempData["ErrorMessage"] = "An error occurred while cancelling the event. Please try again.";
+            }
+
+            return RedirectToAction("Events");
+        }
+
+        [HttpPost("organizer/update-event-status/{id}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> UpdateEventStatus(Guid id, string status)
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var result = await _eventService.UpdateEventStatusAsync(id, organizerId, status);
+
+                if (result)
+                {
+                    TempData["SuccessMessage"] = $"Event status has been updated to {status} successfully!";
+                }
+                else
+                {
+                    TempData["ErrorMessage"] = "Event not found, you don't have permission to update it, or invalid status.";
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating event status");
+                TempData["ErrorMessage"] = "An error occurred while updating the event status. Please try again.";
+            }
+
+            return RedirectToAction("Events");
+        }
     }
 }

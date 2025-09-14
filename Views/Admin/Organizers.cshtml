@@ -46,7 +46,7 @@
                     <div>
                         <h4 class="font-medium mb-2">Please fix the following errors:</h4>
                         <ul class="list-disc list-inside space-y-1">
-                            @foreach (var error in (List<string>)TempData["ValidationErrors"])
+                            @foreach (var error in (List<string>?)TempData["ValidationErrors"] ?? new List<string>())
                             {
                                 <li>@error</li>
                             }

@@ -19,8 +19,19 @@ namespace online_event_booking_system.Data.Entities
         public DateTime EventTime { get; set; }
         public string? Image { get; set; }
         public bool IsPublished { get; set; }
+
+        public int TotalCapacity { get; set; }
+        public string? Tags { get; set; }
+        public string? AgeRestriction { get; set; } = "All Ages";
+        public bool IsMultiDay { get; set; } = false;
+        public string Status { get; set; } = "Draft"; // Draft, Published, Cancelled, Completed
+        public DateTime? TicketSalesStart { get; set; }
+        public DateTime? TicketSalesEnd { get; set; }
+        public string RefundPolicy { get; set; } = "No Refunds";
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
+        public DateTime? DeletedAt { get; set; }
 
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
         public ICollection<EventPrice> Prices { get; set; } = new List<EventPrice>();

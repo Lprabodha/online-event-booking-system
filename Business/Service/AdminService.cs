@@ -86,7 +86,7 @@ namespace online_event_booking_system.Business.Service
                 usersWithRoles.Add(new UserWithRoleViewModel
                 {
                     User = user,
-                    Role = roles.FirstOrDefault()
+                    Role = roles.FirstOrDefault() ?? "No Role"
                 });
             }
 
@@ -144,7 +144,7 @@ namespace online_event_booking_system.Business.Service
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public async Task<UserWithRoleViewModel> GetUserWithRoleById(string id)
+        public async Task<UserWithRoleViewModel?> GetUserWithRoleById(string id)
         {
             var user = await _adminRepository.GetUserById(id);
             if (user == null)
@@ -230,7 +230,7 @@ namespace online_event_booking_system.Business.Service
                 return (false, roleResult.Errors);
             }
 
-            Task.Run(async () =>
+            _ = Task.Run(async () =>
             {
                 var emailSubject = "Your New Event Organizer Account Credentials";
                 var emailBody = EmailTemplates.GetOrganizerAccountCreationTemplate(

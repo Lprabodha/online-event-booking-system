@@ -1,6 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Summer Music Festival - Event Details";
-    ViewData["Description"] = "Join us for an unforgettable night of music under the stars. Get your tickets now for the Summer Music Festival.";
+﻿@model online_event_booking_system.Models.EventDetailsViewModel
+@{
+    ViewData["Title"] = $"{Model.Event.Title} - Event Details";
+    ViewData["Description"] = Model.Event.Description?.Length > 160 ? Model.Event.Description.Substring(0, 160) + "..." : Model.Event.Description;
 }
 
 <section class="relative h-[600px] bg-slate-900 overflow-hidden">
@@ -11,7 +12,27 @@
         <div class="absolute bottom-32 left-1/3 w-40 h-40 bg-blue-500/20 rounded-full blur-xl animate-pulse" style="animation-delay: 2s;"></div>
     </div>
 
-    <img src="/placeholder.svg?height=600&width=1200" alt="Summer Music Festival" class="w-full h-full object-cover opacity-60">
+    @{
+        var imageUrl = !string.IsNullOrEmpty(Model.Event.Image) ? Model.Event.Image : "/placeholder.svg?height=600&width=1200";
+        var eventDate = Model.Event.EventDate.ToString("MMMM dd, yyyy");
+        var eventTime = Model.Event.EventTime.ToString("h:mm tt");
+        var endTime = Model.Event.EventTime.AddHours(4).ToString("h:mm tt");
+        var minPrice = Model.Event.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
+        var maxPrice = Model.Event.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
+        var priceDisplay = minPrice > 0 ? $"${minPrice}" : "Free";
+        var statusBadge = Model.Event.Status == "Published" ? "Available" : "Limited Tickets";
+        var ageRestriction = !string.IsNullOrEmpty(Model.Event.AgeRestriction) ? Model.Event.AgeRestriction : "All Ages";
+        var totalBookings = Model.Event.Bookings?.Count ?? 0;
+        var confirmedBookings = Model.Event.Bookings?.Count(b => b.Status == "Confirmed") ?? 0;
+        var availableTickets = Model.Event.TotalCapacity - confirmedBookings;
+        var soldOutPercentage = Model.Event.TotalCapacity > 0 ? (confirmedBookings * 100) / Model.Event.TotalCapacity : 0;
+        var isSoldOut = availableTickets <= 0;
+        var isAlmostSoldOut = soldOutPercentage >= 80;
+        var daysUntilEvent = (Model.Event.EventDate - DateTime.UtcNow).Days;
+        var hoursUntilEvent = (Model.Event.EventDate - DateTime.UtcNow).TotalHours;
+    }
+    
+    <img src="@imageUrl" alt="@Model.Event.Title" class="w-full h-full object-cover opacity-60">
     <div class="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/60 to-transparent"></div>
 
     <div class="absolute top-10 right-10 w-20 h-20 bg-white/5 rounded-full backdrop-blur-sm border border-white/10 float-animation"></div>
@@ -21,12 +42,27 @@
         <div class="container mx-auto px-4 pb-16">
             <div class="max-w-5xl">
                 <div class="flex flex-wrap items-center gap-4 mb-8">
-                    <span class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20">Music Festival</span>
-                    <span class="bg-red-500/90 text-white px-6 py-3 rounded-full text-sm font-bold animate-pulse backdrop-blur-sm border border-white/20">Limited Tickets</span>
-                    <span class="bg-green-500/90 text-white px-6 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20">All Ages</span>
+                    <span class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20">@Model.Event.Category?.Name</span>
+                    @if (isSoldOut)
+                    {
+                        <span class="bg-red-500/90 text-white px-6 py-3 rounded-full text-sm font-bold animate-pulse backdrop-blur-sm border border-white/20">SOLD OUT</span>
+                    }
+                    else if (isAlmostSoldOut)
+                    {
+                        <span class="bg-orange-500/90 text-white px-6 py-3 rounded-full text-sm font-bold animate-pulse backdrop-blur-sm border border-white/20">Almost Sold Out</span>
+                    }
+                    else
+                    {
+                        <span class="bg-green-500/90 text-white px-6 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20">@availableTickets tickets left</span>
+                    }
+                    <span class="bg-blue-500/90 text-white px-6 py-3 rounded-full text-sm font-bold backdrop-blur-sm border border-white/20">@ageRestriction</span>
+                    @if (daysUntilEvent <= 7 && daysUntilEvent > 0)
+                    {
+                        <span class="bg-yellow-500/90 text-white px-6 py-3 rounded-full text-sm font-bold animate-pulse backdrop-blur-sm border border-white/20">@daysUntilEvent days left</span>
+                    }
                 </div>
-                <h1 class="text-6xl md:text-7xl font-bold text-white mb-8 text-balance leading-tight bg-gradient-to-r from-white via-purple-200 to-teal-200 bg-clip-text text-transparent">Summer Music Festival</h1>
-                <p class="text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">Experience an unforgettable night of music under the stars with world-class artists and incredible performances</p>
+                <h1 class="text-6xl md:text-7xl font-bold text-white mb-8 text-balance leading-tight bg-gradient-to-r from-white via-purple-200 to-teal-200 bg-clip-text text-transparent">@Model.Event.Title</h1>
+                <p class="text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">@Model.Event.Description</p>
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
                     <div class="flex items-center gap-4 bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
@@ -34,8 +70,8 @@
                             📅
                         </div>
                         <div>
-                            <div class="font-bold text-lg">July 15, 2024</div>
-                            <div class="text-white/80">7:00 PM - 11:00 PM</div>
+                            <div class="font-bold text-lg">@eventDate</div>
+                            <div class="text-white/80">@eventTime - @endTime</div>
                         </div>
                     </div>
 
@@ -44,8 +80,8 @@
                             📍
                         </div>
                         <div>
-                            <div class="font-bold text-lg">Central Park</div>
-                            <div class="text-white/80">Amphitheater</div>
+                            <div class="font-bold text-lg">@Model.Event.Venue?.Name</div>
+                            <div class="text-white/80">@Model.Event.Venue?.Location</div>
                         </div>
                     </div>
 
@@ -54,7 +90,7 @@
                             💰
                         </div>
                         <div>
-                            <div class="text-4xl font-bold text-green-400">$45</div>
+                            <div class="text-4xl font-bold text-green-400">@priceDisplay</div>
                             <div class="text-white/80">Starting from</div>
                         </div>
                     </div>
@@ -75,7 +111,7 @@
             <svg class="w-4 h-4 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
                 <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
             </svg>
-            <span class="text-white font-medium">Summer Music Festival</span>
+            <span class="text-white font-medium">@Model.Event.Title</span>
         </nav>
     </div>
 </section>
@@ -95,69 +131,311 @@
                     </h2>
                     <div class="prose prose-lg max-w-none text-slate-300">
                         <p class="text-xl leading-relaxed mb-8 text-slate-200">
-                            Get ready for an unforgettable evening of music under the stars! The Summer Music Festival brings together some of the most talented artists from around the world for a night of incredible performances that will leave you mesmerized.
+                            @Model.Event.Description
                         </p>
-                        <p class="leading-relaxed mb-8 text-slate-300">
-                            This year's lineup features a diverse mix of genres, from indie rock to electronic dance music, ensuring there's something for everyone. The festival takes place in the beautiful Central Park Amphitheater, providing the perfect backdrop for an amazing musical experience with state-of-the-art sound and lighting systems.
-                        </p>
-                        <p class="leading-relaxed mb-8 text-slate-300">
-                            Don't miss out on this spectacular event that promises to be one of the highlights of the summer. Bring your friends, grab some food from our amazing vendors, and dance the night away under the starlit sky!
-                        </p>
+                        @if (!string.IsNullOrEmpty(Model.Event.Tags))
+                        {
+                            <div class="flex flex-wrap gap-2 mb-8">
+                                @foreach (var tag in Model.Event.Tags.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                                {
+                                    <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm font-medium">#@tag.Trim()</span>
+                                }
+                            </div>
+                        }
+                        @if (Model.Event.IsMultiDay)
+                        {
+                            <p class="leading-relaxed mb-8 text-slate-300">
+                                <strong>Multi-day Event:</strong> This event spans multiple days, offering you the opportunity to experience everything at your own pace.
+                            </p>
+                        }
                     </div>
                 </div>
 
-                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+                <!-- Organizer Information Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50 mb-12">
                     <h2 class="text-4xl font-bold text-white mb-8 flex items-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
                             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM15.657 6.343a1 1 0 011.414 0A9.972 9.972 0 0119 12a9.972 9.972 0 01-1.929 5.657 1 1 0 11-1.414-1.414A7.971 7.971 0 0017 12c0-2.21-.895-4.21-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 12a5.983 5.983 0 01-.757 2.829 1 1 0 11-1.415-1.415A3.987 3.987 0 0013 12a3.987 3.987 0 00-.172-1.414 1 1 0 010-1.415z" clip-rule="evenodd"></path>
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
                             </svg>
                         </div>
-                        Featured Artists
+                        Event Organizer
+                    </h2>
+                    <div class="flex flex-col md:flex-row items-start md:items-center gap-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
+                            @(Model.Event.Organizer?.FullName?.Substring(0, 1) ?? "O")
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold text-white mb-2">@(Model.Event.Organizer?.FullName ?? "Event Organizer")</h3>
+                            @if (!string.IsNullOrEmpty(Model.Event.Organizer?.OrganizationName))
+                            {
+                                <p class="text-indigo-300 text-lg mb-2">@Model.Event.Organizer.OrganizationName</p>
+                            }
+                            <div class="flex flex-wrap gap-4 text-sm text-gray-300">
+                                @if (!string.IsNullOrEmpty(Model.Event.Organizer?.Email))
+                                {
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path>
+                                            <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path>
+                                        </svg>
+                                        <span>@Model.Event.Organizer.Email</span>
+                                    </div>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.Event.Organizer?.ContactNumber))
+                                {
+                                    <div class="flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                        </svg>
+                                        <span>@Model.Event.Organizer.ContactNumber</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-3xl font-bold text-indigo-400 mb-1">@confirmedBookings</div>
+                            <div class="text-gray-400 text-sm">Total Bookings</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- What's Included Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50 mb-12">
+                    <h2 class="text-4xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        What's Included
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Event Access</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">Full access to all event activities and performances</p>
+                        </div>
+                        
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Digital Tickets</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">Mobile tickets sent directly to your phone</p>
+                        </div>
+                        
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Event Materials</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">Program guide and event merchandise</p>
+                        </div>
+                        
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Seating</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">@(Model.Event.TotalCapacity > 100 ? "Reserved seating available" : "General admission seating")</p>
+                        </div>
+                        
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Refreshments</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">Complimentary refreshments and snacks</p>
+                        </div>
+                        
+                        <div class="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                                    <svg class="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-lg font-semibold text-white">Parking</h3>
+                            </div>
+                            <p class="text-gray-300 text-sm">@(Model.Event.Venue?.Capacity > 200 ? "Complimentary parking available" : "Street parking available")</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Important Information Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50 mb-12">
+                    <h2 class="text-4xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Important Information
                     </h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="flex items-center gap-6 p-6 bg-slate-700/50 rounded-2xl border border-slate-600/50 hover:bg-slate-700/70 transition-all">
-                            <div class="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                                TW
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">Gates Open</h3>
+                                    <p class="text-gray-300 text-sm">@Model.Event.EventTime.AddHours(-1).ToString("h:mm tt") - Arrive early for best spots</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-white">The Wavelengths</h3>
-                                <p class="text-purple-300 text-sm font-medium">Indie Rock • 8:00 PM</p>
-                                <p class="text-slate-400 text-sm">Headliner</p>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">@ageRestriction</h3>
+                                    <p class="text-gray-300 text-sm">@(ageRestriction == "All Ages" ? "Family-friendly event" : "Age verification required at entrance")</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">Mobile Tickets</h3>
+                                    <p class="text-gray-300 text-sm">Digital tickets sent to your phone - no printing required</p>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex items-center gap-6 p-6 bg-slate-700/50 rounded-2xl border border-slate-600/50 hover:bg-slate-700/70 transition-all">
-                            <div class="w-20 h-20 bg-gradient-to-br from-teal-500 to-teal-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                                ES
+                        
+                        <div class="space-y-6">
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-red-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">No Outside Food</h3>
+                                    <p class="text-gray-300 text-sm">Food vendors available on-site - outside food not permitted</p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-white">Electric Souls</h3>
-                                <p class="text-teal-300 text-sm font-medium">Electronic • 9:30 PM</p>
-                                <p class="text-slate-400 text-sm">Co-Headliner</p>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-yellow-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">Security Check</h3>
+                                    <p class="text-gray-300 text-sm">Bag inspection at entrance - please arrive early</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-6 p-6 bg-slate-700/50 rounded-2xl border border-slate-600/50 hover:bg-slate-700/70 transition-all">
-                            <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                                MV
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-white">Midnight Vibes</h3>
-                                <p class="text-blue-300 text-sm font-medium">Alternative • 7:00 PM</p>
-                                <p class="text-slate-400 text-sm">Opening Act</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-6 p-6 bg-slate-700/50 rounded-2xl border border-slate-600/50 hover:bg-slate-700/70 transition-all">
-                            <div class="w-20 h-20 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-lg">
-                                LB
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-white">Luna Bay</h3>
-                                <p class="text-pink-300 text-sm font-medium">Dream Pop • 7:30 PM</p>
-                                <p class="text-slate-400 text-sm">Supporting Act</p>
+                            
+                            <div class="flex items-start gap-4">
+                                <div class="w-10 h-10 bg-indigo-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                                    <svg class="w-5 h-5 text-indigo-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white mb-2">Weather Policy</h3>
+                                    <p class="text-gray-300 text-sm">@(Model.Event.Venue?.Capacity > 500 ? "Rain or shine - covered areas available" : "Event will proceed in light rain - umbrellas allowed")</p>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Venue Information Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50 mb-12">
+                    <h2 class="text-4xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Venue Information
+                    </h2>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                        <div>
+                            <h3 class="text-2xl font-bold text-white mb-4">@Model.Event.Venue?.Name</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-emerald-400 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <div class="font-semibold text-white">Location</div>
+                                        <div class="text-gray-300">@Model.Event.Venue?.Location</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-start gap-3">
+                                    <svg class="w-5 h-5 text-emerald-400 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <div>
+                                        <div class="font-semibold text-white">Capacity</div>
+                                        <div class="text-gray-300">@Model.Event.Venue?.Capacity people</div>
+                                    </div>
+                                </div>
+                                @if (!string.IsNullOrEmpty(Model.Event.Venue?.ContactInfo))
+                                {
+                                    <div class="flex items-start gap-3">
+                                        <svg class="w-5 h-5 text-emerald-400 mt-1" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"></path>
+                                        </svg>
+                                        <div>
+                                            <div class="font-semibold text-white">Contact</div>
+                                            <div class="text-gray-300">@Model.Event.Venue.ContactInfo</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div>
+                            @if (!string.IsNullOrEmpty(Model.Event.Venue?.Description))
+                            {
+                                <h4 class="text-lg font-semibold text-white mb-3">About the Venue</h4>
+                                <p class="text-gray-300 leading-relaxed">@Model.Event.Venue.Description</p>
+                            }
+                            @if (!string.IsNullOrEmpty(Model.Event.Venue?.Image))
+                            {
+                                <div class="mt-4">
+                                    <img src="@Model.Event.Venue.Image" alt="@Model.Event.Venue.Name" class="w-full h-48 object-cover rounded-2xl shadow-lg">
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+  
 
                 <div class="bg-card rounded-2xl shadow-lg p-8">
                     <h2 class="text-3xl font-serif font-bold text-card-foreground mb-6 flex items-center">
@@ -305,42 +583,128 @@
             </div>
 
             <div class="lg:col-span-1">
+                <!-- Event Statistics Section -->
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 mb-8 border border-slate-700/50">
+                    <h3 class="text-2xl font-bold text-white mb-6 flex items-center">
+                        <svg class="w-6 h-6 text-purple-400 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path>
+                        </svg>
+                        Event Statistics
+                    </h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="text-center p-4 bg-slate-700/50 rounded-2xl">
+                            <div class="text-3xl font-bold text-purple-400 mb-1">@confirmedBookings</div>
+                            <div class="text-gray-400 text-sm">Bookings</div>
+                        </div>
+                        <div class="text-center p-4 bg-slate-700/50 rounded-2xl">
+                            <div class="text-3xl font-bold text-green-400 mb-1">@availableTickets</div>
+                            <div class="text-gray-400 text-sm">Available</div>
+                        </div>
+                        <div class="text-center p-4 bg-slate-700/50 rounded-2xl">
+                            <div class="text-3xl font-bold text-blue-400 mb-1">@soldOutPercentage%</div>
+                            <div class="text-gray-400 text-sm">Sold</div>
+                        </div>
+                        <div class="text-center p-4 bg-slate-700/50 rounded-2xl">
+                            <div class="text-3xl font-bold text-orange-400 mb-1">@Model.Event.TotalCapacity</div>
+                            <div class="text-gray-400 text-sm">Total Capacity</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="mt-6">
+                        <div class="flex justify-between text-sm text-gray-400 mb-2">
+                            <span>Ticket Sales Progress</span>
+                            <span>@soldOutPercentage%</span>
+                        </div>
+                        <div class="w-full bg-slate-700 rounded-full h-3">
+                            <div class="bg-gradient-to-r from-purple-500 to-teal-500 h-3 rounded-full transition-all duration-500" style="width: @soldOutPercentage%"></div>
+                        </div>
+                    </div>
+
+                    @if (isAlmostSoldOut && !isSoldOut)
+                    {
+                        <div class="mt-4 p-3 bg-orange-500/20 border border-orange-500/30 rounded-xl">
+                            <div class="flex items-center gap-2 text-orange-300">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span class="font-medium">Hurry! Only @availableTickets tickets left</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
                 <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sticky top-6 border border-slate-700/50">
                     <div class="text-center mb-8">
                         <div class="flex items-center justify-center gap-3 mb-4">
-                            <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">$45</span>
-                            <div class="text-left">
-                                <div class="text-slate-400 line-through text-lg">$60</div>
-                                <div class="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-bold px-3 py-1 rounded-full">25% OFF</div>
-                            </div>
+                            <span class="text-5xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">@priceDisplay</span>
+                            @if (minPrice > 0)
+                            {
+                                <div class="text-left">
+                                    <div class="text-slate-400 text-lg">Starting from</div>
+                                    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-bold px-3 py-1 rounded-full">Best Price</div>
+                                </div>
+                            }
                         </div>
-                        <p class="text-slate-300 text-lg">General Admission</p>
-                        <p class="text-sm text-red-400 font-medium mt-2">⚡ Early Bird Special - Limited Time</p>
+                        <p class="text-slate-300 text-lg">@(Model.Event.Prices?.FirstOrDefault()?.Category ?? "General Admission")</p>
+                        @if (Model.Event.TicketSalesEnd.HasValue && Model.Event.TicketSalesEnd > DateTime.UtcNow)
+                        {
+                            <p class="text-sm text-red-400 font-medium mt-2">⚡ Ticket sales end @Model.Event.TicketSalesEnd.Value.ToString("MMM dd, yyyy")</p>
+                        }
                     </div>
 
-                    <div class="space-y-4 mb-8">
-                        <div class="border-2 border-purple-500/50 bg-purple-500/10 rounded-2xl p-6 backdrop-blur-sm">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="font-bold text-white text-lg">General Admission</span>
-                                <span class="font-bold text-purple-400 text-xl">$45</span>
-                            </div>
-                            <p class="text-slate-300">Standing room, full access</p>
+                    @if (Model.Event.Prices != null && Model.Event.Prices.Any())
+                    {
+                        <div class="space-y-4 mb-8">
+                            @foreach (var price in Model.Event.Prices.Where(p => p.IsActive).OrderBy(p => p.Price))
+                            {
+                                var isFirst = price == Model.Event.Prices.Where(p => p.IsActive).OrderBy(p => p.Price).First();
+                                <div class="@(isFirst ? "border-2 border-purple-500/50 bg-purple-500/10" : "border border-slate-600/50 bg-slate-700/30") rounded-2xl p-6 @(isFirst ? "backdrop-blur-sm" : "hover:border-purple-500/50 hover:bg-purple-500/5 transition-all cursor-pointer")">
+                                    <div class="flex items-center justify-between mb-3">
+                                        <span class="font-bold text-white text-lg">@price.Category</span>
+                                        <span class="font-bold @(isFirst ? "text-purple-400" : "text-white") text-xl">@(price.Price > 0 ? $"${price.Price}" : "Free")</span>
+                                    </div>
+                                    <p class="text-slate-300">@(price.Description ?? "Standard access")</p>
+                                    @if (price.Stock > 0)
+                                    {
+                                        <p class="text-green-400 text-sm mt-2">@price.Stock tickets available</p>
+                                    }
+                                    else
+                                    {
+                                        <p class="text-red-400 text-sm mt-2">Sold Out</p>
+                                    }
+                                </div>
+                            }
                         </div>
-                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-6 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all cursor-pointer">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="font-bold text-white text-lg">VIP Seating</span>
-                                <span class="font-bold text-white text-xl">$85</span>
+                    }
+
+                    @if (Model.Event.Discounts != null && Model.Event.Discounts.Any())
+                    {
+                        <div class="bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-2xl p-6 mb-8 border border-green-500/30">
+                            <h4 class="text-lg font-bold text-white mb-4 flex items-center">
+                                <svg class="w-5 h-5 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 10a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 01-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zM12 2a1 1 0 01.967.744L14.146 7.2 17.5 9.134a1 1 0 010 1.732L14.146 12.8l-1.179 4.456a1 1 0 01-1.856 1.059L12 15.5l-1.111 1.815a1 1 0 01-1.856-1.059L7.854 12.8 4.5 10.866a1 1 0 010-1.732L7.854 7.2l1.179-4.456A1 1 0 0112 2z" clip-rule="evenodd"></path>
+                                </svg>
+                                Available Discounts
+                            </h4>
+                            <div class="space-y-3">
+                                @foreach (var discount in Model.Event.Discounts.Where(d => d.IsActive))
+                                {
+                                    var discountDisplay = discount.Type == "Percent" ? $"{discount.Value}% OFF" : $"${discount.Value} OFF";
+                                    <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-xl border border-green-500/20">
+                                        <div>
+                                            <div class="font-semibold text-white">@discount.Code</div>
+                                            <div class="text-green-300 text-sm">@(discount.Description ?? "Special discount")</div>
+                                        </div>
+                                        <div class="text-right">
+                                            <div class="text-2xl font-bold text-green-400">@discountDisplay</div>
+                                            <div class="text-green-300 text-sm">Code: @discount.Code</div>
+                                        </div>
+                                    </div>
+                                }
                             </div>
-                            <p class="text-slate-300">Reserved seats, premium view</p>
                         </div>
-                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-6 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all cursor-pointer">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="font-bold text-white text-lg">VIP Package</span>
-                                <span class="font-bold text-white text-xl">$150</span>
-                            </div>
-                            <p class="text-slate-300">Meet & greet, exclusive merch</p>
-                        </div>
-                    </div>
+                    }
 
                     <div class="space-y-4 mb-6 text-sm">
                         <div class="flex items-center justify-between py-3 border-b border-border">
@@ -350,15 +714,16 @@
                                 </svg>
                                 Date
                             </span>
-                            <span class="font-semibold">July 15, 2024</span>
+                            <span class="font-semibold">@eventDate</span>
                         </div>
                         <div class="flex items-center justify-between py-3 border-b border-border">
                             <span class="text-muted-foreground flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v.092a4.535 4.535 0 00-1.676.662C6.602 6.234 6 7.009 6 8c0 .99.602 1.765 1.324 2.246.48.32 1.054.545 1.676.662v1.941c-.391-.127-.68-.317-.843-.504a1 1 0 10-1.51 1.31c.562.649 1.413 1.076 2.353 1.253V15a1 1 0 102 0v-.092a4.535 4.535 0 001.676-.662C13.398 13.766 14 12.991 14 12c0-.99-.602-1.765-1.324-2.246A4.535 4.535 0 0011 9.092V7.151c.391.127.68.317.843.504a1 1 0 101.511-1.31c-.563-.649-1.413-1.076-2.354-1.253V5z" clip-rule="evenodd"></path>
                                 </svg>
+                                Time
                             </span>
-                            <span class="font-semibold">7:00 PM - 11:00 PM</span>
+                            <span class="font-semibold">@eventTime - @endTime</span>
                         </div>
                         <div class="flex items-center justify-between py-3 border-b border-border">
                             <span class="text-muted-foreground flex items-center gap-2">
@@ -367,29 +732,80 @@
                                 </svg>
                                 Venue
                             </span>
-                            <span class="font-semibold text-right">Central Park Amphitheater</span>
+                            <span class="font-semibold text-right">@Model.Event.Venue?.Name</span>
+                        </div>
+                        <div class="flex items-center justify-between py-3 border-b border-border">
+                            <span class="text-muted-foreground">Category</span>
+                            <span class="bg-secondary text-secondary-foreground text-sm font-medium px-3 py-1 rounded-full">@Model.Event.Category?.Name</span>
+                        </div>
+                        <div class="flex items-center justify-between py-3 border-b border-border">
+                            <span class="text-muted-foreground">Capacity</span>
+                            <span class="font-semibold">@Model.Event.TotalCapacity tickets</span>
                         </div>
                         <div class="flex items-center justify-between py-3">
-                            <span class="text-muted-foreground">Category</span>
-                            <span class="bg-secondary text-secondary-foreground text-sm font-medium px-3 py-1 rounded-full">Music</span>
+                            <span class="text-muted-foreground">Age Restriction</span>
+                            <span class="font-semibold">@ageRestriction</span>
                         </div>
                     </div>
 
                     <div class="bg-slate-700/50 rounded-2xl p-6 mb-8 border border-slate-600/50">
                         <div class="flex items-center gap-3 mb-3">
                             <div class="flex -space-x-3">
-                                <div class="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full border-2 border-slate-800 flex items-center justify-center text-white text-sm font-bold">A</div>
-                                <div class="w-10 h-10 bg-gradient-to-br from-teal-500 to-teal-600 rounded-full border-2 border-slate-800 flex items-center justify-center text-white text-sm font-bold">B</div>
-                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full border-2 border-slate-800 flex items-center justify-center text-white text-sm font-bold">C</div>
+                                @{
+                                    var recentBookings = Model.Event.Bookings?.Where(b => b.Status == "Confirmed").Take(3).ToList() ?? new List<online_event_booking_system.Data.Entities.Booking>();
+                                    var colors = new[] { "from-purple-500 to-purple-600", "from-teal-500 to-teal-600", "from-blue-500 to-blue-600" };
+                                }
+                                @for (int i = 0; i < Math.Min(3, recentBookings.Count); i++)
+                                {
+                                    var booking = recentBookings[i];
+                                    var initial = !string.IsNullOrEmpty(booking.Customer?.FullName) ? booking.Customer.FullName.Substring(0, 1).ToUpper() : "U";
+                                    <div class="w-10 h-10 bg-gradient-to-br @colors[i] rounded-full border-2 border-slate-800 flex items-center justify-center text-white text-sm font-bold">@initial</div>
+                                }
+                                @if (recentBookings.Count == 0)
+                                {
+                                    <div class="w-10 h-10 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full border-2 border-slate-800 flex items-center justify-center text-white text-sm font-bold">?</div>
+                                }
                             </div>
-                            <span class="text-white font-bold">247 people attending</span>
+                            <span class="text-white font-bold">@confirmedBookings people attending</span>
                         </div>
-                        <p class="text-slate-400 text-sm">Join Sarah, Mike, and 245 others</p>
+                        @if (confirmedBookings > 0)
+                        {
+                            var firstNames = recentBookings.Take(3).Select(b => b.Customer?.FullName?.Split(' ').FirstOrDefault() ?? "User").ToList();
+                            var othersCount = Math.Max(0, confirmedBookings - 3);
+                            <p class="text-slate-400 text-sm">
+                                Join @string.Join(", ", firstNames)@(othersCount > 0 ? $" and {othersCount} others" : "")
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-slate-400 text-sm">Be the first to book this event!</p>
+                        }
                     </div>
 
-                    <a href="/Checkout/1" class="block w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white text-center py-5 rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 mb-6 shadow-lg">
-                        Book Tickets Now
-                    </a>
+                    @if (isSoldOut)
+                    {
+                        <button disabled class="block w-full bg-gray-500 text-white text-center py-5 rounded-2xl font-bold text-xl cursor-not-allowed mb-6 shadow-lg">
+                            Sold Out
+                        </button>
+                    }
+                    else if (Model.Event.TicketSalesEnd.HasValue && Model.Event.TicketSalesEnd < DateTime.UtcNow)
+                    {
+                        <button disabled class="block w-full bg-gray-500 text-white text-center py-5 rounded-2xl font-bold text-xl cursor-not-allowed mb-6 shadow-lg">
+                            Sales Ended
+                        </button>
+                    }
+                    else if (Model.Event.TicketSalesStart.HasValue && Model.Event.TicketSalesStart > DateTime.UtcNow)
+                    {
+                        <button disabled class="block w-full bg-gray-500 text-white text-center py-5 rounded-2xl font-bold text-xl cursor-not-allowed mb-6 shadow-lg">
+                            Sales Start @Model.Event.TicketSalesStart.Value.ToString("MMM dd, yyyy")
+                        </button>
+                    }
+                    else
+                    {
+                        <a href="/Checkout/@Model.Event.Id" class="block w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white text-center py-5 rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 mb-6 shadow-lg">
+                            @(isAlmostSoldOut ? "Book Now - Limited Tickets!" : "Book Tickets Now")
+                        </a>
+                    }
 
                     <div class="text-center">
                         <p class="text-slate-400 mb-3">Don't have an account?</p>
@@ -397,6 +813,11 @@
                     </div>
 
                     <div class="mt-8 pt-8 border-t border-slate-700">
+                        <div class="mb-6">
+                            <h4 class="text-lg font-semibold text-white mb-3">Refund Policy</h4>
+                            <p class="text-gray-300 text-sm leading-relaxed">@Model.Event.RefundPolicy</p>
+                        </div>
+                        
                         <div class="flex items-center justify-center gap-6 text-sm text-slate-400">
                             <div class="flex items-center gap-2">
                                 <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -422,69 +843,63 @@
     <div class="container mx-auto px-4">
         <h2 class="text-5xl font-bold text-white mb-16 text-center bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">You Might Also Like</h2>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            <div class="bg-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all hover:scale-105 border border-slate-600/50">
-                <img src="/placeholder.svg?height=250&width=400" alt="Jazz Night" class="w-full h-56 object-cover">
-                <div class="p-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="bg-blue-500/20 text-blue-300 text-sm font-bold px-4 py-2 rounded-full border border-blue-500/30">Music</span>
-                        <span class="text-2xl font-bold text-green-400">$35</span>
+        @if (Model.RelatedEvents != null && Model.RelatedEvents.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                @foreach (var relatedEvent in Model.RelatedEvents)
+                {
+                    var relatedImageUrl = !string.IsNullOrEmpty(relatedEvent.Image) ? relatedEvent.Image : "/placeholder.svg?height=250&width=400";
+                    var relatedEventDate = relatedEvent.EventDate.ToString("MMMM dd, yyyy");
+                    var relatedEventTime = relatedEvent.EventTime.ToString("h:mm tt");
+                    var relatedMinPrice = relatedEvent.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
+                    var relatedPriceDisplay = relatedMinPrice > 0 ? $"${relatedMinPrice}" : "Free";
+                    var categoryColors = new Dictionary<string, string>
+                    {
+                        { "Music", "bg-blue-500/20 text-blue-300 border-blue-500/30" },
+                        { "Sports", "bg-green-500/20 text-green-300 border-green-500/30" },
+                        { "Technology", "bg-purple-500/20 text-purple-300 border-purple-500/30" },
+                        { "Business", "bg-orange-500/20 text-orange-300 border-orange-500/30" },
+                        { "Education", "bg-indigo-500/20 text-indigo-300 border-indigo-500/30" },
+                        { "Arts", "bg-pink-500/20 text-pink-300 border-pink-500/30" }
+                    };
+                    var categoryColor = categoryColors.ContainsKey(relatedEvent.Category?.Name ?? "") 
+                        ? categoryColors[relatedEvent.Category?.Name ?? ""] 
+                        : "bg-gray-500/20 text-gray-300 border-gray-500/30";
+                    
+                    <div class="bg-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all hover:scale-105 border border-slate-600/50">
+                        <img src="@relatedImageUrl" alt="@relatedEvent.Title" class="w-full h-56 object-cover">
+                        <div class="p-8">
+                            <div class="flex items-center justify-between mb-4">
+                                <span class="@categoryColor text-sm font-bold px-4 py-2 rounded-full border">@relatedEvent.Category?.Name</span>
+                                <span class="text-2xl font-bold text-green-400">@relatedPriceDisplay</span>
+                            </div>
+                            <h3 class="text-2xl font-bold text-white mb-3">@relatedEvent.Title</h3>
+                            <p class="text-slate-300 mb-6">@(relatedEvent.Description?.Length > 100 ? relatedEvent.Description.Substring(0, 100) + "..." : relatedEvent.Description)</p>
+                            <div class="flex items-center text-slate-400 text-sm mb-6">
+                                <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                </svg>
+                                @relatedEventDate • @relatedEventTime
+                            </div>
+                            <a href="/Events/Details/@relatedEvent.Id" class="block w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white text-center py-4 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all">
+                                View Details
+                            </a>
+                        </div>
                     </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Jazz Night at Blue Note</h3>
-                    <p class="text-slate-300 mb-6">Experience smooth jazz in an intimate setting</p>
-                    <div class="flex items-center text-slate-400 text-sm mb-6">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                        </svg>
-                        July 20, 2024 • 9:00 PM
-                    </div>
-                    <a href="/Events/Details/4" class="block w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white text-center py-4 rounded-xl font-bold hover:from-blue-600 hover:to-blue-700 transition-all">
-                        View Details
-                    </a>
-                </div>
+                }
             </div>
-
-            <div class="bg-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all hover:scale-105 border border-slate-600/50">
-                <img src="/placeholder.svg?height=250&width=400" alt="Rock Festival" class="w-full h-56 object-cover">
-                <div class="p-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="bg-red-500/20 text-red-300 text-sm font-bold px-4 py-2 rounded-full border border-red-500/30">Music</span>
-                        <span class="text-2xl font-bold text-green-400">$65</span>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Rock the Night Festival</h3>
-                    <p class="text-slate-300 mb-6">High-energy rock performances all night long</p>
-                    <div class="flex items-center text-slate-400 text-sm mb-6">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                        </svg>
-                        August 10, 2024 • 8:00 PM
-                    </div>
-                    <a href="/Events/Details/5" class="block w-full bg-gradient-to-r from-red-500 to-red-600 text-white text-center py-4 rounded-xl font-bold hover:from-red-600 hover:to-red-700 transition-all">
-                        View Details
-                    </a>
+        }
+        else
+        {
+            <div class="text-center py-12">
+                <div class="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"></path>
+                    </svg>
                 </div>
+                <h3 class="text-xl font-semibold text-white mb-2">No Related Events Found</h3>
+                <p class="text-slate-400">Check back later for more events in this category.</p>
             </div>
-
-            <div class="bg-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all hover:scale-105 border border-slate-600/50">
-                <img src="/placeholder.svg?height=250&width=400" alt="Symphony Night" class="w-full h-56 object-cover">
-                <div class="p-8">
-                    <div class="flex items-center justify-between mb-4">
-                        <span class="bg-purple-500/20 text-purple-300 text-sm font-bold px-4 py-2 rounded-full border border-purple-500/30">Classical</span>
-                        <span class="text-2xl font-bold text-green-400">$85</span>
-                    </div>
-                    <h3 class="text-2xl font-bold text-white mb-3">Symphony Under Stars</h3>
-                    <p class="text-slate-300 mb-6">Beautiful classical music in an outdoor setting</p>
-                    <div class="flex items-center text-slate-400 text-sm mb-6">
-                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                        </svg>
-                        September 5, 2024 • 7:30 PM
-                    </div>
-                    <a href="/Events/Details/6" class="block w-full bg-gradient-to-r from-purple-500 to-purple-600 text-white text-center py-4 rounded-xl font-bold hover:from-purple-600 hover:to-purple-700 transition-all">
-                        View Details
-                    </a>
-                </div>
-            </div>
-        </div>
+        }
     </div>
 </section>

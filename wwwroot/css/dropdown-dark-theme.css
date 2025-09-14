@@ -1,0 +1,104 @@
+/* Global Dropdown Dark Theme Styling - Matching Template Colors */
+
+/* Custom dropdown styling for dark theme using template variables */
+select {
+    background-color: var(--dark-navy) !important;
+    color: var(--foreground) !important;
+}
+
+select option {
+    background-color: var(--dark-navy) !important;
+    color: var(--foreground) !important;
+}
+
+select:focus option {
+    background-color: var(--dark-blue) !important;
+    color: var(--foreground) !important;
+}
+
+select option:hover {
+    background-color: var(--dark-blue) !important;
+    color: var(--foreground) !important;
+}
+
+select option:checked {
+    background-color: var(--primary) !important;
+    color: var(--primary-foreground) !important;
+}
+
+select option:focus {
+    background-color: var(--dark-blue) !important;
+    color: var(--foreground) !important;
+}
+
+/* Custom dropdown arrow using template colors */
+select {
+    /* Hide default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    /* Add custom arrow */
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23bfc9d9' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    padding-right: 2.5rem;
+    color: var(--muted-foreground);
+}
+
+/* Ensure no default arrow shows on different browsers */
+select::-ms-expand {
+    display: none;
+}
+
+/* Firefox specific */
+select::-moz-appearance {
+    text-indent: 0.01px;
+    text-overflow: '';
+}
+
+/* Ensure dropdowns have proper dark styling classes matching template */
+.select-dark {
+    background-color: var(--dark-navy) !important;
+    color: var(--foreground) !important;
+}
+
+.select-dark option {
+    background-color: var(--dark-navy) !important;
+    color: var(--foreground) !important;
+}
+
+/* Additional styling for better UX using template colors */
+select:focus {
+    outline: none;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+select:hover {
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Glass morphism effect matching template */
+select {
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Ensure consistency with template form inputs */
+select {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+select:focus {
+    background-color: var(--dark-blue) !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+/* Hover state matching template buttons */
+select:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.3) !important;
+}

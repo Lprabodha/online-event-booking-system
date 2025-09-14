@@ -21,13 +21,11 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Retrieving all categories");
                 var categories = await _context.Categories
                     .Include(c => c.Events)
                     .OrderBy(c => c.Name)
                     .ToListAsync();
                 
-                _logger.LogInformation("Successfully retrieved {Count} categories", categories.Count);
                 return categories;
             }
             catch (Exception ex)
@@ -41,20 +39,10 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Retrieving category with ID: {CategoryId}", id);
                 var category = await _context.Categories
                     .Include(c => c.Events)
                     .ThenInclude(e => e.Venue)
                     .FirstOrDefaultAsync(c => c.Id == id);
-                
-                if (category == null)
-                {
-                    _logger.LogWarning("Category with ID {CategoryId} not found", id);
-                }
-                else
-                {
-                    _logger.LogInformation("Successfully retrieved category: {CategoryName}", category.Name);
-                }
                 
                 return category;
             }
@@ -69,13 +57,11 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Creating new category: {CategoryName}", category.Name);
                 
                 category.CreatedAt = DateTime.UtcNow;
                 _context.Categories.Add(category);
                 await _context.SaveChangesAsync();
                 
-                _logger.LogInformation("Successfully created category with ID: {CategoryId}", category.Id);
                 return category;
             }
             catch (Exception ex)
@@ -89,13 +75,11 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Updating category with ID: {CategoryId}, Name: {CategoryName}", category.Id, category.Name);
                 
                 category.UpdatedAt = DateTime.UtcNow;
                 _context.Categories.Update(category);
                 await _context.SaveChangesAsync();
                 
-                _logger.LogInformation("Successfully updated category with ID: {CategoryId}", category.Id);
                 return category;
             }
             catch (Exception ex)
@@ -109,7 +93,6 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Attempting to delete category with ID: {CategoryId}", id);
                 
                 var category = await _context.Categories.FindAsync(id);
                 if (category == null)
@@ -123,19 +106,15 @@ namespace online_event_booking_system.Repository.Service
                 if (hasEvents)
                 {
                     // Soft delete - mark as inactive instead of hard delete
-                    _logger.LogInformation("Category {CategoryName} has associated events, performing soft delete", category.Name);
                     category.IsActive = false;
                     category.UpdatedAt = DateTime.UtcNow;
                     await _context.SaveChangesAsync();
-                    _logger.LogInformation("Successfully performed soft delete on category with ID: {CategoryId}", id);
                     return true;
                 }
 
                 // Hard delete if no associated events
-                _logger.LogInformation("Category {CategoryName} has no associated events, performing hard delete", category.Name);
                 _context.Categories.Remove(category);
                 await _context.SaveChangesAsync();
-                _logger.LogInformation("Successfully performed hard delete on category with ID: {CategoryId}", id);
                 return true;
             }
             catch (Exception ex)
@@ -165,14 +144,12 @@ namespace online_event_booking_system.Repository.Service
         {
             try
             {
-                _logger.LogInformation("Retrieving active categories");
                 var categories = await _context.Categories
                     .Where(c => c.IsActive)
                     .Include(c => c.Events)
                     .OrderBy(c => c.Name)
                     .ToListAsync();
                 
-                _logger.LogInformation("Successfully retrieved {Count} active categories", categories.Count);
                 return categories;
             }
             catch (Exception ex)

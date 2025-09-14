@@ -17,7 +17,7 @@
                     <div class="mt-4 md:mt-0 flex flex-wrap gap-3">
                         <!-- Export Dropdown -->
                         <div class="relative">
-                            <button id="exportDropdownBtn" class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200 flex items-center space-x-2">
+                            <button id="exportDropdownBtn" class="bg-dark-navy border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200 flex items-center space-x-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                 </svg>
@@ -28,19 +28,19 @@
                             </button>
                             <div id="exportDropdown" class="absolute right-0 mt-2 w-48 bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-lg z-10 hidden">
                                 <div class="py-2">
-                                    <button onclick="exportReport('pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="exportReport('pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
                                         <span>Export as PDF</span>
                                     </button>
-                                    <button onclick="exportReport('csv')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="exportReport('csv')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
                                         <span>Export as CSV</span>
                                     </button>
-                                    <button onclick="exportReport('excel')" class="w-full px-4 py-3 text-left text-white hover:bg-white/10 transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="exportReport('excel')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
@@ -65,31 +65,31 @@
             <section aria-label="Date Range" class="mb-8">
                 <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4">
                     <div class="flex items-center space-x-4">
-                        <select aria-label="Report period" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                            <option>Last 7 Days</option>
-                            <option>Last 30 Days</option>
-                            <option>Last 3 Months</option>
-                            <option>Last 6 Months</option>
-                            <option>This Year</option>
-                            <option>Custom Range</option>
+                        <select aria-label="Report period" class="px-4 py-3 bg-dark-navy border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                            <option class="bg-dark-navy text-foreground">Last 7 Days</option>
+                            <option class="bg-dark-navy text-foreground">Last 30 Days</option>
+                            <option class="bg-dark-navy text-foreground">Last 3 Months</option>
+                            <option class="bg-dark-navy text-foreground">Last 6 Months</option>
+                            <option class="bg-dark-navy text-foreground">This Year</option>
+                            <option class="bg-dark-navy text-foreground">Custom Range</option>
                         </select>
-                        <select aria-label="Event filter" class="px-4 py-3 bg-white/10 border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                            <option>All Events</option>
-                            <option>Live Events</option>
-                            <option>Completed Events</option>
-                            <option>Draft Events</option>
+                        <select aria-label="Event filter" class="px-4 py-3 bg-dark-navy border border-white/20 rounded-2xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                            <option class="bg-dark-navy text-foreground">All Events</option>
+                            <option class="bg-dark-navy text-foreground">Live Events</option>
+                            <option class="bg-dark-navy text-foreground">Completed Events</option>
+                            <option class="bg-dark-navy text-foreground">Draft Events</option>
                         </select>
                     </div>
                     <div class="flex items-center space-x-2">
                         <button class="px-4 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold">Apply Filters</button>
-                        <button class="px-4 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">Reset</button>
+                        <button class="px-4 py-3 bg-dark-navy border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200">Reset</button>
                     </div>
                 </div>
             </section>
 
             <!-- Key Metrics Cards -->
             <section aria-label="Key Metrics" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <div class="flex items-center justify-between mb-4">
                         <div class="p-3 bg-green-500/20 rounded-xl">
                             <svg class="w-6 h-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -103,7 +103,7 @@
                     <p class="text-gray-400 text-xs mt-1">vs last period</p>
                 </div>
                 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <div class="flex items-center justify-between mb-4">
                         <div class="p-3 bg-blue-500/20 rounded-xl">
                             <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -117,7 +117,7 @@
                     <p class="text-gray-400 text-xs mt-1">vs last period</p>
                 </div>
                 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <div class="flex items-center justify-between mb-4">
                         <div class="p-3 bg-purple-500/20 rounded-xl">
                             <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -131,7 +131,7 @@
                     <p class="text-gray-400 text-xs mt-1">vs last period</p>
                 </div>
                 
-                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <div class="flex items-center justify-between mb-4">
                         <div class="p-3 bg-teal-500/20 rounded-xl">
                             <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,8 +154,8 @@
                         <h2 class="text-xl font-bold">Revenue Trend</h2>
                         <div class="flex space-x-2" role="tablist" aria-label="Chart range tabs">
                             <button onclick="updateRevenueChart('7d')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
-                            <button onclick="updateRevenueChart('30d')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
-                            <button onclick="updateRevenueChart('90d')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">90D</button>
+                            <button onclick="updateRevenueChart('30d')" role="tab" aria-selected="false" class="px-4 py-2 bg-dark-navy text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
+                            <button onclick="updateRevenueChart('90d')" role="tab" aria-selected="false" class="px-4 py-2 bg-dark-navy text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">90D</button>
                         </div>
                     </div>
                     <div class="h-64 relative">
@@ -175,7 +175,7 @@
                         <h2 class="text-xl font-bold">Ticket Sales</h2>
                         <div class="flex space-x-2" role="tablist" aria-label="Chart type tabs">
                             <button onclick="updateTicketChart('daily')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">Daily</button>
-                            <button onclick="updateTicketChart('weekly')" role="tab" aria-selected="false" class="px-4 py-2 bg-white/10 text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">Weekly</button>
+                            <button onclick="updateTicketChart('weekly')" role="tab" aria-selected="false" class="px-4 py-2 bg-dark-navy text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">Weekly</button>
                         </div>
                     </div>
                     <div class="h-64 relative">
@@ -256,7 +256,7 @@
                                 </div>
                                 <span class="text-white font-semibold">@percentages[i]%</span>
                             </div>
-                            <div class="w-full bg-white/10 rounded-full h-2">
+                            <div class="w-full bg-dark-navy rounded-full h-2">
                                 <div class="@colors[i] h-2 rounded-full" style="width: @percentages[i]%"></div>
                             </div>
                         }
@@ -615,9 +615,9 @@
             // Update button states
             document.querySelectorAll('[onclick*="updateRevenueChart"]').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
-                btn.classList.add('bg-white/10', 'text-gray-300');
+                btn.classList.add('bg-dark-navy', 'text-gray-300');
             });
-            event.target.classList.remove('bg-white/10', 'text-gray-300');
+            event.target.classList.remove('bg-dark-navy', 'text-gray-300');
             event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
 
             // Sample data for different periods
@@ -651,9 +651,9 @@
             // Update button states
             document.querySelectorAll('[onclick*="updateTicketChart"]').forEach(btn => {
                 btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
-                btn.classList.add('bg-white/10', 'text-gray-300');
+                btn.classList.add('bg-dark-navy', 'text-gray-300');
             });
-            event.target.classList.remove('bg-white/10', 'text-gray-300');
+            event.target.classList.remove('bg-dark-navy', 'text-gray-300');
             event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
 
             // Sample data for different types
