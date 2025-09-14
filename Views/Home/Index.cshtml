@@ -128,7 +128,7 @@
                     var eventDate = evt.EventDate.ToString("MMM dd, yyyy");
                     var eventTime = evt.EventTime.ToString("h:mm tt");
                     var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
-                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"LKR {minPrice}" : $"LKR {minPrice} - {maxPrice}") : "Free";
                     var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
                     var isSoon = daysUntilEvent <= 7 && daysUntilEvent > 0;
                     
@@ -215,7 +215,7 @@
                     var eventDate = evt.EventDate.ToString("MMM dd, yyyy");
                     var eventTime = evt.EventTime.ToString("h:mm tt");
                     var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
-                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"LKR {minPrice}" : $"LKR {minPrice} - {maxPrice}") : "Free";
                     var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
                     var isToday = daysUntilEvent == 0;
                     var isTomorrow = daysUntilEvent == 1;
@@ -345,7 +345,7 @@
                     var eventDate = evt.EventDate.ToString("MMM dd");
                     var eventTime = evt.EventTime.ToString("h:mm tt");
                     var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
-                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"LKR {minPrice}" : $"LKR {minPrice} - {maxPrice}") : "Free";
                     var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
                     var isSoon = daysUntilEvent <= 7 && daysUntilEvent > 0;
                     

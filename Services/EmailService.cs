@@ -3,6 +3,7 @@ using MimeKit;
 using MimeKit.Text;
 using online_event_booking_system.Models;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace online_event_booking_system.Services
@@ -10,10 +11,12 @@ namespace online_event_booking_system.Services
     public class EmailService : IEmailService
     {
         private readonly SmtpSettings _smtpSettings;
+        private readonly ILogger<EmailService> _logger;
 
-        public EmailService(IOptions<SmtpSettings> smtpSettings)
+        public EmailService(IOptions<SmtpSettings> smtpSettings, ILogger<EmailService> logger)
         {
             _smtpSettings = smtpSettings.Value;
+            _logger = logger;
         }
 
         public async Task SendEmailAsync(string toEmail, string subject, string body)
@@ -39,7 +42,7 @@ namespace online_event_booking_system.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error sending email: {ex.Message}");
+                    _logger.LogError(ex, "Error sending email");
                     throw;
                 }
             }

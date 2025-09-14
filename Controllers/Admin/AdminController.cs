@@ -282,9 +282,71 @@ namespace online_event_booking_system.Controllers.Admin
         /// </summary>
         /// <returns></returns>
         [HttpGet("admin/events")]
-        public IActionResult Events()
+        public async Task<IActionResult> Events(string? search, string? status, int page = 1, int pageSize = 12)
         {
-            return View();
+            try
+            {
+                // Get all events with related data
+                var events = await _adminService.GetAllEventsAsync();
+                
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    events = events.Where(e => 
+                        e.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Description.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Venue.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Organizer.FullName.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Category.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    );
+                }
+
+                // Apply status filter
+                if (!string.IsNullOrEmpty(status) && status != "all")
+                {
+                    events = events.Where(e => e.Status.ToLower() == status.ToLower());
+                }
+
+                // Calculate event status based on date
+                var now = DateTime.UtcNow;
+                var eventsWithStatus = events.Select(e => new
+                {
+                    Event = e,
+                    CalculatedStatus = e.EventDate < now ? "ended" : 
+                                     e.EventDate.AddHours(2) > now && e.EventDate <= now ? "live" : 
+                                     e.Status == "Cancelled" ? "cancelled" : "upcoming"
+                });
+
+                // Apply calculated status filter
+                if (!string.IsNullOrEmpty(status) && status != "all" && status != "upcoming" && status != "live" && status != "ended" && status != "cancelled")
+                {
+                    // Filter by calculated status
+                    eventsWithStatus = eventsWithStatus.Where(e => e.CalculatedStatus == status);
+                }
+
+                var eventsList = eventsWithStatus.ToList();
+                
+                // Calculate pagination
+                var totalItems = eventsList.Count;
+                var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
+                var skip = (page - 1) * pageSize;
+                var paginatedEvents = eventsList.Skip(skip).Take(pageSize).ToList();
+
+                ViewBag.CurrentPage = page;
+                ViewBag.TotalPages = totalPages;
+                ViewBag.PageSize = pageSize;
+                ViewBag.TotalItems = totalItems;
+                ViewBag.StartItem = skip + 1;
+                ViewBag.EndItem = Math.Min(skip + pageSize, totalItems);
+                ViewBag.SearchTerm = search;
+                ViewBag.SelectedStatus = status;
+
+                return View(paginatedEvents);
+            }
+            catch (Exception ex)
+            {
+                return View(new List<object>());
+            }
         }
 
         [HttpGet("admin/organizers")]

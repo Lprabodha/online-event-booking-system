@@ -1,349 +1,229 @@
+@model List<online_event_booking_system.Data.Entities.Event>
+
 @{
     ViewData["Title"] = "Browse Events";
-    Layout = "_DashboardLayout";
+    Layout = "_Layout";
 }
 
-<!-- Customer Browse Events Container -->
-<div class="min-h-screen bg-dark-navy text-white pt-20">
-    <!-- Main Content -->
-    <div class="p-4 md:p-6 pt-8">
-            <!-- Page Header -->
-            <div class="mb-6 lg:mb-8">
-                <h1 class="text-2xl lg:text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">Browse Events</h1>
-                <p class="text-gray-400 text-sm lg:text-base">Discover amazing events and book your tickets</p>
-            </div>
-
-            <!-- Search and Filters -->
-            <div class="mb-6 lg:mb-8 space-y-4">
-                <!-- Search Bar -->
-                <div class="relative">
-                    <input type="text" id="eventSearch" placeholder="Search events..." 
-                           class="w-full px-4 py-3 pl-12 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                    <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+<div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
+    <!-- Header -->
+    <div class="bg-white/5 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <h1 class="text-3xl font-bold text-white mb-2">Discover Events</h1>
+                    <p class="text-gray-300">Find and book amazing events near you</p>
                 </div>
-
-                <!-- Filter Tabs -->
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="filterEvents('all')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 bg-gradient-to-r from-purple-500 to-teal-500 text-white text-sm">
-                        All Events
-                    </button>
-                    <button onclick="filterEvents('music')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Music
-                    </button>
-                    <button onclick="filterEvents('sports')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Sports
-                    </button>
-                    <button onclick="filterEvents('tech')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Technology
-                    </button>
-                    <button onclick="filterEvents('art')" class="event-filter px-4 py-2 rounded-lg font-medium transition-all duration-200 text-gray-300 hover:text-white hover:bg-white/10 text-sm">
-                        Art & Culture
-                    </button>
-                </div>
-            </div>
-
-            <!-- Events Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                <!-- Event Card 1 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="music">
-                    <div class="h-48 bg-gradient-to-br from-purple-500/20 to-teal-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
+                
+                <!-- Search and Filter -->
+                <div class="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+                    <form method="get" class="flex-1 lg:flex-none">
+                        <div class="relative">
+                            <input type="text" name="search" value="@ViewBag.SearchTerm" 
+                                   placeholder="Search events, venues, or categories..." 
+                                   class="w-full lg:w-80 px-4 py-3 pl-12 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
                         </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-medium">Music</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Summer Music Festival 2024</h3>
-                        <p class="text-gray-400 text-sm mb-3">Join us for an unforgettable evening of music featuring top artists</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 15, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Concert Hall</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$35</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 2 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="tech">
-                    <div class="h-48 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                        </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-blue-500/20 text-blue-400 rounded-full text-xs font-medium">Technology</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Tech Conference 2024</h3>
-                        <p class="text-gray-400 text-sm mb-3">Explore the latest in technology and innovation</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 20, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Expo Center</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$120</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 3 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="art">
-                    <div class="h-48 bg-gradient-to-br from-pink-500/20 to-rose-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded-full text-xs font-medium">Limited</span>
-                        </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-pink-500/20 text-pink-400 rounded-full text-xs font-medium">Art & Culture</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Art Exhibition Opening</h3>
-                        <p class="text-gray-400 text-sm mb-3">Contemporary art showcase featuring local and international artists</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 10, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Gallery</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$25</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 4 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="sports">
-                    <div class="h-48 bg-gradient-to-br from-green-500/20 to-emerald-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                        </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Sports</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Basketball Championship</h3>
-                        <p class="text-gray-400 text-sm mb-3">Watch the final game of the season championship</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 22, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Sports Arena</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$45</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 5 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="music">
-                    <div class="h-48 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-red-500/20 text-red-400 rounded-full text-xs font-medium">Sold Out</span>
-                        </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-indigo-500/20 text-indigo-400 rounded-full text-xs font-medium">Music</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">Jazz Night</h3>
-                        <p class="text-gray-400 text-sm mb-3">Intimate jazz performance in a cozy setting</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 18, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Jazz Club</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$60</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gray-500/20 border border-gray-500/30 text-gray-400 rounded-lg font-semibold cursor-not-allowed text-sm">
-                                Sold Out
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Event Card 6 -->
-                <div class="event-card bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 group" data-category="tech">
-                    <div class="h-48 bg-gradient-to-br from-orange-500/20 to-red-500/20 relative">
-                        <div class="absolute top-3 right-3">
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">Available</span>
-                        </div>
-                        <div class="absolute bottom-3 left-3">
-                            <span class="px-2 py-1 bg-orange-500/20 text-orange-400 rounded-full text-xs font-medium">Technology</span>
-                        </div>
-                    </div>
-                    <div class="p-4 lg:p-6">
-                        <h3 class="text-lg lg:text-xl font-bold text-white mb-2">AI Workshop</h3>
-                        <p class="text-gray-400 text-sm mb-3">Hands-on workshop on artificial intelligence and machine learning</p>
-                        
-                        <div class="space-y-2 mb-4">
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                </svg>
-                                <span class="text-gray-300">Dec 25, 2024</span>
-                            </div>
-                            <div class="flex items-center space-x-2 text-sm">
-                                <svg class="w-4 h-4 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                                </svg>
-                                <span class="text-gray-300">Tech Hub</span>
-                            </div>
-                        </div>
-                        
-                        <div class="flex items-center justify-between">
-                            <div>
-                                <p class="text-2xl font-bold text-white">$80</p>
-                                <p class="text-gray-400 text-xs">per ticket</p>
-                            </div>
-                            <button class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 transform hover:scale-105 text-sm">
-                                Book Now
-                            </button>
-                        </div>
-                    </div>
+                    </form>
+                    
+                    <form method="get" class="lg:w-auto">
+                        <select name="category" onchange="this.form.submit()" 
+                                class="px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            <option value="">All Categories</option>
+                            @if (ViewBag.Categories != null)
+                            {
+                                @foreach (var cat in (List<online_event_booking_system.Data.Entities.Category>)ViewBag.Categories)
+                                {
+                                    <option value="@cat.Id" selected="@(ViewBag.SelectedCategory == cat.Id.ToString())">@cat.Name</option>
+                                }
+                            }
+                        </select>
+                        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                        {
+                            <input type="hidden" name="search" value="@ViewBag.SearchTerm" />
+                        }
+                    </form>
                 </div>
             </div>
-
-            <!-- Load More Button -->
-            <div class="text-center mt-8">
-                <button class="px-8 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-all duration-200 font-medium">
-                    Load More Events
-                </button>
-            </div>
+        </div>
     </div>
 
-    <script>
-        // Event filtering functionality
-        function filterEvents(category) {
-            const eventCards = document.querySelectorAll('.event-card');
-            const filterButtons = document.querySelectorAll('.event-filter');
-
-            // Update filter button styles
-            filterButtons.forEach(btn => {
-                btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
-                btn.classList.add('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
-            });
-
-            // Highlight active filter
-            event.target.classList.remove('text-gray-300', 'hover:text-white', 'hover:bg-white/10');
-            event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500', 'text-white');
-
-            // Filter events
-            eventCards.forEach(card => {
-                const cardCategory = card.getAttribute('data-category');
-                if (category === 'all' || cardCategory === category) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+    <!-- Events Grid -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        @if (Model != null && Model.Any())
+        {
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach (var eventItem in Model)
+                {
+                    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden hover:bg-white/10 transition-all duration-300 transform hover:scale-105">
+                        <!-- Event Image -->
+                        <div class="relative h-48 bg-gradient-to-br from-purple-500 to-pink-500">
+                            @if (!string.IsNullOrEmpty(eventItem.Image))
+                            {
+                                <img src="@eventItem.Image" alt="@eventItem.Title" class="w-full h-full object-cover">
+                            }
+                            else
+                            {
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="w-16 h-16 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                            }
+                            
+                            <!-- Category Badge -->
+                            <div class="absolute top-4 left-4">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-600/80 text-white backdrop-blur-sm">
+                                    @eventItem.Category?.Name
+                                </span>
+                            </div>
+                            
+                            <!-- Price Badge -->
+                            @if (eventItem.Prices?.Any() == true)
+                            {
+                                var minPrice = eventItem.Prices.Min(p => p.Price);
+                                <div class="absolute top-4 right-4">
+                                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-600/80 text-white backdrop-blur-sm">
+                                        From LKR @minPrice.ToString("F2")
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        
+                        <!-- Event Details -->
+                        <div class="p-6">
+                            <div class="mb-4">
+                                <h3 class="text-xl font-bold text-white mb-2 line-clamp-2">@eventItem.Title</h3>
+                                <p class="text-gray-300 text-sm line-clamp-3">@eventItem.Description</p>
+                            </div>
+                            
+                            <!-- Event Info -->
+                            <div class="space-y-3 mb-6">
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <svg class="w-4 h-4 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                    <span>@eventItem.EventDate.ToString("MMM dd, yyyy")</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <svg class="w-4 h-4 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>@eventItem.EventTime.ToString("h:mm tt")</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <svg class="w-4 h-4 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                    <span>@(eventItem.Venue?.Name ?? "Venue TBD")</span>
+                                </div>
+                                
+                                <div class="flex items-center text-sm text-gray-400">
+                                    <svg class="w-4 h-4 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                    </svg>
+                                    <span>@(eventItem.Organizer?.FullName ?? "Organizer")</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3">
+                                <a href="/events/@eventItem.Id" 
+                                   class="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold py-3 px-4 rounded-xl text-center hover:from-purple-700 hover:to-pink-700 transition-all duration-300 transform hover:scale-105">
+                                    View Details
+                                </a>
+                                <button onclick="addToFavorites('@eventItem.Id')" 
+                                        class="px-4 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-colors">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 }
+            </div>
+        }
+        else
+        {
+            <!-- Empty State -->
+            <div class="text-center py-16">
+                <div class="max-w-md mx-auto">
+                    <svg class="w-24 h-24 text-gray-400 mx-auto mb-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                    </svg>
+                    <h3 class="text-2xl font-bold text-white mb-4">No Events Found</h3>
+                    <p class="text-gray-400 mb-6">
+                        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string))
+                        {
+                            <span>No events match your search for "<span class="text-purple-400">@ViewBag.SearchTerm</span>"</span>
+                        }
+                        else
+                        {
+                            <span>There are no events available at the moment.</span>
+                        }
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        @if (!string.IsNullOrEmpty(ViewBag.SearchTerm as string) || !string.IsNullOrEmpty(ViewBag.SelectedCategory as string))
+                        {
+                            <a href="/customer/events" class="inline-flex items-center px-6 py-3 bg-purple-600 text-white rounded-xl hover:bg-purple-700 transition-colors">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                                </svg>
+                                Clear Filters
+                            </a>
+                        }
+                        <a href="/events" class="inline-flex items-center px-6 py-3 bg-white/10 border border-white/20 text-white rounded-xl hover:bg-white/20 transition-colors">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Browse All Events
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function addToFavorites(eventId) {
+        // TODO: Implement favorites functionality
+        alert('Favorites feature coming soon!');
+    }
+    
+    // Auto-submit search form on input
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.querySelector('input[name="search"]');
+        if (searchInput) {
+            let timeout;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => {
+                    this.form.submit();
+                }, 500);
             });
         }
+    });
+</script>
 
-        // Search functionality
-        document.getElementById('eventSearch').addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const eventCards = document.querySelectorAll('.event-card');
-
-            eventCards.forEach(card => {
-                const eventTitle = card.querySelector('h3').textContent.toLowerCase();
-                const eventDescription = card.querySelector('p').textContent.toLowerCase();
-                
-                if (eventTitle.includes(searchTerm) || eventDescription.includes(searchTerm)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        });
-
-    </script>
-</div>
+<style>
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .line-clamp-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>

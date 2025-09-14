@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Repository.Interface;
 
@@ -9,11 +10,13 @@ namespace online_event_booking_system.Repository.Service
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly ApplicationDbContext _context;
 
-        public AdminRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager)
+        public AdminRepository(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, ApplicationDbContext context)
         {
             _userManager = userManager;
             _roleManager = roleManager;
+            _context = context;
         }
 
         public async Task<bool> CreateUser(ApplicationUser user, string password, string role)
@@ -114,6 +117,18 @@ namespace online_event_booking_system.Repository.Service
         public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
         {
             return await _userManager.AddToRoleAsync(user, role);
+        }
+
+        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        {
+            return await _context.Events
+                .Include(e => e.Venue)
+                .Include(e => e.Category)
+                .Include(e => e.Organizer)
+                .Include(e => e.Prices)
+                .Include(e => e.Bookings)
+                .OrderByDescending(e => e.CreatedAt)
+                .ToListAsync();
         }
     }
 }

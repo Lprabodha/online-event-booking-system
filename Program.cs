@@ -11,6 +11,8 @@ using online_event_booking_system.Models;
 using online_event_booking_system.Repository.Interface;
 using online_event_booking_system.Repository.Service;
 using online_event_booking_system.Services;
+using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Business.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +65,16 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 // S3 Service
 builder.Services.AddScoped<IS3Service, S3Service>();
 
+// Payment Service
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// QR Code Service
+builder.Services.AddScoped<IQRCodeService, QRCodeService>();
+
+// Booking Service
+builder.Services.AddScoped<IBookingService, BookingService>();
+
 // Services
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -101,6 +113,9 @@ else
     app.UseHsts();
 }
 
+// Add error handling middleware for 404 errors
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -112,6 +127,18 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Map error routes
+app.MapControllerRoute(
+    name: "error",
+    pattern: "Error/{statusCode}",
+    defaults: new { controller = "Error", action = "HttpStatusCodeHandler" });
+
+app.MapControllerRoute(
+    name: "error-handler",
+    pattern: "Error",
+    defaults: new { controller = "Error", action = "Error" });
+
 app.MapRazorPages();
 
 app.Run();

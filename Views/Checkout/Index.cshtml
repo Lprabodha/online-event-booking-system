@@ -1,6 +1,7 @@
-﻿@{
-    ViewData["Title"] = "Checkout - Summer Music Festival";
-    ViewData["Description"] = "Complete your ticket purchase for Summer Music Festival. Secure payment processing.";
+﻿@model online_event_booking_system.Models.View_Models.CheckoutViewModel
+@{
+    ViewData["Title"] = $"Checkout - {Model.Event.Title}";
+    ViewData["Description"] = $"Complete your ticket purchase for {Model.Event.Title}. Secure payment processing.";
 }
 
 
@@ -45,7 +46,8 @@
                         </div>
                         Contact Information
                     </h2>
-                    <form class="space-y-8">
+                    <form id="checkoutForm" class="space-y-8">
+                        <div id="checkoutMessage" class="mt-3 text-sm hidden"></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label for="firstName" class="block text-sm font-bold text-white mb-3">First Name *</label>
@@ -86,85 +88,65 @@
                         Select Tickets
                     </h2>
 
-                    <div class="space-y-6">
-                        <div class="border-2 border-purple-500/50 bg-purple-500/10 rounded-2xl p-8 backdrop-blur-sm">
-                            <div class="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-white">General Admission</h3>
-                                    <p class="text-slate-300 text-lg">Standing room, full venue access</p>
-                                    <div class="flex items-center gap-3 mt-4">
-                                        <span class="text-4xl font-bold text-purple-400">$45</span>
-                                        <span class="text-slate-400 line-through text-lg">$60</span>
-                                        <span class="bg-green-500/20 text-green-300 text-sm font-bold px-3 py-2 rounded-full border border-green-500/30">25% OFF</span>
+                    <div class="space-y-6" id="ticketSelection">
+                        @foreach (var ticket in Model.TicketItems)
+                        {
+                            var isFirst = ticket == Model.TicketItems.First();
+                            var borderClass = isFirst ? "border-2 border-purple-500/50 bg-purple-500/10" : "border border-slate-600/50 bg-slate-700/30 hover:border-purple-500/50 hover:bg-purple-500/5";
+                            var priceId = ticket.EventPriceId.ToString().Replace("-", "");
+                            
+                            <div class="@borderClass rounded-2xl p-8 backdrop-blur-sm transition-all" data-price-id="@ticket.EventPriceId">
+                                <div class="flex items-center justify-between mb-6">
+                                    <div>
+                                        <h3 class="text-2xl font-bold text-white">@ticket.Category</h3>
+                                        <p class="text-slate-300 text-lg">@ticket.Description</p>
+                                        <div class="flex items-center gap-3 mt-4">
+                                            <span class="text-4xl font-bold text-purple-400">LKR @ticket.Price.ToString("F2")</span>
+                                            @if (ticket.AvailableStock < 10)
+                                            {
+                                                <span class="bg-yellow-500/20 text-yellow-300 text-sm font-bold px-3 py-2 rounded-full border border-yellow-500/30">Limited</span>
+                                            }
+                                        </div>
+                                        <p class="text-sm text-slate-400 mt-2">@ticket.AvailableStock tickets remaining</p>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('@priceId')">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
+                                        <span id="@(priceId + "-qty")" class="text-3xl font-bold text-white w-12 text-center">0</span>
+                                        <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('@priceId')">
+                                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="flex items-center gap-4">
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('general')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                    <span id="general-qty" class="text-3xl font-bold text-white w-12 text-center">2</span>
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('general')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                </div>
                             </div>
-                        </div>
-
-                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-8 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
-                            <div class="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-white">VIP Seating</h3>
-                                    <p class="text-slate-300 text-lg">Reserved seats, premium view</p>
-                                    <div class="flex items-center gap-3 mt-4">
-                                        <span class="text-4xl font-bold text-white">$85</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('vip')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                    <span id="vip-qty" class="text-3xl font-bold text-white w-12 text-center">0</span>
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('vip')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="border border-slate-600/50 bg-slate-700/30 rounded-2xl p-8 hover:border-purple-500/50 hover:bg-purple-500/5 transition-all">
-                            <div class="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-white">VIP Package</h3>
-                                    <p class="text-slate-300 text-lg">Meet & greet, exclusive merchandise, premium seating</p>
-                                    <div class="flex items-center gap-3 mt-4">
-                                        <span class="text-4xl font-bold text-white">$150</span>
-                                        <span class="bg-yellow-500/20 text-yellow-300 text-sm font-bold px-3 py-2 rounded-full border border-yellow-500/30">Limited</span>
-                                    </div>
-                                </div>
-                                <div class="flex items-center gap-4">
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="decreaseQuantity('package')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                    <span id="package-qty" class="text-3xl font-bold text-white w-12 text-center">0</span>
-                                    <button type="button" class="w-14 h-14 bg-slate-700/50 border border-slate-600/50 rounded-2xl flex items-center justify-center hover:bg-slate-600/50 transition-all text-white" onclick="increaseQuantity('package')">
-                                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"></path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        }
                     </div>
+                </div>
+
+                <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
+                    <h2 class="text-3xl font-bold text-white mb-8 flex items-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mr-4 shadow-lg">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214-.322-.472-.649-.822-.88a1 1 0 00-1.45.385C6.759 3.855 6 5.33 6 6.873c0 1.544.759 3.018 2.451 4.32a1 1 0 001.45.385c.345-.23.614-.558.822-.88.214.322.472.649.822.88a1 1 0 001.45-.385C13.241 9.891 14 8.417 14 6.873c0-1.544-.759-3.018-2.451-4.32z" clip-rule="evenodd"></path>
+                            </svg>
+                        </div>
+                        Discount Code
+                    </h2>
+                    <div class="flex gap-4">
+                        <input type="text" id="discountCode" name="discountCode"
+                               class="flex-1 px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
+                               placeholder="Enter discount code">
+                        <button type="button" id="applyDiscount" 
+                                class="px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl font-bold hover:from-orange-600 hover:to-orange-700 transition-all">
+                            Apply
+                        </button>
+                    </div>
+                    <div id="discountMessage" class="mt-3 text-sm hidden"></div>
                 </div>
 
                 <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-10 border border-slate-700/50">
@@ -211,30 +193,11 @@
 
                     <div id="cardForm" class="space-y-8">
                         <div>
-                            <label for="cardNumber" class="block text-sm font-bold text-white mb-3">Card Number *</label>
-                            <input type="text" id="cardNumber" name="cardNumber" required
-                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
-                                   placeholder="1234 5678 9012 3456">
-                        </div>
-                        <div class="grid grid-cols-2 gap-8">
-                            <div>
-                                <label for="expiryDate" class="block text-sm font-bold text-white mb-3">Expiry Date *</label>
-                                <input type="text" id="expiryDate" name="expiryDate" required
-                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
-                                       placeholder="MM/YY">
+                            <label class="block text-sm font-bold text-white mb-3">Card Information *</label>
+                            <div id="card-element" class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-purple-500 transition-all">
+                                <!-- Stripe Elements will create form elements here -->
                             </div>
-                            <div>
-                                <label for="cvv" class="block text-sm font-bold text-white mb-3">CVV *</label>
-                                <input type="text" id="cvv" name="cvv" required
-                                       class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
-                                       placeholder="123">
-                            </div>
-                        </div>
-                        <div>
-                            <label for="cardName" class="block text-sm font-bold text-white mb-3">Name on Card *</label>
-                            <input type="text" id="cardName" name="cardName" required
-                                   class="w-full px-6 py-4 bg-slate-700/50 border border-slate-600/50 rounded-2xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all text-white placeholder-slate-400"
-                                   placeholder="John Doe">
+                            <div id="card-errors" class="mt-2 text-sm text-red-400" role="alert"></div>
                         </div>
                     </div>
 
@@ -254,20 +217,29 @@
             <div class="lg:col-span-1">
                 <div class="bg-slate-800/50 backdrop-blur-sm rounded-3xl shadow-2xl p-8 sticky top-6 border border-slate-700/50">
                     <div class="mb-8">
-                        <img src="/placeholder.svg?height=150&width=300" alt="Summer Music Festival" class="w-full h-40 object-cover rounded-2xl mb-6">
-                        <h3 class="text-2xl font-bold text-white mb-4">Summer Music Festival</h3>
+                        @if (!string.IsNullOrEmpty(Model.Event.Image))
+                        {
+                            <img src="@Model.Event.Image" alt="@Model.Event.Title" class="w-full h-40 object-cover rounded-2xl mb-6">
+                        }
+                        else
+                        {
+                            <div class="w-full h-40 bg-gradient-to-br from-purple-500 to-teal-500 rounded-2xl mb-6 flex items-center justify-center">
+                                <span class="text-white text-2xl font-bold">@Model.Event.Title.Substring(0, 1)</span>
+                            </div>
+                        }
+                        <h3 class="text-2xl font-bold text-white mb-4">@Model.Event.Title</h3>
                         <div class="space-y-3 text-slate-300">
                             <div class="flex items-center gap-3">
                                 <svg class="w-5 h-5 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
                                 </svg>
-                                July 15, 2024 • 7:00 PM
+                                @Model.Event.EventDate.ToString("MMMM dd, yyyy") • @Model.Event.EventTime.ToString("HH:mm")
                             </div>
                             <div class="flex items-center gap-3">
                                 <svg class="w-5 h-5 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
                                     <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
                                 </svg>
-                                Central Park Amphitheater
+                                @Model.Event.Venue?.Name
                             </div>
                         </div>
                     </div>
@@ -281,7 +253,7 @@
                                     <span class="font-bold text-white">General Admission</span>
                                     <span class="text-slate-400 block">x2 tickets</span>
                                 </div>
-                                <span class="font-bold text-white text-lg">$90.00</span>
+                                <span class="font-bold text-white text-lg">LKR 90.00</span>
                             </div>
                         </div>
                     </div>
@@ -289,24 +261,20 @@
                     <div class="space-y-4 mb-8">
                         <div class="flex items-center justify-between text-slate-300">
                             <span>Subtotal</span>
-                            <span id="subtotal" class="font-bold">$90.00</span>
+                            <span id="subtotal" class="font-bold">LKR 90.00</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-300">
                             <span>Service Fee</span>
-                            <span id="serviceFee" class="font-bold">$7.50</span>
-                        </div>
-                        <div class="flex items-center justify-between text-slate-300">
-                            <span>Processing Fee</span>
-                            <span id="processingFee" class="font-bold">$2.99</span>
+                            <span id="serviceFee" class="font-bold">LKR 7.50</span>
                         </div>
                         <div class="flex items-center justify-between text-green-400">
                             <span>Early Bird Discount</span>
-                            <span id="discount">-$15.00</span>
+                            <span id="discount">-LKR 15.00</span>
                         </div>
                         <div class="border-t border-slate-700 pt-4">
                             <div class="flex items-center justify-between text-2xl font-bold">
                                 <span class="text-white">Total</span>
-                                <span id="total" class="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">$85.49</span>
+                                <span id="total" class="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">LKR 85.49</span>
                             </div>
                         </div>
                     </div>
@@ -321,8 +289,15 @@
                         <p class="text-sm text-slate-400">Your payment information is encrypted and secure. We never store your card details.</p>
                     </div>
 
-                    <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white py-5 rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 mb-6 shadow-lg">
-                        Complete Purchase
+                    <button type="button" id="completePurchase" class="w-full bg-gradient-to-r from-purple-500 to-teal-500 text-white py-5 rounded-2xl font-bold text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 mb-6 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        <span id="purchaseText">Complete Purchase</span>
+                        <span id="purchaseLoader" class="hidden">
+                            <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Processing...
+                        </span>
                     </button>
 
                     <div class="text-center">
@@ -339,124 +314,532 @@
     </div>
 </section>
 
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden">
+    <div class="flex items-center justify-center min-h-screen">
+        <div class="bg-slate-800 rounded-3xl p-8 text-center">
+            <div class="w-16 h-16 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4 animate-spin">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">Processing Payment</h3>
+            <p class="text-slate-300">Please wait while we process your booking...</p>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
+    <script src="https://js.stripe.com/v3/"></script>
+    <script type="application/json" id="checkout-data">
+        @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+            TicketItems = Model.TicketItems,
+            EventId = Model.EventId,
+            StripePublishableKey = Model.StripePublishableKey
+        }))
+    </script>
     <script>
-        // Ticket quantity management
-        const prices = {
-            general: 45,
-            vip: 85,
-            package: 150
-        };
+        // Global variables
+        let checkoutData, ticketData, eventId, stripe, cardElement, appliedDiscount = null;
 
-        function increaseQuantity(type) {
-            const qtyElement = document.getElementById(type + '-qty');
-            let qty = parseInt(qtyElement.textContent);
-            if (qty < 10) { // Max 10 tickets per type
-                qtyElement.textContent = qty + 1;
+        // Initialize the checkout system
+        function initializeCheckout() {
+            try {
+                // Get data from JSON script tag
+                const dataElement = document.getElementById('checkout-data');
+                if (!dataElement) {
+                    return;
+                }
+                
+                checkoutData = JSON.parse(dataElement.textContent);
+                ticketData = checkoutData.TicketItems || [];
+
+                // Normalize ticket properties so JS can use lowercase names regardless of server JSON casing
+                ticketData = ticketData.map(t => {
+                    const normalized = Object.assign({}, t);
+                    normalized.price = (t.price !== undefined) ? t.price : (t.Price !== undefined ? t.Price : 0);
+                    normalized.category = (t.category !== undefined) ? t.category : (t.Category !== undefined ? t.Category : 'Ticket');
+                    normalized.eventPriceId = (t.eventPriceId !== undefined) ? t.eventPriceId : (t.EventPriceId !== undefined ? t.EventPriceId : '');
+                    normalized.maxQuantity = (t.maxQuantity !== undefined) ? t.maxQuantity : (t.MaxQuantity !== undefined ? t.MaxQuantity : 10);
+                    normalized.availableStock = (t.availableStock !== undefined) ? t.availableStock : (t.AvailableStock !== undefined ? t.AvailableStock : 10);
+                    // precompute a normalized id used for DOM ids
+                    normalized.normalizedPriceId = (normalized.eventPriceId || '').toString().replace(/-/g, '');
+                    // ensure quantity value exists for potential server round-trips
+                    normalized.quantity = normalized.quantity || 0;
+                    return normalized;
+                });
+                eventId = checkoutData.EventId;
+
+                // Initialize Stripe
+                if (checkoutData.StripePublishableKey) {
+                    stripe = Stripe(checkoutData.StripePublishableKey);
+                    initializeStripeElements();
+                } else {
+                }
+
+                // Initialize event listeners
+                initializeEventListeners();
+
+                // Add click-to-select behavior for ticket cards: clicking a card increases its quantity
+                try {
+                    const ticketCards = document.querySelectorAll('[data-price-id]');
+                    ticketCards.forEach(card => {
+                        card.addEventListener('click', function (e) {
+                            // Ignore clicks on buttons inside the card (they have their own handlers)
+                            if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+                            const raw = (card.getAttribute('data-price-id') || '').toString();
+                            const pid = raw.replace(/-/g, '');
+                            increaseQuantity(pid);
+                        });
+                    });
+                } catch (e) {
+                    // Non-fatal: continue without click-to-select
+                }
+                
+                // Initialize order summary
                 updateOrderSummary();
+                
+            } catch (error) {
             }
         }
 
-        function decreaseQuantity(type) {
-            const qtyElement = document.getElementById(type + '-qty');
-            let qty = parseInt(qtyElement.textContent);
-            if (qty > 0) {
-                qtyElement.textContent = qty - 1;
-                updateOrderSummary();
+        // Initialize Stripe Elements
+        function initializeStripeElements() {
+            try {
+                const elements = stripe.elements();
+                
+                // Create card element
+                cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#ffffff',
+                            '::placeholder': {
+                                color: '#94a3b8',
+                            },
+                        },
+                        invalid: {
+                            color: '#ef4444',
+                        },
+                    },
+                });
+                
+                // Mount card element
+                const cardElementDiv = document.getElementById('card-element');
+                if (cardElementDiv) {
+                    cardElement.mount('#card-element');
+                } else {
+                    return;
+                }
+                
+                // Handle card element errors
+                cardElement.on('change', function(event) {
+                    const displayError = document.getElementById('card-errors');
+                    if (displayError) {
+                        if (event.error) {
+                            displayError.textContent = event.error.message;
+                        } else {
+                            displayError.textContent = '';
+                        }
+                    }
+                });
+                
+            } catch (error) {
             }
         }
 
+        // Initialize all event listeners
+        function initializeEventListeners() {
+            // Discount code validation
+            const applyDiscountBtn = document.getElementById('applyDiscount');
+            if (applyDiscountBtn) {
+                applyDiscountBtn.addEventListener('click', handleDiscountApplication);
+            }
+
+            // Payment method switching
+            const paymentMethodRadios = document.querySelectorAll('input[name="paymentMethod"]');
+            paymentMethodRadios.forEach(radio => {
+                radio.addEventListener('change', handlePaymentMethodChange);
+            });
+
+            // Complete purchase button
+            const completePurchaseBtn = document.getElementById('completePurchase');
+            if (completePurchaseBtn) {
+                completePurchaseBtn.addEventListener('click', handleCompletePurchase);
+            }
+        }
+
+        // Handle quantity increase
+        function increaseQuantity(priceId) {
+            try {
+                const qtyElement = document.getElementById(priceId + '-qty');
+                if (!qtyElement) return;
+                
+                let qty = parseInt(qtyElement.textContent) || 0;
+                const ticket = ticketData.find(t => (t.normalizedPriceId || '').toString() === priceId);
+                
+                if (ticket && qty < Math.min(ticket.maxQuantity || 10, ticket.availableStock || 10)) {
+                    qtyElement.textContent = qty + 1;
+                    updateOrderSummary();
+                }
+            } catch (error) {
+            }
+        }
+
+        // Handle quantity decrease
+        function decreaseQuantity(priceId) {
+            try {
+                const qtyElement = document.getElementById(priceId + '-qty');
+                if (!qtyElement) return;
+                
+                let qty = parseInt(qtyElement.textContent) || 0;
+                if (qty > 0) {
+                    qtyElement.textContent = qty - 1;
+                    updateOrderSummary();
+                }
+            } catch (error) {
+            }
+        }
+
+        // Update order summary
         function updateOrderSummary() {
-            const generalQty = parseInt(document.getElementById('general-qty').textContent);
-            const vipQty = parseInt(document.getElementById('vip-qty').textContent);
-            const packageQty = parseInt(document.getElementById('package-qty').textContent);
+            try {
+                let subtotal = 0;
+                let orderItemsHtml = '';
 
-            let subtotal = 0;
-            let orderItemsHtml = '';
+                if (!ticketData || ticketData.length === 0) {
+                    document.getElementById('orderItems').innerHTML = '<p class="text-slate-400">No tickets available</p>';
+                    return;
+                }
 
-            if (generalQty > 0) {
-                const total = generalQty * prices.general;
-                subtotal += total;
-                orderItemsHtml += `
-                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
-                        <div>
-                            <span class="font-bold text-white">General Admission</span>
-                            <span class="text-slate-400 block">x${generalQty} tickets</span>
-                        </div>
-                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
-                    </div>
-                `;
+                ticketData.forEach(ticket => {
+                    const raw = (ticket.eventPriceId || ticket.EventPriceId || '').toString();
+                    const priceId = raw.replace(/-/g, '');
+                    const qtyElement = document.getElementById(priceId + '-qty');
+                    
+                    if (qtyElement) {
+                        const qty = parseInt(qtyElement.textContent) || 0;
+                        
+                        if (qty > 0) {
+                            const total = qty * (ticket.price || 0);
+                            subtotal += total;
+                            orderItemsHtml += `
+                                <div class="flex items-center justify-between py-3 border-b border-slate-700">
+                                    <div>
+                                        <span class="font-bold text-white">${ticket.category || 'Ticket'}</span>
+                                        <span class="text-slate-400 block">x${qty} tickets</span>
+                                    </div>
+                                    <span class="font-bold text-white text-lg">LKR ${total.toFixed(2)}</span>
+                                </div>
+                            `;
+                        }
+                    }
+                });
+
+                if (subtotal === 0) {
+                    orderItemsHtml = '<p class="text-slate-400">No tickets selected</p>';
+                }
+
+                const orderItemsEl = document.getElementById('orderItems');
+                if (orderItemsEl) {
+                    orderItemsEl.innerHTML = orderItemsHtml;
+                }
+
+                // Calculate fees and totals
+                const serviceFee = subtotal * 0.08; // 8% service fee
+                const discount = getDiscountAmount();
+                const total = subtotal + serviceFee - discount;
+
+                // Update display elements
+                updateElementText('subtotal', `LKR ${subtotal.toFixed(2)}`);
+                updateElementText('serviceFee', `LKR ${serviceFee.toFixed(2)}`);
+                // processingFee removed
+                updateElementText('discount', `-LKR ${discount.toFixed(2)}`);
+                updateElementText('total', `LKR ${total.toFixed(2)}`);
+                
+            } catch (error) {
             }
-
-            if (vipQty > 0) {
-                const total = vipQty * prices.vip;
-                subtotal += total;
-                orderItemsHtml += `
-                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
-                        <div>
-                            <span class="font-bold text-white">VIP Seating</span>
-                            <span class="text-slate-400 block">x${vipQty} tickets</span>
-                        </div>
-                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
-                    </div>
-                `;
-            }
-
-            if (packageQty > 0) {
-                const total = packageQty * prices.package;
-                subtotal += total;
-                orderItemsHtml += `
-                    <div class="flex items-center justify-between py-3 border-b border-slate-700">
-                        <div>
-                            <span class="font-bold text-white">VIP Package</span>
-                            <span class="text-slate-400 block">x${packageQty} tickets</span>
-                        </div>
-                        <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
-                    </div>
-                `;
-            }
-
-            if (subtotal === 0) {
-                orderItemsHtml = '<p class="text-slate-400">No tickets selected</p>';
-            }
-
-            document.getElementById('orderItems').innerHTML = orderItemsHtml;
-
-            const serviceFee = subtotal * 0.08; // 8% service fee
-            const processingFee = 2.99;
-            const discount = subtotal > 0 ? 15.00 : 0; // Early bird discount
-            const total = subtotal + serviceFee + processingFee - discount;
-
-            document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
-            document.getElementById('serviceFee').textContent = `$${serviceFee.toFixed(2)}`;
-            document.getElementById('processingFee').textContent = `$${processingFee.toFixed(2)}`;
-            document.getElementById('discount').textContent = `-$${discount.toFixed(2)}`;
-            document.getElementById('total').textContent = `$${total.toFixed(2)}`;
         }
 
-        // Payment method switching
-        document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                // Update UI based on selected payment method
-                document.querySelectorAll('label').forEach(label => {
+        // Helper function to safely update element text
+        function updateElementText(elementId, text) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                element.textContent = text;
+            }
+        }
+
+        // Get discount amount
+        function getDiscountAmount() {
+            return appliedDiscount ? appliedDiscount.amount : 0;
+        }
+
+        // Handle discount code application
+        async function handleDiscountApplication() {
+            try {
+                const discountCode = document.getElementById('discountCode').value.trim();
+                
+                if (!discountCode) {
+                    showDiscountMessage('Please enter a discount code.', 'error');
+                    return;
+                }
+
+                const response = await fetch('/checkout/validate-discount', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        discountCode: discountCode,
+                        eventId: eventId
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const result = await response.json();
+                
+                if (result.valid) {
+                    // Apply a 10% discount for demo
+                    const subtotalText = document.getElementById('subtotal').textContent || '$0.00';
+                    const subtotalValue = parseFloat(subtotalText.replace('$', '')) || 0;
+                    
+                    appliedDiscount = {
+                        code: discountCode,
+                        amount: subtotalValue * 0.1
+                    };
+                    showDiscountMessage('Discount code applied successfully!', 'success');
+                    updateOrderSummary();
+                } else {
+                    showDiscountMessage(result.message || 'Invalid discount code.', 'error');
+                }
+            } catch (error) {
+                showDiscountMessage('Error validating discount code.', 'error');
+            }
+        }
+
+        // Show discount message
+        function showDiscountMessage(message, type) {
+            const messageEl = document.getElementById('discountMessage');
+            if (messageEl) {
+                messageEl.textContent = message;
+                messageEl.className = `mt-3 text-sm ${type === 'success' ? 'text-green-400' : 'text-red-400'}`;
+                messageEl.classList.remove('hidden');
+            }
+        }
+
+        // Handle payment method change
+        function handlePaymentMethodChange(event) {
+            try {
+                const target = event && event.target ? event.target : this;
+                const labels = document.querySelectorAll('label');
+                labels.forEach(label => {
                     label.classList.remove('border-purple-500/50', 'bg-purple-500/10');
                     label.classList.add('border-slate-600/50', 'bg-slate-700/30');
                 });
 
-                this.closest('label').classList.add('border-purple-500/50', 'bg-purple-500/10');
-                this.closest('label').classList.remove('border-slate-600/50', 'bg-slate-700/30');
+                const parentLabel = target.closest('label');
+                if (parentLabel) {
+                    parentLabel.classList.add('border-purple-500/50', 'bg-purple-500/10');
+                    parentLabel.classList.remove('border-slate-600/50', 'bg-slate-700/30');
+                }
 
-                // Show/hide card form
                 const cardForm = document.getElementById('cardForm');
-                if (this.value === 'card') {
-                    cardForm.style.display = 'block';
-                } else {
-                    cardForm.style.display = 'none';
+                if (cardForm) {
+                    if (target.value === 'card') {
+                        cardForm.style.display = 'block';
+                    } else {
+                        cardForm.style.display = 'none';
+                    }
+                }
+            } catch (error) {
+            }
+        }
+
+        // Handle complete purchase
+        async function handleCompletePurchase() {
+            try {
+                const button = document.getElementById('completePurchase');
+                const purchaseText = document.getElementById('purchaseText');
+                const purchaseLoader = document.getElementById('purchaseLoader');
+                
+                // Validate tickets selected
+                const selectedTickets = getSelectedTickets();
+                if (selectedTickets.length === 0) {
+                    showCheckoutMessage('Please select at least one ticket.', 'error');
+                    return;
+                }
+
+                // Validate form fields
+                if (!validateForm()) {
+                    return;
+                }
+
+                // Get form data
+                const formData = {
+                    eventId: eventId,
+                    tickets: selectedTickets,
+                    discountCode: appliedDiscount ? appliedDiscount.code : null,
+                    email: document.getElementById('email').value,
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    phoneNumber: document.getElementById('phone').value,
+                    paymentMethodId: (document.querySelector('input[name="paymentMethod"]:checked') || {}).value || 'card'
+                };
+
+                // Show loading state
+                setLoadingState(true, button, purchaseText, purchaseLoader);
+
+                // Process checkout
+                const checkoutResult = await processCheckout(formData);
+                if (!checkoutResult.success) {
+                    // Show server validation message (e.g., invalid booking request)
+                    showCheckoutMessage(checkoutResult.message || 'Checkout failed. Please check your selections.', 'error');
+                    setLoadingState(false, button, purchaseText, purchaseLoader);
+                    return;
+                }
+
+                // Confirm payment with Stripe
+                const { error, paymentIntent } = await stripe.confirmCardPayment(
+                    checkoutResult.clientSecret,
+                    {
+                        payment_method: {
+                            card: cardElement,
+                        }
+                    }
+                );
+
+                if (error) {
+                    showCheckoutMessage(error.message || 'Payment failed', 'error');
+                    setLoadingState(false, button, purchaseText, purchaseLoader);
+                    return;
+                }
+
+                if (paymentIntent.status === 'succeeded') {
+                    // Payment succeeded - redirect to confirmation page
+                    // The webhook will handle updating the booking status
+                    window.location.href = `/checkout/confirm/${checkoutResult.bookingId}`;
+                }
+            } catch (error) {
+                showCheckoutMessage('Payment failed: ' + (error && error.message ? error.message : ''), 'error');
+            } finally {
+                // Reset loading state
+                const button = document.getElementById('completePurchase');
+                const purchaseText = document.getElementById('purchaseText');
+                const purchaseLoader = document.getElementById('purchaseLoader');
+                setLoadingState(false, button, purchaseText, purchaseLoader);
+            }
+        }
+
+        // Get selected tickets
+        function getSelectedTickets() {
+            const selectedTickets = [];
+            ticketData.forEach(ticket => {
+                const raw = (ticket.eventPriceId || ticket.EventPriceId || '').toString();
+                const priceId = raw.replace(/-/g, '');
+                const qtyElement = document.getElementById(priceId + '-qty');
+                
+                if (qtyElement) {
+                    const qty = parseInt(qtyElement.textContent) || 0;
+                    if (qty > 0) {
+                        // Use the original eventPriceId for the API call
+                        const eventPriceId = ticket.eventPriceId || ticket.EventPriceId;
+                        selectedTickets.push({
+                            eventPriceId: eventPriceId,
+                            quantity: qty
+                        });
+                    }
                 }
             });
-        });
+            return selectedTickets;
+        }
 
-        // Initialize
-        updateOrderSummary();
+        // Show checkout messages in-page (error/success)
+        function showCheckoutMessage(message, type) {
+            const el = document.getElementById('checkoutMessage');
+            if (!el) return;
+            el.textContent = message;
+            el.className = `mt-3 text-sm ${type === 'error' ? 'text-red-400' : 'text-green-400'}`;
+            el.classList.remove('hidden');
+            if (type !== 'error') {
+                setTimeout(() => el.classList.add('hidden'), 5000);
+            }
+        }
+
+        // Validate form
+        function validateForm() {
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+
+            if (!firstName || !lastName || !email) {
+                showCheckoutMessage('Please fill in all required fields (First Name, Last Name, Email).', 'error');
+                return false;
+            }
+
+            // Basic email validation
+            // Use RegExp constructor and escape the at-symbol as Unicode to avoid Razor interpreting it inside a script
+            const emailRegex = new RegExp('^[^\\s\\u0040]+\\u0040[^\\s\\u0040]+\\.[^\\s\\u0040]+$');
+            if (!emailRegex.test(email)) {
+                showCheckoutMessage('Please enter a valid email address.', 'error');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Process checkout
+        async function processCheckout(formData) {
+            const response = await fetch('/checkout/process', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            return await response.json();
+        }
+
+        // Confirm payment
+        async function confirmPayment(paymentIntentId, bookingId) {
+            const response = await fetch('/checkout/confirm-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    paymentIntentId: paymentIntentId,
+                    bookingId: bookingId
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            return await response.json();
+        }
+
+        // Set loading state
+        function setLoadingState(isLoading, button, purchaseText, purchaseLoader) {
+            if (button) button.disabled = isLoading;
+            if (purchaseText) purchaseText.classList.toggle('hidden', isLoading);
+            if (purchaseLoader) purchaseLoader.classList.toggle('hidden', !isLoading);
+            
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.toggle('hidden', !isLoading);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeCheckout);
     </script>
 }
