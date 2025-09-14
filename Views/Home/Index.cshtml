@@ -124,9 +124,13 @@
                 @foreach (var evt in Model.UpcomingEvents.Take(3))
                 {
                     var minPrice = evt.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
+                    var maxPrice = evt.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
                     var eventDate = evt.EventDate.ToString("MMM dd, yyyy");
                     var eventTime = evt.EventTime.ToString("h:mm tt");
                     var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
+                    var isSoon = daysUntilEvent <= 7 && daysUntilEvent > 0;
                     
                     <div class="group bg-dark-blue/50 backdrop-blur-sm rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden hover:shadow-purple-500/25 transition-all duration-500 transform hover:-translate-y-4 border border-gray-700 hover:border-purple-500/50">
                         <div class="relative overflow-hidden">
@@ -136,8 +140,14 @@
                                 <span class="bg-gradient-to-r from-purple-500 to-teal-500 text-white text-xs sm:text-sm font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-lg">@evt.Category?.Name</span>
                             </div>
                             <div class="absolute top-2 sm:top-4 right-2 sm:right-4">
-                                <span class="bg-white/90 backdrop-blur-sm text-dark-navy text-lg sm:text-xl font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-lg">$@minPrice</span>
+                                <span class="bg-white/90 backdrop-blur-sm text-dark-navy text-sm sm:text-lg font-bold px-2 sm:px-4 py-1 sm:py-2 rounded-full shadow-lg">@priceDisplay</span>
                             </div>
+                            @if (isSoon)
+                            {
+                                <div class="absolute top-2 sm:top-4 left-2 sm:left-4 mt-8 sm:mt-12">
+                                    <span class="bg-red-500/90 backdrop-blur-sm text-white text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded-full shadow-lg animate-pulse">@daysUntilEvent days left!</span>
+                                </div>
+                            }
                             <div class="absolute bottom-2 sm:bottom-4 left-2 sm:right-4 right-2 sm:right-4">
                                 <div class="flex items-center text-white text-xs sm:text-sm">
                                     <svg class="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -166,6 +176,149 @@
                 </div>
             }
         </div>
+        
+        <!-- View All Events Button -->
+        @if (Model.UpcomingEvents != null && Model.UpcomingEvents.Count() > 3)
+        {
+            <div class="text-center mt-12">
+                <a href="/Events" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                    <span>View All Events</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Upcoming This Week Section -->
+<section class="py-24 bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-orange-400 to-red-400 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-20 w-48 h-48 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full blur-2xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="text-center mb-16 px-4">
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Upcoming This Week</h2>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto text-pretty">Don't miss these exciting events happening this week</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-4">
+            @if (Model.EventsThisWeek != null && Model.EventsThisWeek.Any())
+            {
+                @foreach (var evt in Model.EventsThisWeek.Take(6))
+                {
+                    var minPrice = evt.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
+                    var maxPrice = evt.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
+                    var eventDate = evt.EventDate.ToString("MMM dd, yyyy");
+                    var eventTime = evt.EventTime.ToString("h:mm tt");
+                    var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
+                    var isToday = daysUntilEvent == 0;
+                    var isTomorrow = daysUntilEvent == 1;
+                    var isThisWeek = daysUntilEvent <= 7 && daysUntilEvent > 0;
+                    
+                    <div class="group bg-slate-700/50 backdrop-blur-sm rounded-2xl shadow-2xl overflow-hidden hover:shadow-orange-500/25 transition-all duration-500 transform hover:-translate-y-2 border border-slate-600 hover:border-orange-500/50">
+                        <div class="relative overflow-hidden">
+                            <img src="@imageUrl" alt="@evt.Title" class="w-full h-48 sm:h-56 object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                            
+                            <!-- Category Badge -->
+                            <div class="absolute top-3 left-3">
+                                <span class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">@evt.Category?.Name</span>
+                            </div>
+                            
+                            <!-- Price Badge -->
+                            <div class="absolute top-3 right-3">
+                                <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-sm font-bold px-3 py-1 rounded-full shadow-lg">@priceDisplay</span>
+                            </div>
+                            
+                            <!-- Urgency Badge -->
+                            @if (isToday)
+                            {
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">TODAY!</span>
+                                </div>
+                            }
+                            else if (isTomorrow)
+                            {
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="bg-orange-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">TOMORROW!</span>
+                                </div>
+                            }
+                            else if (isThisWeek)
+                            {
+                                <div class="absolute bottom-3 left-3">
+                                    <span class="bg-yellow-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">@daysUntilEvent days left</span>
+                                </div>
+                            }
+                            
+                            <!-- Date & Time -->
+                            <div class="absolute bottom-3 right-3">
+                                <div class="flex items-center text-white text-xs">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>@eventDate</span>
+                                </div>
+                                <div class="flex items-center text-white text-xs mt-1">
+                                    <svg class="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+                                    </svg>
+                                    <span>@eventTime</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-6">
+                            <h3 class="text-xl font-bold text-white mb-3">@evt.Title</h3>
+                            <p class="text-gray-300 text-sm mb-4 leading-relaxed">@(evt.Description?.Length > 100 ? evt.Description.Substring(0, 100) + "..." : evt.Description)</p>
+                            
+                            <!-- Venue Info -->
+                            <div class="flex items-center text-gray-400 text-xs mb-4">
+                                <svg class="w-4 h-4 mr-2 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
+                                </svg>
+                                <span>@evt.Venue?.Name</span>
+                            </div>
+                            
+                            <a href="/Events/Details/@evt.Id" class="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-3 rounded-xl font-bold text-sm hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <!-- Fallback content when no events this week -->
+                <div class="col-span-full text-center py-12">
+                    <div class="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">No Events This Week</h3>
+                    <p class="text-slate-400">Check back later for events happening this week.</p>
+                </div>
+            }
+        </div>
+        
+        <!-- View All Events Button -->
+        @if (Model.EventsThisWeek != null && Model.EventsThisWeek.Count() > 6)
+        {
+            <div class="text-center mt-12">
+                <a href="/Events?filter=thisweek" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
+                    <span>View All This Week's Events</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                    </svg>
+                </a>
+            </div>
+        }
     </div>
 </section>
 
@@ -188,10 +341,13 @@
                 @foreach (var evt in Model.LatestEvents)
                 {
                     var minPrice = evt.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
+                    var maxPrice = evt.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
                     var eventDate = evt.EventDate.ToString("MMM dd");
                     var eventTime = evt.EventTime.ToString("h:mm tt");
                     var imageUrl = !string.IsNullOrEmpty(evt.Image) ? evt.Image : "/images/placeholder.svg";
-                    var priceDisplay = minPrice > 0 ? $"${minPrice}" : "Free";
+                    var priceDisplay = minPrice > 0 ? (minPrice == maxPrice ? $"${minPrice}" : $"${minPrice} - ${maxPrice}") : "Free";
+                    var daysUntilEvent = (evt.EventDate - DateTime.UtcNow).Days;
+                    var isSoon = daysUntilEvent <= 7 && daysUntilEvent > 0;
                     
                     <div class="group bg-dark-navy/80 backdrop-blur-sm rounded-2xl shadow-xl overflow-hidden hover:shadow-teal-500/25 transition-all duration-300 transform hover:-translate-y-2 border border-gray-700 hover:border-teal-500/50">
                         <div class="relative overflow-hidden">
@@ -201,15 +357,14 @@
                                 <span class="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">NEW</span>
                             </div>
                             <div class="absolute top-3 right-3">
-                                @if (minPrice > 0)
-                                {
-                                    <span class="bg-white/90 backdrop-blur-sm text-dark-navy text-lg font-bold px-3 py-1 rounded-full shadow-lg">@priceDisplay</span>
-                                }
-                                else
-                                {
-                                    <span class="bg-gradient-to-r from-green-400 to-teal-400 text-white text-lg font-bold px-3 py-1 rounded-full shadow-lg">Free</span>
-                                }
+                                <span class="bg-white/90 backdrop-blur-sm text-dark-navy text-sm font-bold px-3 py-1 rounded-full shadow-lg">@priceDisplay</span>
                             </div>
+                            @if (isSoon)
+                            {
+                                <div class="absolute top-3 left-3 mt-6">
+                                    <span class="bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg animate-pulse">@daysUntilEvent days left!</span>
+                                </div>
+                            }
                         </div>
                         <div class="p-6">
                             <h3 class="text-lg font-bold text-white mb-3">@evt.Title</h3>
@@ -248,166 +403,6 @@
     </div>
 </section>
 
-<!-- Upcoming Events with Enhanced Interactive Design -->
-<section class="py-24 bg-dark-navy relative overflow-hidden">
-    <div class="absolute inset-0 opacity-5">
-        <div class="absolute top-40 left-40 w-96 h-96 bg-gradient-to-r from-purple-400 to-teal-400 rounded-full blur-3xl"></div>
-    </div>
-    
-    <div class="container mx-auto px-4 relative z-10">
-        <div class="text-center mb-20 px-4">
-            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-8">Upcoming This Week</h2>
-            <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto text-pretty">Don't miss these exciting events happening in the next 7 days</p>
-        </div>
-        
-        <div class="space-y-6 md:space-y-8 px-4">
-            <!-- Enhanced upcoming event cards with better layout and interactivity -->
-            <!-- Upcoming Event 1 -->
-            <div class="group bg-gradient-to-r from-dark-blue/80 to-dark-purple/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col lg:flex-row items-center gap-6 md:gap-8 hover:shadow-purple-500/25 transition-all duration-500 border border-gray-700 hover:border-purple-500/50 transform hover:-translate-y-2">
-                <div class="relative flex-shrink-0">
-                    <img src="/images/placeholder.svg" alt="Jazz Night" class="w-full lg:w-80 h-48 md:h-56 object-cover rounded-2xl shadow-lg">
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-gradient-to-r from-orange-500 to-red-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg animate-pulse">Tomorrow</span>
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
-                </div>
-                <div class="flex-1 text-center lg:text-left">
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-4">
-                        <span class="bg-gradient-to-r from-blue-500 to-teal-500 text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg">Music</span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                            </svg>
-                            July 20, 2024 • 9:00 PM
-                        </span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Blue Note Club
-                        </span>
-                    </div>
-                    <h3 class="text-3xl lg:text-4xl font-bold text-white mb-4">Jazz Night at Blue Note</h3>
-                    <p class="text-gray-300 mb-6 leading-relaxed max-w-2xl">Experience smooth jazz in an intimate setting with world-class musicians. Featuring the Marcus Miller Quartet with special guest vocalist Sarah McKenzie.</p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">$35</span>
-                            <span class="text-gray-400 line-through text-lg">$45</span>
-                            <span class="bg-gradient-to-r from-green-400 to-teal-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">22% OFF</span>
-                        </div>
-                        <a href="/events/4" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                            Book Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upcoming Event 2 -->
-            <div class="group bg-gradient-to-r from-dark-blue/80 to-dark-purple/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col lg:flex-row items-center gap-6 md:gap-8 hover:shadow-purple-500/25 transition-all duration-500 border border-gray-700 hover:border-purple-500/50 transform hover:-translate-y-2">
-                <div class="relative flex-shrink-0">
-                    <img src="/images/placeholder.svg" alt="Outdoor Movie Night" class="w-full lg:w-80 h-48 md:h-56 object-cover rounded-2xl shadow-lg">
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">This Week</span>
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
-                </div>
-                <div class="flex-1 text-center lg:text-left">
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-4">
-                        <span class="bg-gradient-to-r from-purple-500 to-pink-500 text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg">Entertainment</span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                            </svg>
-                            July 22, 2024 • 8:30 PM
-                        </span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Central Park
-                        </span>
-                    </div>
-                    <h3 class="text-3xl lg:text-4xl font-bold text-white mb-4">Outdoor Movie Night</h3>
-                    <p class="text-gray-300 mb-6 leading-relaxed max-w-2xl">Watch classic films under the stars in a magical outdoor setting. This week featuring "Casablanca" with complimentary popcorn and blanket rental available.</p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">$18</span>
-                            <span class="bg-gradient-to-r from-blue-400 to-teal-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Family Friendly</span>
-                        </div>
-                        <a href="/Events/Details/9" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                            Book Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Upcoming Event 3 -->
-            <div class="group bg-gradient-to-r from-dark-blue/80 to-dark-purple/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-8 flex flex-col lg:flex-row items-center gap-6 md:gap-8 hover:shadow-purple-500/25 transition-all duration-500 border border-gray-700 hover:border-purple-500/50 transform hover:-translate-y-2">
-                <div class="relative flex-shrink-0">
-                    <img src="/images/placeholder.svg" alt="Cooking Workshop" class="w-full lg:w-80 h-48 md:h-56 object-cover rounded-2xl shadow-lg">
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-gradient-to-r from-green-500 to-teal-500 text-white text-sm font-bold px-4 py-2 rounded-full shadow-lg">Weekend</span>
-                    </div>
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-2xl"></div>
-                </div>
-                <div class="flex-1 text-center lg:text-left">
-                    <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-4">
-                        <span class="bg-gradient-to-r from-green-500 to-teal-500 text-white text-sm font-medium px-4 py-2 rounded-full shadow-lg">Workshop</span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
-                            </svg>
-                            July 24, 2024 • 2:00 PM
-                        </span>
-                        <span class="text-gray-300 text-sm flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-teal-400" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-                            </svg>
-                            Culinary Institute
-                        </span>
-                    </div>
-                    <h3 class="text-3xl lg:text-4xl font-bold text-white mb-4">Italian Cooking Workshop</h3>
-                    <p class="text-gray-300 mb-6 leading-relaxed max-w-2xl">Learn to make authentic Italian pasta and sauces from scratch with Chef Marco. Includes all ingredients, wine pairing, and take-home recipe book.</p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                        <div class="flex items-center gap-3">
-                            <span class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">$85</span>
-                            <span class="bg-gradient-to-r from-yellow-400 to-orange-400 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">Limited Spots</span>
-                        </div>
-                        <a href="/Events/Details/10" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-10 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                            Book Now
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Enhanced View All Button -->
-        <div class="text-center mt-16 px-4">
-            <a href="/Events?filter=upcoming" class="inline-flex items-center bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl">
-                View All Upcoming Events
-                <svg class="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
-                </svg>
-            </a>
-        </div>
-        
-        <!-- Quick Stats for Upcoming Events -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12 px-4">
-            <div class="bg-gradient-to-r from-purple-500/20 to-teal-500/20 backdrop-blur-sm rounded-2xl p-6 border border-purple-500/30 text-center">
-                <div class="text-3xl font-bold text-white mb-2">24</div>
-                <div class="text-gray-300 text-sm">Events This Week</div>
-            </div>
-            <div class="bg-gradient-to-r from-teal-500/20 to-blue-500/20 backdrop-blur-sm rounded-2xl p-6 border border-teal-500/30 text-center">
-                <div class="text-3xl font-bold text-white mb-2">156</div>
-                <div class="text-gray-300 text-sm">Events This Month</div>
-            </div>
-            <div class="bg-gradient-to-r from-blue-500/20 to-purple-500/20 backdrop-blur-sm rounded-2xl p-6 border border-blue-500/30 text-center">
-                <div class="text-3xl font-bold text-white mb-2">89%</div>
-                <div class="text-gray-300 text-sm">Selling Fast</div>
-            </div>
-        </div>
-    </div>
-</section>
 
 <!-- Browse by Category -->
 <section class="py-20 bg-slate-900 relative overflow-hidden">

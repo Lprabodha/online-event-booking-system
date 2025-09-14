@@ -26,16 +26,18 @@ public class HomeController : Controller
             // Fetch active categories for the browse by category section
             var categories = (await _categoryService.GetActiveCategoriesAsync()).ToList();
             
-            // Fetch upcoming and latest events
+            // Fetch upcoming, latest, and this week's events
             var upcomingEvents = await _eventService.GetUpcomingEventsAsync(6);
             var latestEvents = await _eventService.GetLatestEventsAsync(4);
+            var eventsThisWeek = await _eventService.GetEventsThisWeekAsync(6);
             
             // Create a view model to pass all data
             var viewModel = new HomePageViewModel
             {
                 Categories = categories,
                 UpcomingEvents = upcomingEvents,
-                LatestEvents = latestEvents
+                LatestEvents = latestEvents,
+                EventsThisWeek = eventsThisWeek
             };
             
             return View(viewModel);

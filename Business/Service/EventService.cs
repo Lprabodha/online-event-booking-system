@@ -459,5 +459,25 @@ namespace online_event_booking_system.Business.Service
 
             return relatedEvents;
         }
+
+        public async Task<List<Event>> GetEventsThisWeekAsync(int count = 6)
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var endOfWeek = startOfWeek.AddDays(7);
+
+            return await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished && 
+                           e.Status == "Published" && 
+                           e.DeletedAt == null &&
+                           e.EventDate >= startOfWeek &&
+                           e.EventDate < endOfWeek)
+                .OrderBy(e => e.EventDate)
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }
