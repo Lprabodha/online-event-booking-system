@@ -4,7 +4,7 @@ namespace online_event_booking_system.Services
 {
     public interface IPaymentService
     {
-        Task<PaymentIntent> CreatePaymentIntentAsync(decimal amount, string currency, string customerId, string eventId);
+        Task<PaymentIntent> CreatePaymentIntentAsync(decimal amount, string currency, string customerId, string eventId, Guid bookingId);
         Task<PaymentIntent> ConfirmPaymentIntentAsync(string paymentIntentId);
         Task<bool> RefundPaymentAsync(string paymentIntentId, decimal? amount = null);
         Task<Customer> CreateOrGetStripeCustomerAsync(ApplicationUser user);
@@ -17,7 +17,7 @@ namespace online_event_booking_system.Services
         public string ClientSecret { get; set; } = string.Empty;
         public string Status { get; set; } = string.Empty;
         public decimal Amount { get; set; }
-        public string Currency { get; set; } = "usd";
+        public string Currency { get; set; } = "LKR";
     }
 
     public class Customer

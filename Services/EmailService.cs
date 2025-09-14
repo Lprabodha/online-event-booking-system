@@ -39,7 +39,7 @@ namespace online_event_booking_system.Services
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error sending email: {ex.Message}");
+                    _logger.LogError(ex, "Error sending email");
                     throw;
                 }
             }

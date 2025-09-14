@@ -19,7 +19,7 @@
         var endTime = Model.Event.EventTime.AddHours(4).ToString("h:mm tt");
         var minPrice = Model.Event.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
         var maxPrice = Model.Event.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
-        var priceDisplay = minPrice > 0 ? $"${minPrice}" : "Free";
+        var priceDisplay = minPrice > 0 ? $"LKR {minPrice}" : "Free";
         var statusBadge = Model.Event.Status == "Published" ? "Available" : "Limited Tickets";
         var ageRestriction = !string.IsNullOrEmpty(Model.Event.AgeRestriction) ? Model.Event.AgeRestriction : "All Ages";
         var totalBookings = Model.Event.Bookings?.Count ?? 0;
@@ -518,7 +518,7 @@
                                 <div class="@(isFirst ? "border-2 border-purple-500/50 bg-purple-500/10" : "border border-slate-600/50 bg-slate-700/30") rounded-2xl p-6 @(isFirst ? "backdrop-blur-sm" : "hover:border-purple-500/50 hover:bg-purple-500/5 transition-all cursor-pointer")">
                                     <div class="flex items-center justify-between mb-3">
                                         <span class="font-bold text-white text-lg">@price.Category</span>
-                                        <span class="font-bold @(isFirst ? "text-purple-400" : "text-white") text-xl">@(price.Price > 0 ? $"${price.Price}" : "Free")</span>
+                                        <span class="font-bold @(isFirst ? "text-purple-400" : "text-white") text-xl">@(price.Price > 0 ? $"LKR {price.Price}" : "Free")</span>
                                     </div>
                                     <p class="text-slate-300">@(price.Description ?? "Standard access")</p>
                                     @if (price.Stock > 0)
@@ -708,7 +708,7 @@
                     var relatedEventDate = relatedEvent.EventDate.ToString("MMMM dd, yyyy");
                     var relatedEventTime = relatedEvent.EventTime.ToString("h:mm tt");
                     var relatedMinPrice = relatedEvent.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
-                    var relatedPriceDisplay = relatedMinPrice > 0 ? $"${relatedMinPrice}" : "Free";
+                    var relatedPriceDisplay = relatedMinPrice > 0 ? $"LKR {relatedMinPrice}" : "Free";
                     var categoryColors = new Dictionary<string, string>
                     {
                         { "Music", "bg-blue-500/20 text-blue-300 border-blue-500/30" },

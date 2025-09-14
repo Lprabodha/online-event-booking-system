@@ -180,11 +180,7 @@ namespace online_event_booking_system.Business.Service
                 decimal processingFee = 2.99m;
                 decimal total = subtotal + serviceFee + processingFee - discountAmount;
 
-                // Create payment intent
-                var paymentIntent = await _paymentService.CreatePaymentIntentAsync(
-                    total, "usd", stripeCustomer.Id, request.EventId.ToString());
-
-                // Create booking record
+                // Create booking record first
                 var booking = new Booking
                 {
                     CustomerId = userId,
@@ -196,6 +192,10 @@ namespace online_event_booking_system.Business.Service
                 _context.Bookings.Add(booking);
                 await _context.SaveChangesAsync();
 
+                // Create payment intent with booking ID
+                var paymentIntent = await _paymentService.CreatePaymentIntentAsync(
+                    total, "lkr", stripeCustomer.Id, request.EventId.ToString(), booking.Id);
+
                 // Create payment record
                 var payment = new Payment
                 {
@@ -203,7 +203,7 @@ namespace online_event_booking_system.Business.Service
                     Amount = total,
                     PaymentMethod = "Stripe",
                     Status = "Pending",
-                    Currency = "USD",
+                    Currency = "LKR",
                     TransactionId = paymentIntent.Id,
                     Notes = $"Booking for {eventData.Title}"
                 };
@@ -219,8 +219,8 @@ namespace online_event_booking_system.Business.Service
                     for (int i = 0; i < ticket.Quantity; i++)
                     {
                         var ticketNumber = $"{booking.BookingReference}-{ticket.EventPriceId.ToString()[..8]}-{i + 1:D3}";
-                        var qrCodeData = _qrCodeService.GenerateTicketQRCode(
-                            Guid.NewGuid(), request.EventId, userId);
+                        var qrCodeData = _qrCodeService.GenerateTicketQRCodeWithData(
+                            Guid.NewGuid(), request.EventId, userId, ticketNumber);
 
                         var ticketRecord = new Ticket
                         {
@@ -329,11 +329,13 @@ namespace online_event_booking_system.Business.Service
         {
             return await _context.Bookings
                 .Include(b => b.Event)
+                    .ThenInclude(e => e.Venue)
                 .Include(b => b.Customer)
                 .Include(b => b.Tickets)
                     .ThenInclude(t => t.EventPrice)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
         }
+
 
         public async Task<List<Booking>> GetUserBookingsAsync(string userId)
         {

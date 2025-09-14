@@ -6,6 +6,13 @@ namespace online_event_booking_system.Services
 {
     public class QRCodeService : IQRCodeService
     {
+        private readonly ILogger<QRCodeService> _logger;
+
+        public QRCodeService(ILogger<QRCodeService> logger)
+        {
+            _logger = logger;
+        }
+
         public string GenerateQRCode(string data, int size = 200)
         {
             try
@@ -20,26 +27,49 @@ namespace online_event_booking_system.Services
             }
             catch (Exception ex)
             {
-                // Log error and return empty string
-                Console.WriteLine($"Error generating QR code: {ex.Message}");
+                _logger.LogError(ex, "Error generating QR code");
                 return string.Empty;
             }
         }
 
         public string GenerateTicketQRCode(Guid ticketId, Guid eventId, string customerId)
         {
-            // Create a structured data string for the ticket
-            var ticketData = new
+            try
             {
-                ticketId = ticketId.ToString(),
-                eventId = eventId.ToString(),
-                customerId = customerId,
-                timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
-                type = "ticket"
-            };
+                // Create a structured data string for the ticket (no API URLs)
+                var ticketData = new
+                {
+                    ticketId = ticketId.ToString(),
+                    eventId = eventId.ToString(),
+                    customerId = customerId,
+                    timestamp = DateTime.UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                    type = "ticket",
+                    version = "1.0"
+                };
 
-            var jsonData = System.Text.Json.JsonSerializer.Serialize(ticketData);
-            return GenerateQRCode(jsonData);
+                var jsonData = System.Text.Json.JsonSerializer.Serialize(ticketData);
+                return GenerateQRCode(jsonData, 256); // Larger size for better scanning
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating ticket QR code for ticket {TicketId}", ticketId);
+                return string.Empty;
+            }
+        }
+
+        public string GenerateTicketQRCodeWithData(Guid ticketId, Guid eventId, string customerId, string ticketNumber)
+        {
+            try
+            {
+                // Create a simple, readable QR code data format
+                var qrData = $"TICKET:{ticketNumber}|EVENT:{eventId}|CUSTOMER:{customerId}|ID:{ticketId}";
+                return GenerateQRCode(qrData, 256);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating detailed ticket QR code for ticket {TicketId}", ticketId);
+                return string.Empty;
+            }
         }
     }
 }

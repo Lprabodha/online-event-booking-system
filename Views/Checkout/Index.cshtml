@@ -47,6 +47,7 @@
                         Contact Information
                     </h2>
                     <form id="checkoutForm" class="space-y-8">
+                        <div id="checkoutMessage" class="mt-3 text-sm hidden"></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <div>
                                 <label for="firstName" class="block text-sm font-bold text-white mb-3">First Name *</label>
@@ -100,7 +101,7 @@
                                         <h3 class="text-2xl font-bold text-white">@ticket.Category</h3>
                                         <p class="text-slate-300 text-lg">@ticket.Description</p>
                                         <div class="flex items-center gap-3 mt-4">
-                                            <span class="text-4xl font-bold text-purple-400">$@ticket.Price.ToString("F2")</span>
+                                            <span class="text-4xl font-bold text-purple-400">LKR @ticket.Price.ToString("F2")</span>
                                             @if (ticket.AvailableStock < 10)
                                             {
                                                 <span class="bg-yellow-500/20 text-yellow-300 text-sm font-bold px-3 py-2 rounded-full border border-yellow-500/30">Limited</span>
@@ -252,7 +253,7 @@
                                     <span class="font-bold text-white">General Admission</span>
                                     <span class="text-slate-400 block">x2 tickets</span>
                                 </div>
-                                <span class="font-bold text-white text-lg">$90.00</span>
+                                <span class="font-bold text-white text-lg">LKR 90.00</span>
                             </div>
                         </div>
                     </div>
@@ -260,20 +261,20 @@
                     <div class="space-y-4 mb-8">
                         <div class="flex items-center justify-between text-slate-300">
                             <span>Subtotal</span>
-                            <span id="subtotal" class="font-bold">$90.00</span>
+                            <span id="subtotal" class="font-bold">LKR 90.00</span>
                         </div>
                         <div class="flex items-center justify-between text-slate-300">
                             <span>Service Fee</span>
-                            <span id="serviceFee" class="font-bold">$7.50</span>
+                            <span id="serviceFee" class="font-bold">LKR 7.50</span>
                         </div>
                         <div class="flex items-center justify-between text-green-400">
                             <span>Early Bird Discount</span>
-                            <span id="discount">-$15.00</span>
+                            <span id="discount">-LKR 15.00</span>
                         </div>
                         <div class="border-t border-slate-700 pt-4">
                             <div class="flex items-center justify-between text-2xl font-bold">
                                 <span class="text-white">Total</span>
-                                <span id="total" class="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">$85.49</span>
+                                <span id="total" class="bg-gradient-to-r from-purple-400 to-teal-400 bg-clip-text text-transparent">LKR 85.49</span>
                             </div>
                         </div>
                     </div>
@@ -347,12 +348,26 @@
                 // Get data from JSON script tag
                 const dataElement = document.getElementById('checkout-data');
                 if (!dataElement) {
-                    console.error('Checkout data not found');
                     return;
                 }
                 
                 checkoutData = JSON.parse(dataElement.textContent);
                 ticketData = checkoutData.TicketItems || [];
+
+                // Normalize ticket properties so JS can use lowercase names regardless of server JSON casing
+                ticketData = ticketData.map(t => {
+                    const normalized = Object.assign({}, t);
+                    normalized.price = (t.price !== undefined) ? t.price : (t.Price !== undefined ? t.Price : 0);
+                    normalized.category = (t.category !== undefined) ? t.category : (t.Category !== undefined ? t.Category : 'Ticket');
+                    normalized.eventPriceId = (t.eventPriceId !== undefined) ? t.eventPriceId : (t.EventPriceId !== undefined ? t.EventPriceId : '');
+                    normalized.maxQuantity = (t.maxQuantity !== undefined) ? t.maxQuantity : (t.MaxQuantity !== undefined ? t.MaxQuantity : 10);
+                    normalized.availableStock = (t.availableStock !== undefined) ? t.availableStock : (t.AvailableStock !== undefined ? t.AvailableStock : 10);
+                    // precompute a normalized id used for DOM ids
+                    normalized.normalizedPriceId = (normalized.eventPriceId || '').toString().replace(/-/g, '');
+                    // ensure quantity value exists for potential server round-trips
+                    normalized.quantity = normalized.quantity || 0;
+                    return normalized;
+                });
                 eventId = checkoutData.EventId;
 
                 // Initialize Stripe
@@ -360,17 +375,31 @@
                     stripe = Stripe(checkoutData.StripePublishableKey);
                     initializeStripeElements();
                 } else {
-                    console.error('Stripe publishable key not found');
                 }
 
                 // Initialize event listeners
                 initializeEventListeners();
+
+                // Add click-to-select behavior for ticket cards: clicking a card increases its quantity
+                try {
+                    const ticketCards = document.querySelectorAll('[data-price-id]');
+                    ticketCards.forEach(card => {
+                        card.addEventListener('click', function (e) {
+                            // Ignore clicks on buttons inside the card (they have their own handlers)
+                            if (e.target && (e.target.tagName === 'BUTTON' || e.target.closest('button'))) return;
+                            const raw = (card.getAttribute('data-price-id') || '').toString();
+                            const pid = raw.replace(/-/g, '');
+                            increaseQuantity(pid);
+                        });
+                    });
+                } catch (e) {
+                    // Non-fatal: continue without click-to-select
+                }
                 
                 // Initialize order summary
                 updateOrderSummary();
                 
             } catch (error) {
-                console.error('Error initializing checkout:', error);
             }
         }
 
@@ -400,7 +429,6 @@
                 if (cardElementDiv) {
                     cardElement.mount('#card-element');
                 } else {
-                    console.error('Card element container not found');
                     return;
                 }
                 
@@ -417,7 +445,6 @@
                 });
                 
             } catch (error) {
-                console.error('Error initializing Stripe elements:', error);
             }
         }
 
@@ -449,17 +476,13 @@
                 if (!qtyElement) return;
                 
                 let qty = parseInt(qtyElement.textContent) || 0;
-                const ticket = ticketData.find(t => {
-                    const raw = (t.eventPriceId || t.EventPriceId || '').toString();
-                    return raw.replace(/-/g, '') === priceId;
-                });
+                const ticket = ticketData.find(t => (t.normalizedPriceId || '').toString() === priceId);
                 
                 if (ticket && qty < Math.min(ticket.maxQuantity || 10, ticket.availableStock || 10)) {
                     qtyElement.textContent = qty + 1;
                     updateOrderSummary();
                 }
             } catch (error) {
-                console.error('Error increasing quantity:', error);
             }
         }
 
@@ -475,7 +498,6 @@
                     updateOrderSummary();
                 }
             } catch (error) {
-                console.error('Error decreasing quantity:', error);
             }
         }
 
@@ -507,7 +529,7 @@
                                         <span class="font-bold text-white">${ticket.category || 'Ticket'}</span>
                                         <span class="text-slate-400 block">x${qty} tickets</span>
                                     </div>
-                                    <span class="font-bold text-white text-lg">$${total.toFixed(2)}</span>
+                                    <span class="font-bold text-white text-lg">LKR ${total.toFixed(2)}</span>
                                 </div>
                             `;
                         }
@@ -529,14 +551,13 @@
                 const total = subtotal + serviceFee - discount;
 
                 // Update display elements
-                updateElementText('subtotal', `$${subtotal.toFixed(2)}`);
-                updateElementText('serviceFee', `$${serviceFee.toFixed(2)}`);
+                updateElementText('subtotal', `LKR ${subtotal.toFixed(2)}`);
+                updateElementText('serviceFee', `LKR ${serviceFee.toFixed(2)}`);
                 // processingFee removed
-                updateElementText('discount', `-$${discount.toFixed(2)}`);
-                updateElementText('total', `$${total.toFixed(2)}`);
+                updateElementText('discount', `-LKR ${discount.toFixed(2)}`);
+                updateElementText('total', `LKR ${total.toFixed(2)}`);
                 
             } catch (error) {
-                console.error('Error updating order summary:', error);
             }
         }
 
@@ -595,7 +616,6 @@
                     showDiscountMessage(result.message || 'Invalid discount code.', 'error');
                 }
             } catch (error) {
-                console.error('Error applying discount:', error);
                 showDiscountMessage('Error validating discount code.', 'error');
             }
         }
@@ -635,7 +655,6 @@
                     }
                 }
             } catch (error) {
-                console.error('Error handling payment method change:', error);
             }
         }
 
@@ -649,7 +668,7 @@
                 // Validate tickets selected
                 const selectedTickets = getSelectedTickets();
                 if (selectedTickets.length === 0) {
-                    alert('Please select at least one ticket.');
+                    showCheckoutMessage('Please select at least one ticket.', 'error');
                     return;
                 }
 
@@ -666,7 +685,8 @@
                     email: document.getElementById('email').value,
                     firstName: document.getElementById('firstName').value,
                     lastName: document.getElementById('lastName').value,
-                    phoneNumber: document.getElementById('phone').value
+                    phoneNumber: document.getElementById('phone').value,
+                    paymentMethodId: (document.querySelector('input[name="paymentMethod"]:checked') || {}).value || 'card'
                 };
 
                 // Show loading state
@@ -675,7 +695,10 @@
                 // Process checkout
                 const checkoutResult = await processCheckout(formData);
                 if (!checkoutResult.success) {
-                    throw new Error(checkoutResult.message);
+                    // Show server validation message (e.g., invalid booking request)
+                    showCheckoutMessage(checkoutResult.message || 'Checkout failed. Please check your selections.', 'error');
+                    setLoadingState(false, button, purchaseText, purchaseLoader);
+                    return;
                 }
 
                 // Confirm payment with Stripe
@@ -689,21 +712,18 @@
                 );
 
                 if (error) {
-                    throw new Error(error.message);
+                    showCheckoutMessage(error.message || 'Payment failed', 'error');
+                    setLoadingState(false, button, purchaseText, purchaseLoader);
+                    return;
                 }
 
                 if (paymentIntent.status === 'succeeded') {
-                    // Confirm payment on server
-                    const confirmResult = await confirmPayment(paymentIntent.id, checkoutResult.bookingId);
-                    if (confirmResult.success) {
-                        window.location.href = confirmResult.redirectUrl;
-                    } else {
-                        throw new Error(confirmResult.message);
-                    }
+                    // Payment succeeded - redirect to confirmation page
+                    // The webhook will handle updating the booking status
+                    window.location.href = `/checkout/confirm/${checkoutResult.bookingId}`;
                 }
             } catch (error) {
-                console.error('Payment failed:', error);
-                alert('Payment failed: ' + error.message);
+                showCheckoutMessage('Payment failed: ' + (error && error.message ? error.message : ''), 'error');
             } finally {
                 // Reset loading state
                 const button = document.getElementById('completePurchase');
@@ -724,14 +744,28 @@
                 if (qtyElement) {
                     const qty = parseInt(qtyElement.textContent) || 0;
                     if (qty > 0) {
+                        // Use the original eventPriceId for the API call
+                        const eventPriceId = ticket.eventPriceId || ticket.EventPriceId;
                         selectedTickets.push({
-                            eventPriceId: ticket.eventPriceId,
+                            eventPriceId: eventPriceId,
                             quantity: qty
                         });
                     }
                 }
             });
             return selectedTickets;
+        }
+
+        // Show checkout messages in-page (error/success)
+        function showCheckoutMessage(message, type) {
+            const el = document.getElementById('checkoutMessage');
+            if (!el) return;
+            el.textContent = message;
+            el.className = `mt-3 text-sm ${type === 'error' ? 'text-red-400' : 'text-green-400'}`;
+            el.classList.remove('hidden');
+            if (type !== 'error') {
+                setTimeout(() => el.classList.add('hidden'), 5000);
+            }
         }
 
         // Validate form
@@ -741,14 +775,15 @@
             const email = document.getElementById('email').value.trim();
 
             if (!firstName || !lastName || !email) {
-                alert('Please fill in all required fields (First Name, Last Name, Email).');
+                showCheckoutMessage('Please fill in all required fields (First Name, Last Name, Email).', 'error');
                 return false;
             }
 
             // Basic email validation
-            const emailRegex = new RegExp('^[^\\s@@]+@@[^\\s@@]+\\.[^\\s@@]+$');
+            // Use RegExp constructor and escape the at-symbol as Unicode to avoid Razor interpreting it inside a script
+            const emailRegex = new RegExp('^[^\\s\\u0040]+\\u0040[^\\s\\u0040]+\\.[^\\s\\u0040]+$');
             if (!emailRegex.test(email)) {
-                alert('Please enter a valid email address.');
+                showCheckoutMessage('Please enter a valid email address.', 'error');
                 return false;
             }
 

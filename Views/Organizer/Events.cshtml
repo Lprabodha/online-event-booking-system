@@ -137,7 +137,7 @@
                                         <td class="px-3 md:px-6 py-4">
                                             <div>
                                                 <div class="text-white font-semibold">@eventItem.Title</div>
-                                                <div class="text-gray-400 text-sm">@eventItem.Category?.Name • $@minPrice.ToString("F2")</div>
+                                                <div class="text-gray-400 text-sm">@eventItem.Category?.Name • LKR @minPrice.ToString("F2")</div>
                                                 <div class="text-gray-400 text-xs sm:hidden">@eventItem.EventDate.ToString("MMM dd, yyyy") @eventItem.EventTime.ToString("h:mm tt")</div>
                                             </div>
                                         </td>
@@ -153,7 +153,7 @@
                                             <div class="text-white">@totalBookings</div>
                                             <div class="text-gray-400 text-sm">of @eventItem.TotalCapacity</div>
                                         </td>
-                                        <td class="px-3 md:px-6 py-4 text-white font-semibold hidden lg:table-cell">$@((totalBookings * minPrice).ToString("F2"))</td>
+                                        <td class="px-3 md:px-6 py-4 text-white font-semibold hidden lg:table-cell">LKR @((totalBookings * minPrice).ToString("F2"))</td>
                                         <td class="px-3 md:px-6 py-4">
                                             <div class="flex flex-wrap gap-1 md:gap-2">
                                                 <!-- View Button -->

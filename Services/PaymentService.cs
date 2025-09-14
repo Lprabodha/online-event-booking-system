@@ -17,20 +17,21 @@ namespace online_event_booking_system.Services
             StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
         }
 
-        public async Task<PaymentIntent> CreatePaymentIntentAsync(decimal amount, string currency, string customerId, string eventId)
+        public async Task<PaymentIntent> CreatePaymentIntentAsync(decimal amount, string currency, string customerId, string eventId, Guid bookingId)
         {
             try
             {
                 var service = new PaymentIntentService();
                 var options = new PaymentIntentCreateOptions
                 {
-                    Amount = (long)(amount * 100), // Convert to cents
+                    Amount = (long)(amount * 100), // Convert to cents (LKR doesn't use decimal places)
                     Currency = currency.ToLower(),
                     Customer = customerId,
                     Metadata = new Dictionary<string, string>
                     {
                         { "eventId", eventId },
-                        { "customerId", customerId }
+                        { "customerId", customerId },
+                        { "bookingId", bookingId.ToString() }
                     },
                     AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                     {
@@ -69,7 +70,7 @@ namespace online_event_booking_system.Services
                     ClientSecret = paymentIntent.ClientSecret,
                     Status = paymentIntent.Status,
                     Amount = (decimal)paymentIntent.Amount / 100,
-                    Currency = paymentIntent.Currency
+                    Currency = paymentIntent.Currency.ToUpper()
                 };
             }
             catch (StripeException ex)

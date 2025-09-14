@@ -4,8 +4,7 @@ using Stripe;
 
 namespace online_event_booking_system.Controllers.Public
 {
-    [ApiController]
-    [Route("api/[controller]")]
+    [Route("webhook")]
     public class StripeWebhookController : ControllerBase
     {
         private readonly IBookingService _bookingService;
@@ -22,7 +21,7 @@ namespace online_event_booking_system.Controllers.Public
             _configuration = configuration;
         }
 
-        [HttpPost("webhook")]
+        [HttpPost("stripe")]
         public async Task<IActionResult> HandleWebhook()
         {
             var json = await new StreamReader(HttpContext.Request.Body).ReadToEndAsync();
@@ -75,8 +74,19 @@ namespace online_event_booking_system.Controllers.Public
                 var bookingId = paymentIntent.Metadata.GetValueOrDefault("bookingId");
                 if (!string.IsNullOrEmpty(bookingId) && Guid.TryParse(bookingId, out var bookingGuid))
                 {
-                    await _bookingService.ProcessPaymentAsync(paymentIntent.Id, bookingGuid);
-                    _logger.LogInformation($"Payment succeeded for booking {bookingGuid}");
+                    var success = await _bookingService.ProcessPaymentAsync(paymentIntent.Id, bookingGuid);
+                    if (success)
+                    {
+                        _logger.LogInformation($"Payment succeeded for booking {bookingGuid}");
+                    }
+                    else
+                    {
+                        _logger.LogWarning($"Failed to process payment for booking {bookingGuid}");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning($"No booking ID found in payment intent metadata for {paymentIntent.Id}");
                 }
             }
             catch (Exception ex)
