@@ -118,25 +118,5 @@
             }
         });
         
-        // Add some random floating animation to the main illustration
-        const illustration = document.querySelector('svg');
-        if (illustration) {
-            // Add inline style for floating animation
-            illustration.style.animation = 'float 3s ease-in-out infinite';
-            
-            // Add the keyframes dynamically
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-20px); }
-                }
-                @keyframes glow {
-                    0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-                    50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.8); }
-                }
-            `;
-            document.head.appendChild(style);
-        }
     });
 </script>

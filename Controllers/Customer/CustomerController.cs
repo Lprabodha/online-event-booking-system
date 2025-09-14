@@ -42,9 +42,54 @@ namespace online_event_booking_system.Controllers.Customer
         }
 
         [HttpGet("customer/events")]
-        public IActionResult Events()
+        public async Task<IActionResult> Events(string? search, string? category)
         {
-            return View();
+            try
+            {
+                // Get all published events
+                var events = await _context.Events
+                    .Include(e => e.Venue)
+                    .Include(e => e.Category)
+                    .Include(e => e.Organizer)
+                    .Include(e => e.Prices)
+                    .Where(e => e.IsPublished && e.Status != "Cancelled")
+                    .OrderByDescending(e => e.CreatedAt)
+                    .ToListAsync();
+
+                // Apply search filter
+                if (!string.IsNullOrEmpty(search))
+                {
+                    events = events.Where(e => 
+                        e.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Description.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Venue.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                        e.Category.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
+                    ).ToList();
+                }
+
+                // Apply category filter
+                if (!string.IsNullOrEmpty(category) && Guid.TryParse(category, out var categoryId))
+                {
+                    events = events.Where(e => e.CategoryId == categoryId).ToList();
+                }
+
+                // Get categories for filter dropdown
+                var categories = await _context.Categories
+                    .Where(c => c.IsActive)
+                    .OrderBy(c => c.Name)
+                    .ToListAsync();
+
+                ViewBag.Categories = categories;
+                ViewBag.SelectedCategory = category;
+                ViewBag.SearchTerm = search;
+
+                return View(events);
+            }
+            catch (Exception ex)
+            {
+                // Log error if needed
+                return View(new List<online_event_booking_system.Data.Entities.Event>());
+            }
         }
 
         [HttpGet("customer/bookings")]
