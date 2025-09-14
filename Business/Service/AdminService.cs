@@ -246,6 +246,15 @@ namespace online_event_booking_system.Business.Service
         }
 
         /// <summary>
+        /// Get all events with related data for admin management.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<IEnumerable<Event>> GetAllEventsAsync()
+        {
+            return await _adminRepository.GetAllEventsAsync();
+        }
+
+        /// <summary>
         /// Generate a secure random password.
         /// </summary>
         /// <returns></returns>

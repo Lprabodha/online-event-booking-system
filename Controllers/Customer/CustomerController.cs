@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;

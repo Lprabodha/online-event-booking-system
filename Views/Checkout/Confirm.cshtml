@@ -69,8 +69,8 @@
                                                 @if (!string.IsNullOrEmpty(ticket.QRCode))
                                                 {
                                                     <!-- Make QR larger and downloadable -->
-                                                    <a href="data:image/png;base64,@ticket.QRCode" download="@($"ticket-{ticket.TicketNumber}.png")" title="Download QR code">
-                                                        <img src="data:image/png;base64,@ticket.QRCode" alt="QR Code" class="w-32 h-32 rounded-md border" />
+                                                    <a href="@ticket.QRCode" download="@($"ticket-{ticket.TicketNumber}.png")" title="Download QR code">
+                                                        <img src="@ticket.QRCode" alt="QR Code" class="w-32 h-32 rounded-md border" />
                                                     </a>
                                                 }
                                                 else

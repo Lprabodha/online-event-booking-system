@@ -67,5 +67,11 @@ namespace online_event_booking_system.Business.Interface
         /// <param name="user"></param>
         /// <returns></returns>
         Task<(bool success, IEnumerable<IdentityError>? errors)> CreateOrganizer(ApplicationUser user);
+        
+        /// <summary>
+        /// Get all events with related data for admin management
+        /// </summary>
+        /// <returns></returns>
+        Task<IEnumerable<Event>> GetAllEventsAsync();
     }
 }

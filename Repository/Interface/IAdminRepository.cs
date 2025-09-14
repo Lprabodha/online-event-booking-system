@@ -14,5 +14,6 @@ namespace online_event_booking_system.Repository.Interface
         Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName);
         Task<IdentityResult> CreateOrganizerAsync(ApplicationUser user, string password);
         Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role);
+        Task<IEnumerable<Event>> GetAllEventsAsync();
     }
 }
