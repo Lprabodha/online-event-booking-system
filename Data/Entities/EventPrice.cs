@@ -20,6 +20,18 @@ namespace online_event_booking_system.Data.Entities
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
+        // Additional fields for various price types
+        [MaxLength(500)]
+        public string? Description { get; set; }
+        
+        [MaxLength(50)]
+        public string PriceType { get; set; } = "Standard"; // Standard, Early Bird, VIP, Group, Student, etc.
+        
+        public DateTime? ValidFrom { get; set; }
+        public DateTime? ValidUntil { get; set; }
+        public int? MinQuantity { get; set; }
+        public int? MaxQuantity { get; set; }
+
         public ICollection<Ticket> Tickets { get; set; } = new List<Ticket>();
     }
 }

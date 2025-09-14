@@ -54,7 +54,7 @@ namespace online_event_booking_system.Business.Interface
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        Task<UserWithRoleViewModel> GetUserWithRoleById(string id);
+        Task<UserWithRoleViewModel?> GetUserWithRoleById(string id);
         /// <summary>
         /// Get users by their assigned role
         /// </summary>

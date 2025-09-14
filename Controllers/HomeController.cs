@@ -1,6 +1,6 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using online_event_booking_system.Models;
+using System.Diagnostics;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
 
