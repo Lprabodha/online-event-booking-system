@@ -307,6 +307,13 @@ namespace online_event_booking_system.Business.Service
                     _context.Tickets.Update(ticket);
                 }
 
+                // Add loyalty points (1 point per LKR 10 spent)
+                var pointsEarned = (int)(payment.Amount / 10);
+                if (pointsEarned > 0)
+                {
+                    await AddLoyaltyPointsAsync(booking.CustomerId, pointsEarned, $"Points earned from booking {booking.BookingReference}");
+                }
+
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
@@ -346,6 +353,56 @@ namespace online_event_booking_system.Business.Service
                 .Where(b => b.CustomerId == userId)
                 .OrderByDescending(b => b.CreatedAt)
                 .ToListAsync();
+        }
+
+        public async Task<List<Payment>> GetUserPaymentsAsync(string userId)
+        {
+            return await _context.Payments
+                .Where(p => p.CustomerId == userId)
+                .OrderByDescending(p => p.PaidAt)
+                .ToListAsync();
+        }
+
+        public async Task<LoyaltyPoint?> GetUserLoyaltyPointsAsync(string userId)
+        {
+            return await _context.LoyaltyPoints
+                .FirstOrDefaultAsync(lp => lp.CustomerId == userId);
+        }
+
+        public async Task<bool> AddLoyaltyPointsAsync(string userId, int points, string description)
+        {
+            try
+            {
+                var loyaltyPoint = await _context.LoyaltyPoints
+                    .FirstOrDefaultAsync(lp => lp.CustomerId == userId);
+
+                if (loyaltyPoint == null)
+                {
+                    loyaltyPoint = new LoyaltyPoint
+                    {
+                        CustomerId = userId,
+                        Points = points,
+                        Description = description,
+                        LastUpdated = DateTime.UtcNow
+                    };
+                    _context.LoyaltyPoints.Add(loyaltyPoint);
+                }
+                else
+                {
+                    loyaltyPoint.Points += points;
+                    loyaltyPoint.Description = description;
+                    loyaltyPoint.LastUpdated = DateTime.UtcNow;
+                    _context.LoyaltyPoints.Update(loyaltyPoint);
+                }
+
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding loyalty points");
+                return false;
+            }
         }
 
         public async Task<bool> CancelBookingAsync(Guid bookingId, string userId)
