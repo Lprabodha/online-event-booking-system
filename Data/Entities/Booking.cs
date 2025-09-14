@@ -15,7 +15,7 @@ namespace online_event_booking_system.Data.Entities
         public string BookingReference { get; set; } = Guid.NewGuid().ToString("N");
         
         [Required, MaxLength(20)]
-        public string Status { get; set; } = "Confirmed"; // Pending, Confirmed, Cancelled
+        public string Status { get; set; } = "Pending"; // Pending, Confirmed, Cancelled
         
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }

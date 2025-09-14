@@ -11,6 +11,8 @@ using online_event_booking_system.Models;
 using online_event_booking_system.Repository.Interface;
 using online_event_booking_system.Repository.Service;
 using online_event_booking_system.Services;
+using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Business.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +64,16 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 
 // S3 Service
 builder.Services.AddScoped<IS3Service, S3Service>();
+
+// Payment Service
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+// QR Code Service
+builder.Services.AddScoped<IQRCodeService, QRCodeService>();
+
+// Booking Service
+builder.Services.AddScoped<IBookingService, BookingService>();
 
 // Services
 builder.Services.AddScoped<IAdminService, AdminService>();
