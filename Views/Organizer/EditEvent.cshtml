@@ -1,3 +1,4 @@
+@model online_event_booking_system.Models.View_Models.CreateEventViewModel
 @{
     ViewData["Title"] = "Edit Event";
     Layout = "_DashboardLayout";
@@ -27,12 +28,19 @@
 
             <!-- Event Status Banner -->
             <section aria-label="Event Status" class="mb-8">
-                <div class="bg-gradient-to-r from-green-500/20 to-teal-500/20 border border-green-500/30 rounded-2xl p-4">
+                @{
+                    var eventEntity = ViewBag.EventEntity as online_event_booking_system.Data.Entities.Event;
+                    var statusClass = eventEntity?.IsPublished == true ? "from-green-500/20 to-teal-500/20 border-green-500/30" : "from-yellow-500/20 to-orange-500/20 border-yellow-500/30";
+                    var statusDotClass = eventEntity?.IsPublished == true ? "bg-green-400" : "bg-yellow-400";
+                    var statusText = eventEntity?.IsPublished == true ? "Event is Live" : "Event is Draft";
+                    var statusDescription = eventEntity?.IsPublished == true ? "This event is currently published and accepting ticket sales" : "This event is in draft mode and not yet published";
+                }
+                <div class="bg-gradient-to-r @statusClass border @statusClass.Split(' ')[1] rounded-2xl p-4">
                     <div class="flex items-center space-x-3">
-                        <div class="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                        <div class="w-3 h-3 @statusDotClass rounded-full @(eventEntity?.IsPublished == true ? "animate-pulse" : "")"></div>
                         <div>
-                            <h3 class="text-white font-semibold">Event is Live</h3>
-                            <p class="text-gray-300 text-sm">This event is currently published and accepting ticket sales</p>
+                            <h3 class="text-white font-semibold">@statusText</h3>
+                            <p class="text-gray-300 text-sm">@statusDescription</p>
                         </div>
                     </div>
                 </div>
@@ -71,30 +79,25 @@
             </section>
 
             <!-- Event Edit Form -->
-            <form class="space-y-8">
+            <form asp-action="EditEvent" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" enctype="multipart/form-data" class="space-y-8">
+                @Html.AntiForgeryToken()
                 <!-- Basic Information -->
                 <section aria-label="Basic Information" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h2 class="text-xl font-bold mb-6">Basic Information</h2>
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Title *</label>
-                                <input type="text" value="Summer Music Festival 2024" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Enter your event title">
+                                <label asp-for="Title" class="block text-sm font-medium text-gray-300 mb-2">Event Title *</label>
+                                <input asp-for="Title" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Enter your event title">
+                                <span asp-validation-for="Title" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Category *</label>
-                                <select required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="music" selected>Music & Concerts</option>
-                                    <option value="sports">Sports</option>
-                                    <option value="technology">Technology</option>
-                                    <option value="business">Business</option>
-                                    <option value="arts">Arts & Culture</option>
-                                    <option value="food">Food & Drink</option>
-                                    <option value="education">Education</option>
-                                    <option value="health">Health & Wellness</option>
-                                    <option value="other">Other</option>
+                                <label asp-for="CategoryId" class="block text-sm font-medium text-gray-300 mb-2">Event Category *</label>
+                                <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="">Select a category</option>
                                 </select>
+                                <span asp-validation-for="CategoryId" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
@@ -112,40 +115,36 @@
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Venue *</label>
-                                <select required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="concert-hall" selected>Concert Hall</option>
-                                    <option value="expo-center">Expo Center</option>
-                                    <option value="open-arena">Open Arena</option>
-                                    <option value="theater">Theater</option>
-                                    <option value="stadium">Stadium</option>
-                                    <option value="conference-center">Conference Center</option>
+                                <label asp-for="VenueId" class="block text-sm font-medium text-gray-300 mb-2">Venue *</label>
+                                <select asp-for="VenueId" asp-items="@(new SelectList(Model.Venues, "Id", "Name"))" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="">Select a venue</option>
                                 </select>
+                                <span asp-validation-for="VenueId" class="text-red-400 text-sm"></span>
                             </div>
                         </div>
                         
                         <div class="space-y-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Description *</label>
-                                <textarea rows="6" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm resize-none" placeholder="Describe your event in detail...">Join us for an unforgettable summer music festival featuring top artists, delicious food, and amazing vibes. This year's lineup includes both established and emerging artists across multiple genres. Don't miss out on this incredible experience!</textarea>
+                                <label asp-for="Description" class="block text-sm font-medium text-gray-300 mb-2">Event Description *</label>
+                                <textarea asp-for="Description" rows="6" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm resize-none" placeholder="Describe your event in detail..."></textarea>
+                                <span asp-validation-for="Description" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
+                                <label asp-for="ImageFile" class="block text-sm font-medium text-gray-300 mb-2">Event Image</label>
                                 <div class="relative">
-                                    <img src="~/images/placeholder.svg" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
-                                    <button type="button" class="absolute top-2 right-2 bg-black/50 text-white p-2 rounded-lg hover:bg-black/70 transition-all">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-                                        </svg>
-                                    </button>
+                                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                                    {
+                                        <img src="@Model.ImageUrl" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/images/placeholder.svg" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
+                                    }
                                 </div>
-                                <div class="border-2 border-dashed border-white/20 rounded-xl p-4 text-center hover:border-purple-500/50 transition-all cursor-pointer">
-                                    <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                                    </svg>
-                                    <p class="text-gray-400 text-sm">Click to change image</p>
-                                </div>
+                                <input asp-for="ImageFile" type="file" accept="image/*" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <span asp-validation-for="ImageFile" class="text-red-400 text-sm"></span>
+                                <input asp-for="ImageUrl" type="hidden" />
                             </div>
                         </div>
                     </div>
@@ -156,24 +155,27 @@
                     <h2 class="text-xl font-bold mb-6">Date & Time</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Start Date *</label>
-                            <input type="date" value="2024-07-15" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <label asp-for="EventDate" class="block text-sm font-medium text-gray-300 mb-2">Start Date *</label>
+                            <input asp-for="EventDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <span asp-validation-for="EventDate" class="text-red-400 text-sm"></span>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
-                            <input type="time" value="18:00" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <label asp-for="StartTime" class="block text-sm font-medium text-gray-300 mb-2">Start Time *</label>
+                            <input asp-for="StartTime" type="time" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <span asp-validation-for="StartTime" class="text-red-400 text-sm"></span>
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-300 mb-2">End Time *</label>
-                            <input type="time" value="23:00" required class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <label asp-for="EndTime" class="block text-sm font-medium text-gray-300 mb-2">End Time *</label>
+                            <input asp-for="EndTime" type="time" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <span asp-validation-for="EndTime" class="text-red-400 text-sm"></span>
                         </div>
                     </div>
                     
                     <div class="mt-6">
                         <label class="flex items-center space-x-3">
-                            <input type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded">
+                            <input asp-for="IsMultiDay" type="checkbox" class="text-purple-500 focus:ring-purple-500 rounded">
                             <span class="text-gray-300">This is a multi-day event</span>
                         </label>
                     </div>
@@ -185,30 +187,34 @@
                     <div class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Total Capacity *</label>
-                                <input type="number" value="500" required min="1" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
+                                <label asp-for="TotalCapacity" class="block text-sm font-medium text-gray-300 mb-2">Total Capacity *</label>
+                                <input asp-for="TotalCapacity" type="number" min="1" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
+                                <span asp-validation-for="TotalCapacity" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales Start</label>
-                                <input type="datetime-local" value="2024-06-01T10:00" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <label asp-for="TicketSalesStart" class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales Start</label>
+                                <input asp-for="TicketSalesStart" type="datetime-local" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <span asp-validation-for="TicketSalesStart" class="text-red-400 text-sm"></span>
                             </div>
                         </div>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales End</label>
-                                <input type="datetime-local" value="2024-07-14T23:59" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <label asp-for="TicketSalesEnd" class="block text-sm font-medium text-gray-300 mb-2">Ticket Sales End</label>
+                                <input asp-for="TicketSalesEnd" type="datetime-local" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <span asp-validation-for="TicketSalesEnd" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Refund Policy</label>
-                                <select class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="no-refunds">No Refunds</option>
-                                    <option value="full-refund-7days" selected>Full Refund (7 days before)</option>
-                                    <option value="full-refund-24hours">Full Refund (24 hours before)</option>
-                                    <option value="partial-refund">Partial Refund</option>
+                                <label asp-for="RefundPolicy" class="block text-sm font-medium text-gray-300 mb-2">Refund Policy</label>
+                                <select asp-for="RefundPolicy" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="No Refunds">No Refunds</option>
+                                    <option value="Full Refund (7 days before)">Full Refund (7 days before)</option>
+                                    <option value="Full Refund (24 hours before)">Full Refund (24 hours before)</option>
+                                    <option value="Partial Refund">Partial Refund</option>
                                 </select>
+                                <span asp-validation-for="RefundPolicy" class="text-red-400 text-sm"></span>
                             </div>
                         </div>
                     </div>
@@ -218,60 +224,57 @@
                 <section aria-label="Ticket Types" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold">Ticket Types</h2>
-                        <button type="button" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105">
+                        <button type="button" id="add-ticket-type" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105">
                             Add Ticket Type
                         </button>
                     </div>
                     
-                    <div class="space-y-4">
-                        <!-- General Admission -->
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                                    <input type="text" value="General Admission" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                    <div class="space-y-4" id="ticket-prices-container">
+                        @for (int i = 0; i < Model.EventPrices.Count; i++)
+                        {
+                            <div class="bg-white/5 border border-white/10 rounded-xl p-4 ticket-price-item">
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                                        <input asp-for="EventPrices[i].Category" type="text" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                        <span asp-validation-for="EventPrices[i].Category" class="text-red-400 text-sm"></span>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                                        <input asp-for="EventPrices[i].Price" type="number" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                        <span asp-validation-for="EventPrices[i].Price" class="text-red-400 text-sm"></span>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                                        <input asp-for="EventPrices[i].Stock" type="number" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                        <span asp-validation-for="EventPrices[i].Stock" class="text-red-400 text-sm"></span>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                                        <select asp-for="EventPrices[i].PriceType" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                            <option value="Standard">Standard</option>
+                                            <option value="Early Bird">Early Bird</option>
+                                            <option value="VIP">VIP</option>
+                                            <option value="Group">Group</option>
+                                            <option value="Student">Student</option>
+                                        </select>
+                                    </div>
+                                    <div class="flex items-end">
+                                        <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all remove-ticket-price">
+                                            Remove
+                                        </button>
+                                    </div>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
-                                    <input type="number" value="25" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <div class="mt-3">
+                                    <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                                    <textarea asp-for="EventPrices[i].Description" rows="2" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm resize-none" placeholder="Optional description..."></textarea>
                                 </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
-                                    <input type="number" value="300" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                </div>
-                                <div class="flex items-end">
-                                    <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all">
-                                        Remove
-                                    </button>
-                                </div>
+                                <input asp-for="EventPrices[i].IsActive" type="hidden" value="true" />
                             </div>
-                        </div>
-                        
-                        <!-- VIP -->
-                        <div class="bg-white/5 border border-white/10 rounded-xl p-4">
-                            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                                    <input type="text" value="VIP Pass" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
-                                    <input type="number" value="75" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                </div>
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
-                                    <input type="number" value="100" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                </div>
-                                <div class="flex items-end">
-                                    <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all">
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        }
                         
                         <!-- Add New Ticket Type Button -->
-                        <div class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-purple-500/50 transition-all cursor-pointer">
+                        <div id="add-ticket-type-placeholder" class="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-purple-500/50 transition-all cursor-pointer">
                             <svg class="w-8 h-8 text-gray-400 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
                             </svg>
@@ -285,19 +288,19 @@
                     <h2 class="text-xl font-bold mb-6">Event Performance</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-green-400">247</p>
+                            <p class="text-3xl font-bold text-green-400">@ViewBag.TotalTicketsSold</p>
                             <p class="text-gray-400 text-sm">Tickets Sold</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-blue-400">$6,175</p>
+                            <p class="text-3xl font-bold text-blue-400">$@ViewBag.TotalRevenue.ToString("N2")</p>
                             <p class="text-gray-400 text-sm">Revenue</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-purple-400">49.4%</p>
+                            <p class="text-3xl font-bold text-purple-400">@ViewBag.CapacityUsedPercentage.ToString("F1")%</p>
                             <p class="text-gray-400 text-sm">Capacity Used</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-teal-400">253</p>
+                            <p class="text-3xl font-bold text-teal-400">@ViewBag.RemainingTickets</p>
                             <p class="text-gray-400 text-sm">Remaining</p>
                         </div>
                     </div>
@@ -309,18 +312,20 @@
                     <div class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Event Tags</label>
-                                <input type="text" value="music, festival, outdoor, summer" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="music, festival, outdoor (comma separated)">
+                                <label asp-for="Tags" class="block text-sm font-medium text-gray-300 mb-2">Event Tags</label>
+                                <input asp-for="Tags" type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="music, festival, outdoor (comma separated)">
+                                <span asp-validation-for="Tags" class="text-red-400 text-sm"></span>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-300 mb-2">Age Restriction</label>
-                                <select class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="all-ages" selected>All Ages</option>
+                                <label asp-for="AgeRestriction" class="block text-sm font-medium text-gray-300 mb-2">Age Restriction</label>
+                                <select asp-for="AgeRestriction" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                    <option value="All Ages">All Ages</option>
                                     <option value="18+">18+ Only</option>
                                     <option value="21+">21+ Only</option>
-                                    <option value="family-friendly">Family Friendly</option>
+                                    <option value="Family Friendly">Family Friendly</option>
                                 </select>
+                                <span asp-validation-for="AgeRestriction" class="text-red-400 text-sm"></span>
                             </div>
                         </div>
                         
@@ -350,9 +355,9 @@
 
                 <!-- Form Actions -->
                 <section aria-label="Form Actions" class="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
-                    <button type="button" class="w-full sm:w-auto bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
+                    <a asp-action="Events" class="w-full sm:w-auto bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200 text-center">
                         Cancel
-                    </button>
+                    </a>
                     <div class="flex space-x-4 w-full sm:w-auto">
                         <button type="button" class="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
                             Save as Draft
@@ -365,3 +370,85 @@
             </form>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        let ticketPriceIndex = @Model.EventPrices.Count;
+
+        // Add ticket type functionality
+        document.getElementById('add-ticket-type').addEventListener('click', function() {
+            addTicketPrice();
+        });
+
+        document.getElementById('add-ticket-type-placeholder').addEventListener('click', function() {
+            addTicketPrice();
+        });
+
+        function addTicketPrice() {
+            const container = document.getElementById('ticket-prices-container');
+            const placeholder = document.getElementById('add-ticket-type-placeholder');
+            
+            const ticketPriceHtml = `
+                <div class="bg-white/5 border border-white/10 rounded-xl p-4 ticket-price-item">
+                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                            <input name="EventPrices[${ticketPriceIndex}].Category" type="text" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
+                            <input name="EventPrices[${ticketPriceIndex}].Price" type="number" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Quantity</label>
+                            <input name="EventPrices[${ticketPriceIndex}].Stock" type="number" min="1" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
+                            <select name="EventPrices[${ticketPriceIndex}].PriceType" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <option value="Standard">Standard</option>
+                                <option value="Early Bird">Early Bird</option>
+                                <option value="VIP">VIP</option>
+                                <option value="Group">Group</option>
+                                <option value="Student">Student</option>
+                            </select>
+                        </div>
+                        <div class="flex items-end">
+                            <button type="button" class="w-full bg-red-500/20 text-red-400 px-3 py-2 rounded-lg hover:bg-red-500/30 transition-all remove-ticket-price">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                        <textarea name="EventPrices[${ticketPriceIndex}].Description" rows="2" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm resize-none" placeholder="Optional description..."></textarea>
+                    </div>
+                    <input name="EventPrices[${ticketPriceIndex}].IsActive" type="hidden" value="true" />
+                </div>
+            `;
+            
+            container.insertBefore(createElementFromHTML(ticketPriceHtml), placeholder);
+            ticketPriceIndex++;
+            
+            // Add event listener to the new remove button
+            const removeButtons = container.querySelectorAll('.remove-ticket-price');
+            removeButtons[removeButtons.length - 1].addEventListener('click', function() {
+                this.closest('.ticket-price-item').remove();
+            });
+        }
+
+        // Remove ticket price functionality
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('remove-ticket-price')) {
+                e.target.closest('.ticket-price-item').remove();
+            }
+        });
+
+        // Helper function to create element from HTML string
+        function createElementFromHTML(htmlString) {
+            const div = document.createElement('div');
+            div.innerHTML = htmlString.trim();
+            return div.firstChild;
+        }
+    </script>
+}

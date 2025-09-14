@@ -226,6 +226,18 @@ namespace online_event_booking_system.Controllers.Organizer
                     }).ToList()
                 };
 
+                // Calculate analytics data
+                var totalTicketsSold = eventEntity.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0;
+                var totalRevenue = eventEntity.Bookings?.SelectMany(b => b.Tickets).Sum(t => t.Payment?.Amount ?? 0) ?? 0;
+                var capacityUsedPercentage = eventEntity.TotalCapacity > 0 ? (totalTicketsSold * 100.0 / eventEntity.TotalCapacity) : 0;
+                var remainingTickets = eventEntity.TotalCapacity - totalTicketsSold;
+
+                ViewBag.EventEntity = eventEntity;
+                ViewBag.TotalTicketsSold = totalTicketsSold;
+                ViewBag.TotalRevenue = totalRevenue;
+                ViewBag.CapacityUsedPercentage = capacityUsedPercentage;
+                ViewBag.RemainingTickets = remainingTickets;
+
                 return View(model);
             }
             catch (Exception ex)
