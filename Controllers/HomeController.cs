@@ -10,11 +10,13 @@ public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly ICategoryService _categoryService;
+    private readonly IEventService _eventService;
 
-    public HomeController(ILogger<HomeController> logger, ICategoryService categoryService)
+    public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, IEventService eventService)
     {
         _logger = logger;
         _categoryService = categoryService;
+        _eventService = eventService;
     }
 
     public async Task<IActionResult> Index()
@@ -22,14 +24,32 @@ public class HomeController : Controller
         try
         {
             // Fetch active categories for the browse by category section
-            var categories = await _categoryService.GetActiveCategoriesAsync();
-            return View(categories);
+            var categories = (await _categoryService.GetActiveCategoriesAsync()).ToList();
+            
+            // Fetch upcoming and latest events
+            var upcomingEvents = await _eventService.GetUpcomingEventsAsync(6);
+            var latestEvents = await _eventService.GetLatestEventsAsync(4);
+            
+            // Create a view model to pass all data
+            var viewModel = new HomePageViewModel
+            {
+                Categories = categories,
+                UpcomingEvents = upcomingEvents,
+                LatestEvents = latestEvents
+            };
+            
+            return View(viewModel);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error occurred while fetching categories for home page");
-            // Return empty list if there's an error
-            return View(new List<Category>());
+            _logger.LogError(ex, "Error occurred while fetching data for home page");
+            // Return empty data if there's an error
+            return View(new HomePageViewModel
+            {
+                Categories = new List<Category>(),
+                UpcomingEvents = new List<Event>(),
+                LatestEvents = new List<Event>()
+            });
         }
     }
 

@@ -20,5 +20,8 @@ namespace online_event_booking_system.Business.Interface
         Task<List<Category>> GetCategoriesAsync();
         Task<List<Venue>> GetVenuesAsync();
         Task<CreateEventViewModel> GetCreateEventViewModelAsync();
+        Task<List<Event>> GetUpcomingEventsAsync(int count = 6);
+        Task<List<Event>> GetLatestEventsAsync(int count = 4);
+        Task<List<Event>> GetRelatedEventsAsync(Guid eventId, int count = 3);
     }
 }

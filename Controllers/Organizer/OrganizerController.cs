@@ -149,7 +149,7 @@ namespace online_event_booking_system.Controllers.Organizer
             try
             {
                 await _discountService.CreateDiscountAsync(model, organizerId);
-                TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
+            TempData["SuccessMessage"] = $"Discount code '{model.Code}' has been created successfully!";
             }
             catch (Exception ex)
             {
@@ -267,6 +267,7 @@ namespace online_event_booking_system.Controllers.Organizer
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while updating discount status for discount {DiscountId}", id);
                 return Json(new { success = false, message = "An error occurred while updating the discount status." });
             }
         }

@@ -96,6 +96,9 @@ namespace online_event_booking_system.Business.Service
                 .Include(e => e.Venue)
                 .Include(e => e.Organizer)
                 .Include(e => e.Prices)
+                .Include(e => e.Bookings)
+                    .ThenInclude(b => b.Customer)
+                .Include(e => e.Discounts)
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
@@ -380,6 +383,81 @@ namespace online_event_booking_system.Business.Service
                     }
                 }
             };
+        }
+
+        public async Task<List<Event>> GetUpcomingEventsAsync(int count = 6)
+        {
+            var now = DateTime.UtcNow;
+            return await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished && 
+                           e.Status == "Published" && 
+                           e.EventDate >= now && 
+                           e.DeletedAt == null)
+                .OrderBy(e => e.EventDate)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<List<Event>> GetLatestEventsAsync(int count = 4)
+        {
+            return await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished && 
+                           e.Status == "Published" && 
+                           e.DeletedAt == null)
+                .OrderByDescending(e => e.CreatedAt)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<List<Event>> GetRelatedEventsAsync(Guid eventId, int count = 3)
+        {
+            // First get the current event to find related events
+            var currentEvent = await _context.Events
+                .FirstOrDefaultAsync(e => e.Id == eventId);
+
+            if (currentEvent == null)
+                return new List<Event>();
+
+            // Get related events by category, excluding the current event
+            var relatedEvents = await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished && 
+                           e.Status == "Published" && 
+                           e.DeletedAt == null &&
+                           e.Id != eventId &&
+                           e.CategoryId == currentEvent.CategoryId)
+                .OrderByDescending(e => e.CreatedAt)
+                .Take(count)
+                .ToListAsync();
+
+            // If we don't have enough events from the same category, get more from other categories
+            if (relatedEvents.Count < count)
+            {
+                var additionalEvents = await _context.Events
+                    .Include(e => e.Category)
+                    .Include(e => e.Venue)
+                    .Include(e => e.Prices)
+                    .Where(e => e.IsPublished && 
+                               e.Status == "Published" && 
+                               e.DeletedAt == null &&
+                               e.Id != eventId &&
+                               !relatedEvents.Select(re => re.Id).Contains(e.Id))
+                    .OrderByDescending(e => e.CreatedAt)
+                    .Take(count - relatedEvents.Count)
+                    .ToListAsync();
+
+                relatedEvents.AddRange(additionalEvents);
+            }
+
+            return relatedEvents;
         }
     }
 }
