@@ -113,6 +113,9 @@ else
     app.UseHsts();
 }
 
+// Add error handling middleware for 404 errors
+app.UseStatusCodePagesWithReExecute("/Error/{0}");
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
@@ -124,6 +127,18 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Map error routes
+app.MapControllerRoute(
+    name: "error",
+    pattern: "Error/{statusCode}",
+    defaults: new { controller = "Error", action = "HttpStatusCodeHandler" });
+
+app.MapControllerRoute(
+    name: "error-handler",
+    pattern: "Error",
+    defaults: new { controller = "Error", action = "Error" });
+
 app.MapRazorPages();
 
 app.Run();

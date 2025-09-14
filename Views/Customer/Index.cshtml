@@ -87,9 +87,9 @@
                                 </div>
                                 <div class="p-4">
                                     <h3 class="text-white font-bold text-lg mb-1">@booking.Event.Title</h3>
-                                    <p class="text-gray-300 text-sm mb-2">@booking.Event.EventDate.ToString("MMM dd, yyyy") • @booking.Event.Venue.Name</p>
+                                    <p class="text-gray-300 text-sm mb-2">@booking.Event.EventDate.ToString("MMM dd, yyyy") • @(booking.Event.Venue?.Name ?? "Venue not specified")</p>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-purple-400 font-semibold">LKR @booking.TotalAmount.ToString("F2")</span>
+                                        <span class="text-purple-400 font-semibold">LKR @booking.Tickets.Sum(t => t.EventPrice?.Price ?? 0).ToString("F2")</span>
                                         <a asp-controller="Customer" asp-action="OrderDetails" asp-route-id="@booking.Id" class="text-blue-400 hover:text-blue-300 text-sm font-medium">
                                             View Details
                                         </a>
@@ -129,15 +129,15 @@
                                 <div class="flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="flex items-center justify-between mb-1">
-                                            <h4 class="font-medium text-white">@payment.Notes</h4>
+                                            <h4 class="font-medium text-white">@(payment.Notes ?? "Payment for event booking")</h4>
                                             <span class="text-lg font-semibold text-white">@payment.Currency @payment.Amount.ToString("F2")</span>
                                         </div>
-                                        <div class="flex items-center space-x-4 text-sm text-gray-500">
+                                        <div class="flex items-center space-x-4 text-sm text-gray-400">
                                             <span>@payment.PaidAt.ToString("MMM dd, yyyy")</span>
                                             <span>•</span>
                                             <span>@payment.PaymentMethod</span>
                                             <span>•</span>
-                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium @(payment.Status == "Completed" ? "bg-green-100 text-green-800" : payment.Status == "Pending" ? "bg-yellow-100 text-yellow-800" : "bg-red-100 text-red-800")">
+                                            <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium @(payment.Status == "Completed" ? "bg-green-500/20 text-green-400 border border-green-500/30" : payment.Status == "Pending" ? "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30" : payment.Status == "Failed" ? "bg-red-500/20 text-red-400 border border-red-500/30" : "bg-gray-500/20 text-gray-400 border border-gray-500/30")">
                                                 @payment.Status
                                             </span>
                                         </div>

@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="flex items-center justify-between sm:flex-col sm:items-end">
                                     <span class="px-3 py-1 @(booking.Status == "Confirmed" ? "bg-green-500/20 text-green-400" : booking.Status == "Pending" ? "bg-yellow-500/20 text-yellow-400" : "bg-red-500/20 text-red-400") rounded-full text-sm font-medium">@booking.Status</span>
-                                    <p class="text-xl lg:text-2xl font-bold text-white ml-4 sm:ml-0 sm:mt-2 @(booking.Status == "Cancelled" ? "line-through" : "")">LKR @booking.TotalAmount.ToString("F2")</p>
+                                    <p class="text-xl lg:text-2xl font-bold text-white ml-4 sm:ml-0 sm:mt-2 @(booking.Status == "Cancelled" ? "line-through" : "")">LKR @booking.Tickets.Sum(t => t.EventPrice?.Price ?? 0).ToString("F2")</p>
                                 </div>
                             </div>
                             
@@ -56,7 +56,7 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
                                 <div class="bg-white/5 border border-white/10 rounded-lg p-3">
                                     <p class="text-gray-400 text-xs mb-1">Order Date</p>
-                                    <p class="text-white font-semibold text-sm">@booking.BookingDate.ToString("MMM dd, yyyy")</p>
+                                    <p class="text-white font-semibold text-sm">@booking.CreatedAt.ToString("MMM dd, yyyy")</p>
                                 </div>
                                 <div class="bg-white/5 border border-white/10 rounded-lg p-3">
                                     <p class="text-gray-400 text-xs mb-1">Tickets</p>
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="bg-white/5 border border-white/10 rounded-lg p-3 sm:col-span-2 lg:col-span-1">
                                     <p class="text-gray-400 text-xs mb-1">Venue</p>
-                                    <p class="text-white font-semibold text-sm">@booking.Event.Venue.Name</p>
+                                    <p class="text-white font-semibold text-sm">@(booking.Event.Venue?.Name ?? "Venue not specified")</p>
                                 </div>
                             </div>
                             
