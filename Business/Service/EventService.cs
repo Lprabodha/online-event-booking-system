@@ -240,30 +240,107 @@ namespace online_event_booking_system.Business.Service
 
         public async Task<bool> PublishEventAsync(Guid id, string organizerId)
         {
-            var eventEntity = await _context.Events
-                .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
+            try
+            {
+                var eventEntity = await _context.Events
+                    .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
 
-            if (eventEntity == null)
-                return false;
+                if (eventEntity == null)
+                    return false;
 
-            eventEntity.IsPublished = true;
-            eventEntity.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-            return true;
+                // Check if event can be published (not cancelled or completed)
+                if (eventEntity.Status == "Cancelled" || eventEntity.Status == "Completed")
+                    return false;
+
+                eventEntity.IsPublished = true;
+                eventEntity.Status = "Published";
+                eventEntity.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error publishing event {EventId}", id);
+                throw;
+            }
         }
 
         public async Task<bool> UnpublishEventAsync(Guid id, string organizerId)
         {
-            var eventEntity = await _context.Events
-                .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
+            try
+            {
+                var eventEntity = await _context.Events
+                    .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
 
-            if (eventEntity == null)
-                return false;
+                if (eventEntity == null)
+                    return false;
 
-            eventEntity.IsPublished = false;
-            eventEntity.UpdatedAt = DateTime.UtcNow;
-            await _context.SaveChangesAsync();
-            return true;
+                eventEntity.IsPublished = false;
+                eventEntity.Status = "Draft";
+                eventEntity.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error unpublishing event {EventId}", id);
+                throw;
+            }
+        }
+
+        public async Task<bool> CancelEventAsync(Guid id, string organizerId)
+        {
+            try
+            {
+                var eventEntity = await _context.Events
+                    .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
+
+                if (eventEntity == null)
+                    return false;
+
+                // Check if event can be cancelled (not already completed)
+                if (eventEntity.Status == "Completed")
+                    return false;
+
+                eventEntity.IsPublished = false;
+                eventEntity.Status = "Cancelled";
+                eventEntity.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error cancelling event {EventId}", id);
+                throw;
+            }
+        }
+
+        public async Task<bool> UpdateEventStatusAsync(Guid id, string organizerId, string status)
+        {
+            try
+            {
+                var eventEntity = await _context.Events
+                    .FirstOrDefaultAsync(e => e.Id == id && e.OrganizerId == organizerId);
+
+                if (eventEntity == null)
+                    return false;
+
+                // Validate status
+                var validStatuses = new[] { "Draft", "Published", "Cancelled", "Completed" };
+                if (!validStatuses.Contains(status))
+                    return false;
+
+                eventEntity.Status = status;
+                eventEntity.IsPublished = status == "Published";
+                eventEntity.UpdatedAt = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating event status {EventId} to {Status}", id, status);
+                throw;
+            }
         }
 
         public async Task<List<Category>> GetCategoriesAsync()

@@ -15,6 +15,8 @@ namespace online_event_booking_system.Business.Interface
         Task<List<Event>> GetPublishedEventsAsync();
         Task<bool> PublishEventAsync(Guid id, string organizerId);
         Task<bool> UnpublishEventAsync(Guid id, string organizerId);
+        Task<bool> CancelEventAsync(Guid id, string organizerId);
+        Task<bool> UpdateEventStatusAsync(Guid id, string organizerId, string status);
         Task<List<Category>> GetCategoriesAsync();
         Task<List<Venue>> GetVenuesAsync();
         Task<CreateEventViewModel> GetCreateEventViewModelAsync();

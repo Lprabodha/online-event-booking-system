@@ -19,11 +19,9 @@ namespace online_event_booking_system.Models
         [Display(Name = "Discount Value")]
         public decimal Value { get; set; }
 
-        [Display(Name = "Apply To Event")]
+        [Required(ErrorMessage = "Event selection is required")]
+        [Display(Name = "Event")]
         public Guid? EventId { get; set; }
-
-        [Display(Name = "Apply To All Events")]
-        public bool ApplyToAllEvents { get; set; } = true;
 
         [Range(1, int.MaxValue, ErrorMessage = "Usage limit must be at least 1")]
         [Display(Name = "Usage Limit")]

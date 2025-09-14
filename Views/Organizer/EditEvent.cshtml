@@ -94,8 +94,8 @@
                             
                             <div>
                                 <label asp-for="CategoryId" class="block text-sm font-medium text-gray-300 mb-2">Event Category *</label>
-                                <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="">Select a category</option>
+                                <select asp-for="CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "Name"))" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                    <option value="" class="bg-dark-navy text-foreground">Select a category</option>
                                 </select>
                                 <span asp-validation-for="CategoryId" class="text-red-400 text-sm"></span>
                             </div>
@@ -116,8 +116,8 @@
                             
                             <div>
                                 <label asp-for="VenueId" class="block text-sm font-medium text-gray-300 mb-2">Venue *</label>
-                                <select asp-for="VenueId" asp-items="@(new SelectList(Model.Venues, "Id", "Name"))" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="">Select a venue</option>
+                                <select asp-for="VenueId" asp-items="@(new SelectList(Model.Venues, "Id", "Name"))" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                    <option value="" class="bg-dark-navy text-foreground">Select a venue</option>
                                 </select>
                                 <span asp-validation-for="VenueId" class="text-red-400 text-sm"></span>
                             </div>
@@ -208,11 +208,11 @@
                             
                             <div>
                                 <label asp-for="RefundPolicy" class="block text-sm font-medium text-gray-300 mb-2">Refund Policy</label>
-                                <select asp-for="RefundPolicy" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="No Refunds">No Refunds</option>
-                                    <option value="Full Refund (7 days before)">Full Refund (7 days before)</option>
-                                    <option value="Full Refund (24 hours before)">Full Refund (24 hours before)</option>
-                                    <option value="Partial Refund">Partial Refund</option>
+                                <select asp-for="RefundPolicy" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                    <option value="No Refunds" class="bg-dark-navy text-foreground">No Refunds</option>
+                                    <option value="Full Refund (7 days before)" class="bg-dark-navy text-foreground">Full Refund (7 days before)</option>
+                                    <option value="Full Refund (24 hours before)" class="bg-dark-navy text-foreground">Full Refund (24 hours before)</option>
+                                    <option value="Partial Refund" class="bg-dark-navy text-foreground">Partial Refund</option>
                                 </select>
                                 <span asp-validation-for="RefundPolicy" class="text-red-400 text-sm"></span>
                             </div>
@@ -251,12 +251,12 @@
                                     </div>
                                     <div>
                                         <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
-                                        <select asp-for="EventPrices[i].PriceType" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                            <option value="Standard">Standard</option>
-                                            <option value="Early Bird">Early Bird</option>
-                                            <option value="VIP">VIP</option>
-                                            <option value="Group">Group</option>
-                                            <option value="Student">Student</option>
+                                        <select asp-for="EventPrices[i].PriceType" class="w-full px-3 py-2 bg-dark-navy border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                            <option value="Standard" class="bg-dark-navy text-foreground">Standard</option>
+                                            <option value="Early Bird" class="bg-dark-navy text-foreground">Early Bird</option>
+                                            <option value="VIP" class="bg-dark-navy text-foreground">VIP</option>
+                                            <option value="Group" class="bg-dark-navy text-foreground">Group</option>
+                                            <option value="Student" class="bg-dark-navy text-foreground">Student</option>
                                         </select>
                                     </div>
                                     <div class="flex items-end">
@@ -319,11 +319,11 @@
                             
                             <div>
                                 <label asp-for="AgeRestriction" class="block text-sm font-medium text-gray-300 mb-2">Age Restriction</label>
-                                <select asp-for="AgeRestriction" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                    <option value="All Ages">All Ages</option>
-                                    <option value="18+">18+ Only</option>
-                                    <option value="21+">21+ Only</option>
-                                    <option value="Family Friendly">Family Friendly</option>
+                                <select asp-for="AgeRestriction" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                    <option value="All Ages" class="bg-dark-navy text-foreground">All Ages</option>
+                                    <option value="18+" class="bg-dark-navy text-foreground">18+ Only</option>
+                                    <option value="21+" class="bg-dark-navy text-foreground">21+ Only</option>
+                                    <option value="Family Friendly" class="bg-dark-navy text-foreground">Family Friendly</option>
                                 </select>
                                 <span asp-validation-for="AgeRestriction" class="text-red-400 text-sm"></span>
                             </div>
@@ -371,6 +371,7 @@
     </div>
 </div>
 
+
 @section Scripts {
     <script>
         let ticketPriceIndex = @Model.EventPrices.Count;
@@ -405,12 +406,12 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-300 mb-2">Type</label>
-                            <select name="EventPrices[${ticketPriceIndex}].PriceType" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                <option value="Standard">Standard</option>
-                                <option value="Early Bird">Early Bird</option>
-                                <option value="VIP">VIP</option>
-                                <option value="Group">Group</option>
-                                <option value="Student">Student</option>
+                            <select name="EventPrices[${ticketPriceIndex}].PriceType" class="w-full px-3 py-2 bg-dark-navy border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                                <option value="Standard" class="bg-dark-navy text-foreground">Standard</option>
+                                <option value="Early Bird" class="bg-dark-navy text-foreground">Early Bird</option>
+                                <option value="VIP" class="bg-dark-navy text-foreground">VIP</option>
+                                <option value="Group" class="bg-dark-navy text-foreground">Group</option>
+                                <option value="Student" class="bg-dark-navy text-foreground">Student</option>
                             </select>
                         </div>
                         <div class="flex items-end">
