@@ -12,7 +12,7 @@ namespace online_event_booking_system.Data.Entities
         public DateTime PurchaseDate { get; set; } = DateTime.UtcNow;
         
         [Required, MaxLength(500)]
-        public string QRCode { get; set; } = default!;
+        public string QRCode { get; set; } = default!; // S3 path or local path to QR code image
         
         public bool IsPaid { get; set; } = false;
         public bool IsUsed { get; set; } = false;

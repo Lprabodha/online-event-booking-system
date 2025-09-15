@@ -51,7 +51,7 @@ namespace online_event_booking_system.Business.Service
                 if (model.ImageFile != null)
                 {
                     var imageKey = await _s3Service.UploadFileAsync(model.ImageFile, "events");
-                    eventEntity.Image = await _s3Service.GetFileUrlAsync(imageKey);
+                    eventEntity.Image = imageKey; // Save the S3 bucket path/key, not presigned URL
                 }
                 else if (!string.IsNullOrEmpty(model.ImageUrl))
                 {
@@ -61,22 +61,25 @@ namespace online_event_booking_system.Business.Service
                 _context.Events.Add(eventEntity);
 
                 // Add event prices
-                foreach (var priceModel in model.EventPrices)
+                if (model.EventPrices != null)
                 {
-                    var eventPrice = new EventPrice
+                    foreach (var priceModel in model.EventPrices)
                     {
-                        Id = Guid.NewGuid(),
-                        EventId = eventEntity.Id,
-                        Category = priceModel.Category,
-                        Price = priceModel.Price,
-                        Stock = priceModel.Stock,
-                        IsActive = priceModel.IsActive,
-                        CreatedAt = DateTime.UtcNow,
-                        // Additional fields
-                        Description = priceModel.Description,
-                        PriceType = priceModel.PriceType ?? "Standard"
-                    };
-                    _context.EventPrices.Add(eventPrice);
+                        var eventPrice = new EventPrice
+                        {
+                            Id = Guid.NewGuid(),
+                            EventId = eventEntity.Id,
+                            Category = priceModel.Category,
+                            Price = priceModel.Price,
+                            Stock = priceModel.Stock,
+                            IsActive = priceModel.IsActive,
+                            CreatedAt = DateTime.UtcNow,
+                            // Additional fields
+                            Description = priceModel.Description,
+                            PriceType = priceModel.PriceType ?? "Standard"
+                        };
+                        _context.EventPrices.Add(eventPrice);
+                    }
                 }
 
                 await _context.SaveChangesAsync();
@@ -162,7 +165,7 @@ namespace online_event_booking_system.Business.Service
             if (model.ImageFile != null)
             {
                 var imageKey = await _s3Service.UploadFileAsync(model.ImageFile, "events");
-                eventEntity.Image = await _s3Service.GetFileUrlAsync(imageKey);
+                eventEntity.Image = imageKey; // Save the S3 bucket path/key, not presigned URL
             }
             else if (!string.IsNullOrEmpty(model.ImageUrl))
             {
@@ -176,22 +179,25 @@ namespace online_event_booking_system.Business.Service
 
             _context.EventPrices.RemoveRange(existingPrices);
 
-            foreach (var priceModel in model.EventPrices)
+            if (model.EventPrices != null)
             {
-                var eventPrice = new EventPrice
+                foreach (var priceModel in model.EventPrices)
                 {
-                    Id = Guid.NewGuid(),
-                    EventId = eventEntity.Id,
-                    Category = priceModel.Category,
-                    Price = priceModel.Price,
-                    Stock = priceModel.Stock,
-                    IsActive = priceModel.IsActive,
-                    CreatedAt = DateTime.UtcNow,
-                    // Additional fields
-                    Description = priceModel.Description,
-                    PriceType = priceModel.PriceType ?? "Standard"
-                };
-                _context.EventPrices.Add(eventPrice);
+                    var eventPrice = new EventPrice
+                    {
+                        Id = Guid.NewGuid(),
+                        EventId = eventEntity.Id,
+                        Category = priceModel.Category,
+                        Price = priceModel.Price,
+                        Stock = priceModel.Stock,
+                        IsActive = priceModel.IsActive,
+                        CreatedAt = DateTime.UtcNow,
+                        // Additional fields
+                        Description = priceModel.Description,
+                        PriceType = priceModel.PriceType ?? "Standard"
+                    };
+                    _context.EventPrices.Add(eventPrice);
+                }
             }
 
             await _context.SaveChangesAsync();
@@ -478,6 +484,25 @@ namespace online_event_booking_system.Business.Service
                 .OrderBy(e => e.EventDate)
                 .Take(count)
                 .ToListAsync();
+        }
+
+        /// <summary>
+        /// Helper method to convert event image paths to URLs
+        /// </summary>
+        private async Task<string> GetEventImageUrlAsync(string imagePath)
+        {
+            if (string.IsNullOrEmpty(imagePath))
+                return string.Empty;
+
+            try
+            {
+                return await _s3Service.GetImageUrlAsync(imagePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting image URL for path: {Path}", imagePath);
+                return imagePath; // Fallback to original path
+            }
         }
     }
 }

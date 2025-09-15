@@ -1,7 +1,9 @@
 ﻿@model online_event_booking_system.Models.EventDetailsViewModel
 @{
     ViewData["Title"] = $"{Model.Event.Title} - Event Details";
-    ViewData["Description"] = Model.Event.Description?.Length > 160 ? Model.Event.Description.Substring(0, 160) + "..." : Model.Event.Description;
+    ViewData["Description"] = !string.IsNullOrEmpty(Model.Event.Description) ? 
+        (Model.Event.Description.Length > 160 ? Model.Event.Description.Substring(0, 160) + "..." : Model.Event.Description) : 
+        "Event details and information";
 }
 
 <section class="relative h-[600px] bg-slate-900 overflow-hidden">
@@ -62,7 +64,14 @@
                     }
                 </div>
                 <h1 class="text-6xl md:text-7xl font-bold text-white mb-8 text-balance leading-tight bg-gradient-to-r from-white via-purple-200 to-teal-200 bg-clip-text text-transparent">@Model.Event.Title</h1>
-                <p class="text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">@Model.Event.Description</p>
+                @if (!string.IsNullOrEmpty(Model.Event.Description))
+                {
+                    <p class="text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">@Model.Event.Description</p>
+                }
+                else
+                {
+                    <p class="text-2xl text-white/90 mb-12 max-w-3xl leading-relaxed">No description available for this event.</p>
+                }
 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-white">
                     <div class="flex items-center gap-4 bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:bg-white/10 transition-all">
@@ -130,9 +139,18 @@
                         About This Event
                     </h2>
                     <div class="prose prose-lg max-w-none text-slate-300">
-                        <p class="text-xl leading-relaxed mb-8 text-slate-200">
-                            @Model.Event.Description
-                        </p>
+                        @if (!string.IsNullOrEmpty(Model.Event.Description))
+                        {
+                            <p class="text-xl leading-relaxed mb-8 text-slate-200">
+                                @Model.Event.Description
+                            </p>
+                        }
+                        else
+                        {
+                            <p class="text-xl leading-relaxed mb-8 text-slate-200">
+                                No detailed description available for this event. Please contact the organizer for more information.
+                            </p>
+                        }
                         @if (!string.IsNullOrEmpty(Model.Event.Tags))
                         {
                             <div class="flex flex-wrap gap-2 mb-8">

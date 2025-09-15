@@ -41,24 +41,24 @@
             <!-- KPI Cards -->
             <section aria-label="KPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
-                    <p class="text-gray-400 text-sm">Revenue (This Month)</p>
-                    <p class="text-3xl font-bold mt-2">$12,450</p>
-                    <p class="text-green-400 text-sm mt-1">+9.4% vs last month</p>
+                    <p class="text-gray-400 text-sm">Total Revenue</p>
+                    <p class="text-3xl font-bold mt-2">LKR @((ViewBag.TotalRevenue ?? 0).ToString("N0"))</p>
+                    <p class="text-green-400 text-sm mt-1">All time revenue</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
-                    <p class="text-gray-400 text-sm">Tickets Sold (This Month)</p>
-                    <p class="text-3xl font-bold mt-2">1,120</p>
-                    <p class="text-blue-400 text-sm mt-1">+6.1% vs last month</p>
+                    <p class="text-gray-400 text-sm">Total Bookings</p>
+                    <p class="text-3xl font-bold mt-2">@(ViewBag.TotalBookings ?? 0)</p>
+                    <p class="text-blue-400 text-sm mt-1">All time bookings</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
-                    <p class="text-gray-400 text-sm">Live Events</p>
-                    <p class="text-3xl font-bold mt-2">3</p>
-                    <p class="text-purple-400 text-sm mt-1">2 today</p>
+                    <p class="text-gray-400 text-sm">Published Events</p>
+                    <p class="text-3xl font-bold mt-2">@(ViewBag.PublishedEvents ?? 0)</p>
+                    <p class="text-purple-400 text-sm mt-1">Currently live</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition hidden xl:block">
-                    <p class="text-gray-400 text-sm">Conversion Rate</p>
-                    <p class="text-3xl font-bold mt-2">3.7%</p>
-                    <p class="text-teal-400 text-sm mt-1">+0.3% vs last month</p>
+                    <p class="text-gray-400 text-sm">Total Events</p>
+                    <p class="text-3xl font-bold mt-2">@(ViewBag.TotalEvents ?? 0)</p>
+                    <p class="text-teal-400 text-sm mt-1">All time events</p>
                 </div>
             </section>
 
@@ -249,10 +249,14 @@
         }, 3000);
     }
 
+    // Server-prepared initial data (faster first paint)
+    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesLabels ?? new List<string>()));
+    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesData ?? new List<decimal>()));
+
     // Chart initialization
     document.addEventListener('DOMContentLoaded', function() {
         // Wait for Chart.js to load, then initialize charts
-        function initializeCharts() {
+        async function initializeCharts() {
             if (typeof Chart === 'undefined') {
                 console.warn('Chart.js not loaded yet, retrying in 100ms...');
                 setTimeout(initializeCharts, 100);
@@ -260,7 +264,7 @@
             }
             
             try {
-                initSalesTrendChart();
+                await initSalesTrendChart();
                 console.log('Sales trend chart initialized successfully');
             } catch (error) {
                 console.error('Error initializing sales trend chart:', error);
@@ -273,7 +277,7 @@
     });
 
     // Sales Trend Chart
-    function initSalesTrendChart() {
+    async function initSalesTrendChart() {
         const canvas = document.getElementById('salesTrendChart');
         if (!canvas) {
             console.error('Sales trend chart canvas not found');
@@ -286,25 +290,39 @@
             return;
         }
         
-        salesTrendChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                datasets: [{
-                    label: 'Sales ($)',
-                    data: [1200, 1900, 1500, 2200, 1800, 2500, 2100],
-                    borderColor: 'rgb(168, 85, 247)',
-                    backgroundColor: 'rgba(168, 85, 247, 0.1)',
-                    borderWidth: 3,
-                    fill: true,
-                    tension: 0.4,
-                    pointBackgroundColor: 'rgb(168, 85, 247)',
-                    pointBorderColor: '#fff',
-                    pointBorderWidth: 2,
-                    pointRadius: 6,
-                    pointHoverRadius: 8
-                }]
-            },
+        try {
+            let labels = initialSalesLabels;
+            let dataset = initialSalesData;
+
+            // If server didn't provide data (or it's empty), fallback to API
+            if (!Array.isArray(labels) || labels.length === 0 || !Array.isArray(dataset) || dataset.length === 0) {
+                const resp = await fetch('/organizer/api/sales-data?period=7d');
+                const json = await resp.json();
+                if (!json.error) {
+                    labels = json.labels;
+                    dataset = json.data;
+                }
+            }
+
+            salesTrendChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Sales (LKR)',
+                        data: dataset,
+                        borderColor: 'rgb(168, 85, 247)',
+                        backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(168, 85, 247)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
@@ -331,7 +349,7 @@
                         ticks: {
                             color: '#9CA3AF',
                             callback: function(value) {
-                                return '$' + value.toLocaleString();
+                                return 'LKR ' + value.toLocaleString();
                             }
                         }
                     }
@@ -353,7 +371,7 @@
     }
 
     // Update Sales Trend Chart
-    function updateSalesTrend(period) {
+    async function updateSalesTrend(period) {
         if (!salesTrendChart) {
             console.error('Sales trend chart not initialized');
             return;
@@ -367,21 +385,24 @@
         event.target.classList.remove('bg-dark-navy', 'text-gray-300');
         event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
 
-        // Sample data for different periods
-        const dataSets = {
-            '7d': {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-                data: [1200, 1900, 1500, 2200, 1800, 2500, 2100]
-            },
-            '30d': {
-                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
-                data: [8500, 11200, 9800, 13500]
+        try {
+            // Load real data from API
+            const response = await fetch(`/organizer/api/sales-data?period=${period}`);
+            const data = await response.json();
+            
+            if (data.error) {
+                console.error('Error loading sales data:', data.error);
+                showNotification('Error loading sales data', 'error');
+                return;
             }
-        };
-
-        salesTrendChart.data.labels = dataSets[period].labels;
-        salesTrendChart.data.datasets[0].data = dataSets[period].data;
-        salesTrendChart.update();
+            
+            salesTrendChart.data.labels = data.labels;
+            salesTrendChart.data.datasets[0].data = data.data;
+            salesTrendChart.update();
+        } catch (error) {
+            console.error('Error updating sales trend:', error);
+            showNotification('Error updating sales data', 'error');
+        }
     }
 </script>
 

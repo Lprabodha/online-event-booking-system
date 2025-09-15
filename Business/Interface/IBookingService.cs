@@ -10,6 +10,7 @@ namespace online_event_booking_system.Business.Interface
         Task<bool> ValidateBookingAsync(ProcessCheckoutRequest request);
         Task<bool> ProcessPaymentAsync(string paymentIntentId, Guid bookingId);
         Task<Booking?> GetBookingByIdAsync(Guid bookingId);
+        Task<Booking?> GetBookingByIdOptimizedAsync(Guid bookingId);
         Task<List<Booking>> GetUserBookingsAsync(string userId);
         Task<List<Payment>> GetUserPaymentsAsync(string userId);
         Task<LoyaltyPoint?> GetUserLoyaltyPointsAsync(string userId);

@@ -14,15 +14,21 @@ namespace online_event_booking_system.Controllers.Public
         private readonly IBookingService _bookingService;
         private readonly ILogger<CheckoutController> _logger;
         private readonly UserManager<online_event_booking_system.Data.Entities.ApplicationUser> _userManager;
+        private readonly ITicketQRService _ticketQRService;
+        private readonly IS3Service _s3Service;
 
         public CheckoutController(
             IBookingService bookingService,
             ILogger<CheckoutController> logger,
-            UserManager<online_event_booking_system.Data.Entities.ApplicationUser> userManager)
+            UserManager<online_event_booking_system.Data.Entities.ApplicationUser> userManager,
+            ITicketQRService ticketQRService,
+            IS3Service s3Service)
         {
             _bookingService = bookingService;
             _logger = logger;
             _userManager = userManager;
+            _ticketQRService = ticketQRService;
+            _s3Service = s3Service;
         }
 
         [HttpGet("checkout/{eventId}")]
@@ -31,6 +37,12 @@ namespace online_event_booking_system.Controllers.Public
             try
             {
                 var checkoutData = await _bookingService.GetCheckoutDataAsync(eventId);
+                
+                // Process event image using direct URL for better performance
+                if (!string.IsNullOrEmpty(checkoutData.Event.Image))
+                {
+                    checkoutData.Event.Image = _s3Service.GetDirectUrl(checkoutData.Event.Image);
+                }
                 
                 // Add Stripe publishable key from configuration
                 checkoutData.StripePublishableKey = HttpContext.RequestServices
@@ -132,6 +144,23 @@ namespace online_event_booking_system.Controllers.Public
                     return RedirectToAction("Index", "Customer");
                 }
 
+                // Process event image using direct URL for better performance
+                if (!string.IsNullOrEmpty(booking.Event.Image))
+                {
+                    booking.Event.Image = _s3Service.GetDirectUrl(booking.Event.Image);
+                }
+
+                // Get QR code URLs for all tickets using direct URLs
+                var qrCodeUrls = new Dictionary<Guid, string>();
+                foreach (var ticket in booking.Tickets)
+                {
+                    if (!string.IsNullOrEmpty(ticket.QRCode))
+                    {
+                        qrCodeUrls[ticket.Id] = _s3Service.GetDirectUrl(ticket.QRCode);
+                    }
+                }
+
+                ViewBag.QRCodeUrls = qrCodeUrls;
                 return View(booking);
             }
             catch (Exception ex)
