@@ -90,6 +90,68 @@ namespace online_event_booking_system.Services
             }
         }
 
+        public async Task<string> UploadByteArrayAsync(byte[] data, string fileName, string contentType, string folder = "events")
+        {
+            try
+            {
+                if (data == null || data.Length == 0)
+                    throw new ArgumentException("Data is empty or null");
+
+                // Check if AWS credentials are available
+                if (_s3Client == null)
+                {
+                    return await SaveByteArrayLocallyAsync(data, fileName, folder);
+                }
+
+                var key = $"{folder}/{Guid.NewGuid()}_{fileName}";
+                
+                using var stream = new MemoryStream(data);
+                var request = new PutObjectRequest
+                {
+                    BucketName = _bucketName,
+                    Key = key,
+                    InputStream = stream,
+                    ContentType = contentType,
+                    ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
+                };
+
+                await _s3Client.PutObjectAsync(request);
+                return key;
+            }
+            catch (AmazonS3Exception ex) when (ex.ErrorCode == "InvalidAccessKeyId" || ex.ErrorCode == "SignatureDoesNotMatch")
+            {
+                _logger.LogWarning("AWS credentials not configured properly. Using local file storage fallback.");
+                return await SaveByteArrayLocallyAsync(data, fileName, folder);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error uploading byte array to S3, falling back to local storage");
+                return await SaveByteArrayLocallyAsync(data, fileName, folder);
+            }
+        }
+
+        private async Task<string> SaveByteArrayLocallyAsync(byte[] data, string fileName, string folder)
+        {
+            try
+            {
+                var uploadsFolder = Path.Combine("wwwroot", "uploads", folder);
+                Directory.CreateDirectory(uploadsFolder);
+                
+                var uniqueFileName = $"{Guid.NewGuid()}_{fileName}";
+                var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                
+                await File.WriteAllBytesAsync(filePath, data);
+                
+                var relativePath = $"/uploads/{folder}/{uniqueFileName}";
+                return relativePath;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error saving byte array locally");
+                throw;
+            }
+        }
+
         public async Task<bool> DeleteFileAsync(string key)
         {
             try
@@ -147,6 +209,31 @@ namespace online_event_booking_system.Services
             {
                 _logger.LogError(ex, "Error generating file URL from S3");
                 return key; // Fallback to returning the key as is
+            }
+        }
+
+        public async Task<string> GetImageUrlAsync(string imagePath)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(imagePath))
+                    return string.Empty;
+
+                // If it's already a URL (starts with http/https), return as-is
+                if (imagePath.StartsWith("http://") || imagePath.StartsWith("https://"))
+                    return imagePath;
+
+                // If it's a local path (starts with /), return as-is
+                if (imagePath.StartsWith("/"))
+                    return imagePath;
+
+                // Otherwise, it's an S3 key, so generate the URL
+                return await GetFileUrlAsync(imagePath);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting image URL for path: {Path}", imagePath);
+                return string.Empty;
             }
         }
     }

@@ -3,6 +3,7 @@ using online_event_booking_system.Models;
 using System.Diagnostics;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Services;
 
 namespace online_event_booking_system.Controllers;
 
@@ -11,12 +12,14 @@ public class HomeController : Controller
     private readonly ILogger<HomeController> _logger;
     private readonly ICategoryService _categoryService;
     private readonly IEventService _eventService;
+    private readonly IS3Service _s3Service;
 
-    public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, IEventService eventService)
+    public HomeController(ILogger<HomeController> logger, ICategoryService categoryService, IEventService eventService, IS3Service s3Service)
     {
         _logger = logger;
         _categoryService = categoryService;
         _eventService = eventService;
+        _s3Service = s3Service;
     }
 
     public async Task<IActionResult> Index()
@@ -30,6 +33,11 @@ public class HomeController : Controller
             var upcomingEvents = await _eventService.GetUpcomingEventsAsync(6);
             var latestEvents = await _eventService.GetLatestEventsAsync(4);
             var eventsThisWeek = await _eventService.GetEventsThisWeekAsync(6);
+            
+            // Process event images to convert S3 keys to URLs
+            await ProcessEventImagesAsync(upcomingEvents);
+            await ProcessEventImagesAsync(latestEvents);
+            await ProcessEventImagesAsync(eventsThisWeek);
             
             // Create a view model to pass all data
             var viewModel = new HomePageViewModel
@@ -77,5 +85,16 @@ public class HomeController : Controller
     public IActionResult Error()
     {
         return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+    }
+
+    private async Task ProcessEventImagesAsync(IEnumerable<Event> events)
+    {
+        foreach (var eventItem in events)
+        {
+            if (!string.IsNullOrEmpty(eventItem.Image))
+            {
+                eventItem.Image = await _s3Service.GetImageUrlAsync(eventItem.Image);
+            }
+        }
     }
 }

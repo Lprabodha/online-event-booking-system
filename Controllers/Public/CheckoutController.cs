@@ -14,15 +14,18 @@ namespace online_event_booking_system.Controllers.Public
         private readonly IBookingService _bookingService;
         private readonly ILogger<CheckoutController> _logger;
         private readonly UserManager<online_event_booking_system.Data.Entities.ApplicationUser> _userManager;
+        private readonly ITicketQRService _ticketQRService;
 
         public CheckoutController(
             IBookingService bookingService,
             ILogger<CheckoutController> logger,
-            UserManager<online_event_booking_system.Data.Entities.ApplicationUser> userManager)
+            UserManager<online_event_booking_system.Data.Entities.ApplicationUser> userManager,
+            ITicketQRService ticketQRService)
         {
             _bookingService = bookingService;
             _logger = logger;
             _userManager = userManager;
+            _ticketQRService = ticketQRService;
         }
 
         [HttpGet("checkout/{eventId}")]
@@ -132,6 +135,27 @@ namespace online_event_booking_system.Controllers.Public
                     return RedirectToAction("Index", "Customer");
                 }
 
+                // Get QR code URLs for all tickets
+                var qrCodeUrls = new Dictionary<Guid, string>();
+                foreach (var ticket in booking.Tickets)
+                {
+                    if (!string.IsNullOrEmpty(ticket.QRCode))
+                    {
+                        try
+                        {
+                            var qrCodeUrl = await _ticketQRService.GetQRCodeUrlAsync(ticket.QRCode);
+                            qrCodeUrls[ticket.Id] = qrCodeUrl;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Error getting QR code URL for ticket {TicketId}", ticket.Id);
+                            // Use the direct path as fallback
+                            qrCodeUrls[ticket.Id] = ticket.QRCode;
+                        }
+                    }
+                }
+
+                ViewBag.QRCodeUrls = qrCodeUrls;
                 return View(booking);
             }
             catch (Exception ex)

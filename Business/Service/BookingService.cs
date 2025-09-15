@@ -13,6 +13,7 @@ namespace online_event_booking_system.Business.Service
         private readonly IPaymentService _paymentService;
         private readonly IQRCodeService _qrCodeService;
         private readonly IEmailService _emailService;
+        private readonly ITicketQRService _ticketQRService;
         private readonly ILogger<BookingService> _logger;
 
         public BookingService(
@@ -20,12 +21,14 @@ namespace online_event_booking_system.Business.Service
             IPaymentService paymentService,
             IQRCodeService qrCodeService,
             IEmailService emailService,
+            ITicketQRService ticketQRService,
             ILogger<BookingService> logger)
         {
             _context = context;
             _paymentService = paymentService;
             _qrCodeService = qrCodeService;
             _emailService = emailService;
+            _ticketQRService = ticketQRService;
             _logger = logger;
         }
 
@@ -218,19 +221,19 @@ namespace online_event_booking_system.Business.Service
                     
                     for (int i = 0; i < ticket.Quantity; i++)
                     {
+                        var ticketId = Guid.NewGuid();
                         var ticketNumber = $"{booking.BookingReference}-{ticket.EventPriceId.ToString()[..8]}-{i + 1:D3}";
-                        var qrCodeData = _qrCodeService.GenerateTicketQRCodeWithData(
-                            Guid.NewGuid(), request.EventId, userId, ticketNumber);
 
                         var ticketRecord = new Ticket
                         {
+                            Id = ticketId,
                             CustomerId = userId,
                             BookingId = booking.Id,
                             EventId = request.EventId,
                             EventPriceId = ticket.EventPriceId,
                             PaymentId = payment.Id,
                             TicketNumber = ticketNumber,
-                            QRCode = qrCodeData,
+                            QRCode = "", // Will be set after payment when QR code is generated and uploaded to S3
                             IsPaid = false
                         };
 
@@ -300,10 +303,35 @@ namespace online_event_booking_system.Business.Service
                     _context.Payments.Update(payment);
                 }
 
-                // Update ticket status
+                // Update ticket status and generate individual QR codes
                 foreach (var ticket in booking.Tickets)
                 {
                     ticket.IsPaid = true;
+                    
+                    // Generate QR code and upload to S3, then send individual ticket email
+                    try
+                    {
+                        var qrCodePath = await _ticketQRService.GenerateAndUploadTicketQRCodeAsync(
+                            ticketId: ticket.Id,
+                            eventId: booking.EventId,
+                            customerId: booking.CustomerId,
+                            ticketNumber: ticket.TicketNumber,
+                            customerEmail: booking.Customer.Email!,
+                            customerName: booking.Customer.FullName,
+                            eventName: booking.Event.Title,
+                            eventDate: booking.Event.EventDate,
+                            venueName: booking.Event.Venue?.Name ?? "TBA"
+                        );
+                        
+                        // Store QR code S3 path in ticket
+                        ticket.QRCode = qrCodePath;
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error generating QR code for ticket {TicketId}", ticket.Id);
+                        // Continue with other tickets even if one fails
+                    }
+                    
                     _context.Tickets.Update(ticket);
                 }
 
@@ -317,8 +345,8 @@ namespace online_event_booking_system.Business.Service
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
-                // Send confirmation email
-                await SendBookingConfirmationEmailAsync(booking);
+                // Send comprehensive booking email with all tickets
+                await SendComprehensiveBookingEmailAsync(booking);
 
                 // Award loyalty points
                 await AwardLoyaltyPointsAsync(booking.CustomerId, booking.Tickets.Count);
@@ -480,65 +508,62 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
-        private async Task SendBookingConfirmationEmailAsync(Booking booking)
+        private async Task SendComprehensiveBookingEmailAsync(Booking booking)
         {
             try
             {
-                var ticketsHtml = string.Join("<br/>", booking.Tickets.Select(t => 
-                    $"<div style='border: 1px solid #ddd; padding: 10px; margin: 10px 0; border-radius: 5px;'>" +
-                    $"<h3>Ticket: {t.TicketNumber}</h3>" +
-                    $"<p><strong>Category:</strong> {t.EventPrice.Category}</p>" +
-                    $"<p><strong>Price:</strong> ${t.EventPrice.Price:F2}</p>" +
-                    $"<div style='text-align: center; margin: 10px 0;'>" +
-                    $"<img src='{t.QRCode}' alt='QR Code' style='max-width: 200px; height: auto;'/>" +
-                    $"</div></div>"));
+                // Get QR code URLs for all tickets
+                var ticketInfos = new List<online_event_booking_system.Helper.TicketInfo>();
+                
+                foreach (var ticket in booking.Tickets)
+                {
+                    try
+                    {
+                        var qrCodeUrl = await _ticketQRService.GetQRCodeUrlAsync(ticket.QRCode);
+                        ticketInfos.Add(new online_event_booking_system.Helper.TicketInfo
+                        {
+                            TicketNumber = ticket.TicketNumber,
+                            Category = ticket.EventPrice?.Category ?? "General Admission",
+                            Description = ticket.EventPrice?.Description ?? "Standard ticket",
+                            Price = ticket.EventPrice?.Price ?? 0,
+                            QRCodeUrl = qrCodeUrl
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Error getting QR code URL for ticket {TicketId}", ticket.Id);
+                        // Add ticket without QR code URL
+                        ticketInfos.Add(new online_event_booking_system.Helper.TicketInfo
+                        {
+                            TicketNumber = ticket.TicketNumber,
+                            Category = ticket.EventPrice?.Category ?? "General Admission",
+                            Description = ticket.EventPrice?.Description ?? "Standard ticket",
+                            Price = ticket.EventPrice?.Price ?? 0,
+                            QRCodeUrl = ""
+                        });
+                    }
+                }
 
-                var emailBody = $@"
-                    <html>
-                    <head>
-                        <style>
-                            body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
-                            .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
-                            .header {{ background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; text-align: center; border-radius: 10px 10px 0 0; }}
-                            .content {{ background: #f9f9f9; padding: 20px; border-radius: 0 0 10px 10px; }}
-                            .ticket {{ background: white; border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 8px; }}
-                            .footer {{ text-align: center; margin-top: 20px; font-size: 12px; color: #666; }}
-                        </style>
-                    </head>
-                    <body>
-                        <div class='container'>
-                            <div class='header'>
-                                <h1>🎫 Booking Confirmation</h1>
-                                <p>Your tickets are confirmed!</p>
-                            </div>
-                            <div class='content'>
-                                <h2>Event Details</h2>
-                                <p><strong>Event:</strong> {booking.Event.Title}</p>
-                                <p><strong>Date:</strong> {booking.Event.EventDate:MMMM dd, yyyy}</p>
-                                <p><strong>Time:</strong> {booking.Event.EventTime:HH:mm}</p>
-                                <p><strong>Venue:</strong> {booking.Event.Venue?.Name}</p>
-                                <p><strong>Booking Reference:</strong> {booking.BookingReference}</p>
-                                
-                                <h2>Your Tickets</h2>
-                                {ticketsHtml}
-                                
-                                <div class='footer'>
-                                    <p>Please bring a valid ID and show your QR code at the entrance.</p>
-                                    <p>If you have any questions, please contact our support team.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </body>
-                    </html>";
+                // Create comprehensive email with all tickets
+                var emailBody = online_event_booking_system.Helper.EmailTemplates.GetMultiTicketBookingTemplate(
+                    customerName: booking.Customer.FullName,
+                    eventName: booking.Event.Title,
+                    eventDate: booking.Event.EventDate,
+                    venueName: booking.Event.Venue?.Name ?? "TBA",
+                    bookingReference: booking.BookingReference,
+                    tickets: ticketInfos
+                );
 
                 await _emailService.SendEmailAsync(
                     booking.Customer.Email!,
-                    $"Booking Confirmation - {booking.Event.Title}",
+                    $"Your Tickets for {booking.Event.Title} - Star Events",
                     emailBody);
+
+                _logger.LogInformation("Comprehensive booking email sent successfully for booking {BookingId}", booking.Id);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error sending booking confirmation email");
+                _logger.LogError(ex, "Error sending comprehensive booking email for booking {BookingId}", booking.Id);
             }
         }
 

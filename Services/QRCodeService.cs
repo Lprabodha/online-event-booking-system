@@ -32,6 +32,24 @@ namespace online_event_booking_system.Services
             }
         }
 
+        public byte[] GenerateQRCodeBytes(string data, int size = 200)
+        {
+            try
+            {
+                using var qrGenerator = new QRCoder.QRCodeGenerator();
+                using var qrCodeData = qrGenerator.CreateQrCode(data, QRCoder.QRCodeGenerator.ECCLevel.Q);
+
+                // Use PngByteQRCode renderer which returns PNG bytes
+                using var pngRenderer = new QRCoder.PngByteQRCode(qrCodeData);
+                return pngRenderer.GetGraphic(size);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating QR code bytes");
+                return Array.Empty<byte>();
+            }
+        }
+
         public string GenerateTicketQRCode(Guid ticketId, Guid eventId, string customerId)
         {
             try
@@ -69,6 +87,21 @@ namespace online_event_booking_system.Services
             {
                 _logger.LogError(ex, "Error generating detailed ticket QR code for ticket {TicketId}", ticketId);
                 return string.Empty;
+            }
+        }
+
+        public byte[] GenerateTicketQRCodeBytes(Guid ticketId, Guid eventId, string customerId, string ticketNumber, int size = 256)
+        {
+            try
+            {
+                // Create a simple, readable QR code data format
+                var qrData = $"TICKET:{ticketNumber}|EVENT:{eventId}|CUSTOMER:{customerId}|ID:{ticketId}";
+                return GenerateQRCodeBytes(qrData, size);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error generating ticket QR code bytes for ticket {TicketId}", ticketId);
+                return Array.Empty<byte>();
             }
         }
     }

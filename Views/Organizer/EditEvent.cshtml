@@ -230,15 +230,17 @@
                     </div>
                     
                     <div class="space-y-4" id="ticket-prices-container">
-                        @for (int i = 0; i < Model.EventPrices.Count; i++)
+                        @if (Model?.EventPrices != null && Model.EventPrices.Count > 0)
                         {
-                            <div class="bg-white/5 border border-white/10 rounded-xl p-4 ticket-price-item">
-                                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
-                                <div>
-                                    <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
-                                        <input asp-for="EventPrices[i].Category" type="text" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
-                                        <span asp-validation-for="EventPrices[i].Category" class="text-red-400 text-sm"></span>
-                                </div>
+                            @for (int i = 0; i < Model.EventPrices.Count; i++)
+                            {
+                                <div class="bg-white/5 border border-white/10 rounded-xl p-4 ticket-price-item">
+                                    <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                                            <input asp-for="EventPrices[i].Category" type="text" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                            <span asp-validation-for="EventPrices[i].Category" class="text-red-400 text-sm"></span>
+                                    </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-300 mb-2">Price</label>
                                         <input asp-for="EventPrices[i].Price" type="number" min="0" step="0.01" class="w-full px-3 py-2 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
@@ -271,6 +273,7 @@
                                 </div>
                                 <input asp-for="EventPrices[i].IsActive" type="hidden" value="true" />
                         </div>
+                            }
                         }
                         
                         <!-- Add New Ticket Type Button -->
@@ -359,11 +362,25 @@
                         Cancel
                     </a>
                     <div class="flex space-x-4 w-full sm:w-auto">
-                        <button type="button" class="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
-                            Save as Draft
+                        <button type="button" id="draftBtn" class="flex-1 sm:flex-none bg-white/10 border border-white/20 text-white px-6 py-3 rounded-xl hover:bg-white/20 transition-all duration-200">
+                            <span class="draft-text">Save as Draft</span>
+                            <span class="draft-loading hidden">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Saving...
+                            </span>
                         </button>
-                        <button type="submit" class="flex-1 sm:flex-none bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
-                            Update Event
+                        <button type="submit" id="submitBtn" class="flex-1 sm:flex-none bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                            <span class="submit-text">Update Event</span>
+                            <span class="submit-loading hidden">
+                                <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Updating...
+                            </span>
                         </button>
                     </div>
                 </section>
@@ -374,7 +391,10 @@
 
 @section Scripts {
     <script>
-        let ticketPriceIndex = @Model.EventPrices.Count;
+        // Form submission tracking
+        let isSubmitting = false;
+        
+        let ticketPriceIndex = @(Model?.EventPrices?.Count ?? 0);
 
         // Add ticket type functionality
         document.getElementById('add-ticket-type').addEventListener('click', function() {
@@ -450,6 +470,131 @@
             const div = document.createElement('div');
             div.innerHTML = htmlString.trim();
             return div.firstChild;
+        }
+
+        // Form submission handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const submitBtn = document.getElementById('submitBtn');
+            const draftBtn = document.getElementById('draftBtn');
+
+            if (form && submitBtn) {
+                // Handle form submission
+                form.addEventListener('submit', function(e) {
+                    if (isSubmitting) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    if (validateForm()) {
+                        setLoadingState(submitBtn, true);
+                        isSubmitting = true;
+                    } else {
+                        e.preventDefault();
+                        return false;
+                    }
+                });
+            }
+
+            if (draftBtn) {
+                // Handle draft button
+                draftBtn.addEventListener('click', function(e) {
+                    if (isSubmitting) {
+                        e.preventDefault();
+                        return false;
+                    }
+                    
+                    setLoadingState(draftBtn, true);
+                    isSubmitting = true;
+                    
+                    // Add hidden field to indicate draft
+                    const draftInput = document.createElement('input');
+                    draftInput.type = 'hidden';
+                    draftInput.name = 'IsDraft';
+                    draftInput.value = 'true';
+                    form.appendChild(draftInput);
+                    
+                    // Submit form
+                    form.submit();
+                });
+            }
+        });
+
+        // Set loading state for buttons
+        function setLoadingState(button, isLoading) {
+            const textSpan = button.querySelector('.submit-text, .draft-text');
+            const loadingSpan = button.querySelector('.submit-loading, .draft-loading');
+            
+            if (isLoading) {
+                button.disabled = true;
+                button.classList.add('opacity-50', 'cursor-not-allowed');
+                if (textSpan) textSpan.classList.add('hidden');
+                if (loadingSpan) loadingSpan.classList.remove('hidden');
+            } else {
+                button.disabled = false;
+                button.classList.remove('opacity-50', 'cursor-not-allowed');
+                if (textSpan) textSpan.classList.remove('hidden');
+                if (loadingSpan) loadingSpan.classList.add('hidden');
+            }
+        }
+
+        // Form validation
+        function validateForm() {
+            const requiredFields = [
+                'Title',
+                'Description', 
+                'CategoryId',
+                'VenueId',
+                'EventDate',
+                'StartTime',
+                'EndTime',
+                'TotalCapacity'
+            ];
+
+            let isValid = true;
+            const errors = [];
+
+            // Check required fields
+            requiredFields.forEach(fieldName => {
+                const field = document.querySelector(`[name="${fieldName}"]`);
+                if (!field || !field.value.trim()) {
+                    isValid = false;
+                    errors.push(`${fieldName} is required`);
+                }
+            });
+
+            // Check if at least one ticket type is added
+            const ticketTypes = document.querySelectorAll('.ticket-price-item');
+            if (ticketTypes.length === 0) {
+                isValid = false;
+                errors.push('At least one ticket type is required');
+            }
+
+            // Check ticket type validation
+            ticketTypes.forEach((ticketType, index) => {
+                const category = ticketType.querySelector(`[name="EventPrices[${index}].Category"]`);
+                const price = ticketType.querySelector(`[name="EventPrices[${index}].Price"]`);
+                const stock = ticketType.querySelector(`[name="EventPrices[${index}].Stock"]`);
+
+                if (!category || !category.value.trim()) {
+                    isValid = false;
+                    errors.push(`Ticket type ${index + 1}: Category is required`);
+                }
+                if (!price || !price.value || parseFloat(price.value) < 0) {
+                    isValid = false;
+                    errors.push(`Ticket type ${index + 1}: Valid price is required`);
+                }
+                if (!stock || !stock.value || parseInt(stock.value) < 1) {
+                    isValid = false;
+                    errors.push(`Ticket type ${index + 1}: Stock must be at least 1`);
+                }
+            });
+
+            if (!isValid) {
+                alert('Please fix the following errors: ' + errors.join(', '));
+            }
+
+            return isValid;
         }
     </script>
 }

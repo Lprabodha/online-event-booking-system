@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Services;
 using System.Security.Claims;
 
 namespace online_event_booking_system.Controllers.Customer
@@ -13,11 +14,13 @@ namespace online_event_booking_system.Controllers.Customer
     {
         private readonly IBookingService _bookingService;
         private readonly ApplicationDbContext _context;
+        private readonly ITicketQRService _ticketQRService;
 
-        public CustomerController(IBookingService bookingService, ApplicationDbContext context)
+        public CustomerController(IBookingService bookingService, ApplicationDbContext context, ITicketQRService ticketQRService)
         {
             _bookingService = bookingService;
             _context = context;
+            _ticketQRService = ticketQRService;
         }
 
         [HttpGet("customer")]
@@ -179,6 +182,26 @@ namespace online_event_booking_system.Controllers.Customer
             if (booking == null || booking.CustomerId != userId)
                 return NotFound();
 
+            // Get QR code URLs for all tickets
+            var qrCodeUrls = new Dictionary<Guid, string>();
+            foreach (var ticket in booking.Tickets)
+            {
+                if (!string.IsNullOrEmpty(ticket.QRCode))
+                {
+                    try
+                    {
+                        var qrCodeUrl = await _ticketQRService.GetQRCodeUrlAsync(ticket.QRCode);
+                        qrCodeUrls[ticket.Id] = qrCodeUrl;
+                    }
+                    catch (Exception ex)
+                    {
+                        // Use the direct path as fallback
+                        qrCodeUrls[ticket.Id] = ticket.QRCode;
+                    }
+                }
+            }
+
+            ViewBag.QRCodeUrls = qrCodeUrls;
             return View(booking);
         }
 

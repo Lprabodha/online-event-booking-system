@@ -34,11 +34,5 @@ namespace online_event_booking_system.Controllers
             return View("NotFound");
         }
 
-        [Route("test-404")]
-        public IActionResult Test404()
-        {
-            // This route will trigger a 404 when accessed
-            return NotFound();
-        }
     }
 }

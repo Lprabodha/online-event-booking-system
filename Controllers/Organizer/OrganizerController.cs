@@ -6,6 +6,7 @@ using System.Security.Claims;
 using online_event_booking_system.Models;
 using online_event_booking_system.Models.View_Models;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Services;
 
 namespace online_event_booking_system.Controllers.Organizer
 {
@@ -16,17 +17,20 @@ namespace online_event_booking_system.Controllers.Organizer
         private readonly IDiscountService _discountService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<OrganizerController> _logger;
+        private readonly IS3Service _s3Service;
 
         public OrganizerController(
             IEventService eventService, 
             IDiscountService discountService, 
             UserManager<ApplicationUser> userManager,
-            ILogger<OrganizerController> logger)
+            ILogger<OrganizerController> logger,
+            IS3Service s3Service)
         {
             _eventService = eventService;
             _discountService = discountService;
             _userManager = userManager;
             _logger = logger;
+            _s3Service = s3Service;
         }
         [HttpGet("organizer")]
         public IActionResult Index()
@@ -413,7 +417,7 @@ namespace online_event_booking_system.Controllers.Organizer
                     ImageUrl = eventEntity.Image,
                     Categories = await _eventService.GetCategoriesAsync(),
                     Venues = await _eventService.GetVenuesAsync(),
-                    EventPrices = eventEntity.Prices.Select(p => new EventPriceViewModel
+                    EventPrices = eventEntity.Prices?.Select(p => new EventPriceViewModel
                     {
                         Category = p.Category,
                         Price = p.Price,
@@ -421,8 +425,20 @@ namespace online_event_booking_system.Controllers.Organizer
                         IsActive = p.IsActive,
                         Description = p.Description,
                         PriceType = p.PriceType
-                    }).ToList()
+                    }).ToList() ?? new List<EventPriceViewModel>()
                 };
+
+                // Ensure EventPrices is never null
+                if (model.EventPrices == null)
+                {
+                    model.EventPrices = new List<EventPriceViewModel>();
+                }
+
+                // Process event image to convert S3 key to URL
+                if (!string.IsNullOrEmpty(model.ImageUrl))
+                {
+                    model.ImageUrl = await _s3Service.GetImageUrlAsync(model.ImageUrl);
+                }
 
                 // Calculate analytics data
                 var totalTicketsSold = eventEntity.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0;
@@ -456,6 +472,7 @@ namespace online_event_booking_system.Controllers.Organizer
                 {
                     model.Categories = await _eventService.GetCategoriesAsync();
                     model.Venues = await _eventService.GetVenuesAsync();
+                    model.EventPrices ??= new List<EventPriceViewModel>();
                     return View(model);
                 }
 
@@ -477,6 +494,7 @@ namespace online_event_booking_system.Controllers.Organizer
                 
                 model.Categories = await _eventService.GetCategoriesAsync();
                 model.Venues = await _eventService.GetVenuesAsync();
+                model.EventPrices ??= new List<EventPriceViewModel>();
                 return View(model);
             }
         }

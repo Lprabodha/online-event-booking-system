@@ -5,7 +5,9 @@ namespace online_event_booking_system.Services
     public interface IS3Service
     {
         Task<string> UploadFileAsync(IFormFile file, string folder = "events");
+        Task<string> UploadByteArrayAsync(byte[] data, string fileName, string contentType, string folder = "events");
         Task<bool> DeleteFileAsync(string key);
         Task<string> GetFileUrlAsync(string key);
+        Task<string> GetImageUrlAsync(string imagePath);
     }
 }

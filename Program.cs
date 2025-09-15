@@ -96,6 +96,9 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 // QR Code Service
 builder.Services.AddScoped<IQRCodeService, QRCodeService>();
 
+// Ticket QR Service
+builder.Services.AddScoped<ITicketQRService, TicketQRService>();
+
 // Booking Service
 builder.Services.AddScoped<IBookingService, BookingService>();
 
