@@ -11,7 +11,7 @@ using online_event_booking_system.Data;
 namespace online_event_booking_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250915164756_init")]
+    [Migration("20250915173900_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -170,6 +170,9 @@ namespace online_event_booking_system.Migrations
                         .IsRequired()
                         .HasMaxLength(15)
                         .HasColumnType("varchar(15)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
