@@ -6,6 +6,7 @@ using online_event_booking_system.Data;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Services;
 using System.Security.Claims;
+using System.Linq;
 
 namespace online_event_booking_system.Controllers.Customer
 {
@@ -15,12 +16,21 @@ namespace online_event_booking_system.Controllers.Customer
         private readonly IBookingService _bookingService;
         private readonly ApplicationDbContext _context;
         private readonly ITicketQRService _ticketQRService;
+        private readonly IS3Service _s3Service;
+        private readonly ILogger<CustomerController> _logger;
 
-        public CustomerController(IBookingService bookingService, ApplicationDbContext context, ITicketQRService ticketQRService)
+        public CustomerController(
+            IBookingService bookingService, 
+            ApplicationDbContext context, 
+            ITicketQRService ticketQRService,
+            IS3Service s3Service,
+            ILogger<CustomerController> logger)
         {
             _bookingService = bookingService;
             _context = context;
             _ticketQRService = ticketQRService;
+            _s3Service = s3Service;
+            _logger = logger;
         }
 
         [HttpGet("customer")]
@@ -65,9 +75,9 @@ namespace online_event_booking_system.Controllers.Customer
                 {
                     events = events.Where(e => 
                         e.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                        e.Description.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                        e.Venue.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                        e.Category.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
+                        (e.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (e.Venue?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (e.Category?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
                     ).ToList();
                 }
 
@@ -115,6 +125,9 @@ namespace online_event_booking_system.Controllers.Customer
                 return RedirectToAction("Login", "Account");
 
             var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return RedirectToAction("Login", "Account");
+
             return View(user);
         }
 
@@ -178,26 +191,24 @@ namespace online_event_booking_system.Controllers.Customer
             if (string.IsNullOrEmpty(userId))
                 return RedirectToAction("Login", "Account");
 
-            var booking = await _bookingService.GetBookingByIdAsync(id);
+            // Use optimized query for better performance
+            var booking = await _bookingService.GetBookingByIdOptimizedAsync(id);
             if (booking == null || booking.CustomerId != userId)
                 return NotFound();
 
-            // Get QR code URLs for all tickets
+            // Process event image using direct URL for better performance
+            if (!string.IsNullOrEmpty(booking.Event.Image))
+            {
+                booking.Event.Image = _s3Service.GetDirectUrl(booking.Event.Image);
+            }
+
+            // Get QR code URLs for all tickets using direct URLs
             var qrCodeUrls = new Dictionary<Guid, string>();
             foreach (var ticket in booking.Tickets)
             {
                 if (!string.IsNullOrEmpty(ticket.QRCode))
                 {
-                    try
-                    {
-                        var qrCodeUrl = await _ticketQRService.GetQRCodeUrlAsync(ticket.QRCode);
-                        qrCodeUrls[ticket.Id] = qrCodeUrl;
-                    }
-                    catch (Exception ex)
-                    {
-                        // Use the direct path as fallback
-                        qrCodeUrls[ticket.Id] = ticket.QRCode;
-                    }
+                    qrCodeUrls[ticket.Id] = _s3Service.GetDirectUrl(ticket.QRCode);
                 }
             }
 

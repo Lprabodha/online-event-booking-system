@@ -83,12 +83,13 @@ namespace online_event_booking_system.Services
         {
             try
             {
-                return await _s3Service.GetFileUrlAsync(qrCodePath);
+                // Use direct URL for better performance (no async S3 calls)
+                return _s3Service.GetDirectUrl(qrCodePath);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting QR code URL for path {Path}", qrCodePath);
-                throw;
+                return qrCodePath; // Return the path as fallback
             }
         }
 

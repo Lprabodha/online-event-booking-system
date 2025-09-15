@@ -186,29 +186,24 @@ namespace online_event_booking_system.Services
         {
             try
             {
-                if (_s3Client == null)
-                {
-                    return key; // If it's a local file path, return as is
-                }
+                if (string.IsNullOrEmpty(key))
+                    return string.Empty;
 
-                var request = new GetPreSignedUrlRequest
-                {
-                    BucketName = _bucketName,
-                    Key = key,
-                    Expires = DateTime.UtcNow.AddHours(24)
-                };
+                // If it's already a URL, return as-is
+                if (key.StartsWith("http://") || key.StartsWith("https://"))
+                    return key;
 
-                return await _s3Client.GetPreSignedURLAsync(request);
-            }
-            catch (AmazonS3Exception ex) when (ex.ErrorCode == "InvalidAccessKeyId" || ex.ErrorCode == "SignatureDoesNotMatch")
-            {
-                _logger.LogWarning("AWS credentials not configured properly. Returning local file URL.");
-                return key; // If it's a local file path, return as is
+                // If it's a local path, return as-is
+                if (key.StartsWith("/"))
+                    return key;
+
+                // Use the specific AWS URL provided by user
+                return $"https://tunercats.s3.us-east-1.amazonaws.com/{key}";
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error generating file URL from S3");
-                return key; // Fallback to returning the key as is
+                _logger.LogError(ex, "Error generating file URL for key: {Key}", key);
+                return key;
             }
         }
 
@@ -227,8 +222,8 @@ namespace online_event_booking_system.Services
                 if (imagePath.StartsWith("/"))
                     return imagePath;
 
-                // Otherwise, it's an S3 key, so generate the URL
-                return await GetFileUrlAsync(imagePath);
+                // Use the specific AWS URL provided by user
+                return $"https://tunercats.s3.us-east-1.amazonaws.com/{imagePath}";
             }
             catch (Exception ex)
             {
@@ -236,5 +231,30 @@ namespace online_event_booking_system.Services
                 return string.Empty;
             }
         }
+
+    public string GetDirectUrl(string key)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(key))
+                return string.Empty;
+
+            // If it's already a URL, return as-is
+            if (key.StartsWith("http://") || key.StartsWith("https://"))
+                return key;
+
+            // If it's a local path, return as-is
+            if (key.StartsWith("/"))
+                return key;
+
+            // Use the specific AWS URL provided by user
+            return $"https://tunercats.s3.us-east-1.amazonaws.com/{key}";
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error generating direct URL for key: {Key}", key);
+            return key;
+        }
+    }
     }
 }

@@ -33,9 +33,34 @@ namespace online_event_booking_system.Controllers.Organizer
             _s3Service = s3Service;
         }
         [HttpGet("organizer")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                
+                // Get dashboard statistics
+                var events = await _eventService.GetEventsByOrganizerAsync(organizerId);
+                var totalEvents = events.Count();
+                var publishedEvents = events.Count(e => e.IsPublished);
+                var totalBookings = events.SelectMany(e => e.Bookings ?? new List<Booking>()).Count();
+                var totalRevenue = events.SelectMany(e => e.Bookings ?? new List<Booking>())
+                    .SelectMany(b => b.Tickets ?? new List<Ticket>())
+                    .Where(t => t.Payment != null)
+                    .Sum(t => t.Payment.Amount);
+
+                ViewBag.TotalEvents = totalEvents;
+                ViewBag.PublishedEvents = publishedEvents;
+                ViewBag.TotalBookings = totalBookings;
+                ViewBag.TotalRevenue = totalRevenue;
+
+                return View();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading organizer dashboard");
+                return View();
+            }
         }
 
         [HttpGet("organizer/events")]
@@ -83,6 +108,85 @@ namespace online_event_booking_system.Controllers.Organizer
         public IActionResult Settings()
         {
             return View();
+        }
+
+        [HttpGet("organizer/api/sales-data")]
+        public async Task<IActionResult> GetSalesData(string period = "7d")
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var events = await _eventService.GetEventsByOrganizerAsync(organizerId);
+                
+                var endDate = DateTime.UtcNow;
+                var startDate = period switch
+                {
+                    "7d" => endDate.AddDays(-7),
+                    "30d" => endDate.AddDays(-30),
+                    "90d" => endDate.AddDays(-90),
+                    _ => endDate.AddDays(-7)
+                };
+
+                // Get sales data grouped by day
+                var salesData = new List<object>();
+                var labels = new List<string>();
+                
+                for (var date = startDate.Date; date <= endDate.Date; date = date.AddDays(1))
+                {
+                    var daySales = events
+                        .SelectMany(e => e.Bookings ?? new List<Booking>())
+                        .Where(b => b.CreatedAt.Date == date && b.Status == "Confirmed")
+                        .SelectMany(b => b.Tickets ?? new List<Ticket>())
+                        .Where(t => t.Payment != null)
+                        .Sum(t => t.Payment.Amount);
+
+                    salesData.Add(daySales);
+                    labels.Add(date.ToString("MMM dd"));
+                }
+
+                return Json(new
+                {
+                    labels = labels,
+                    data = salesData,
+                    totalSales = salesData.Cast<decimal>().Sum()
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting sales data");
+                return Json(new { error = "Failed to load sales data" });
+            }
+        }
+
+        [HttpGet("organizer/api/events-data")]
+        public async Task<IActionResult> GetEventsData()
+        {
+            try
+            {
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                var events = await _eventService.GetEventsByOrganizerAsync(organizerId);
+                
+                var eventData = events.Select(e => new
+                {
+                    id = e.Id,
+                    title = e.Title,
+                    eventDate = e.EventDate,
+                    status = e.Status,
+                    isPublished = e.IsPublished,
+                    totalCapacity = e.TotalCapacity,
+                    ticketsSold = e.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0,
+                    revenue = e.Bookings?.SelectMany(b => b.Tickets ?? new List<Ticket>())
+                        .Where(t => t.Payment != null)
+                        .Sum(t => t.Payment.Amount) ?? 0
+                }).OrderByDescending(e => e.eventDate).ToList();
+
+                return Json(eventData);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting events data");
+                return Json(new { error = "Failed to load events data" });
+            }
         }
 
         [HttpGet("organizer/discounts")]

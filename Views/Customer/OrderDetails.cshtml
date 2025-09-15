@@ -4,6 +4,8 @@
     Layout = "_DashboardLayout";
 }
 
+@Html.AntiForgeryToken()
+
 <!-- Customer Order Details Container -->
 <div class="min-h-screen bg-dark-navy text-white pt-20">
     <!-- Main Content -->
@@ -153,10 +155,15 @@
                                             </span>
                                         </div>
                                     </div>
-                                    @if (!string.IsNullOrEmpty(ticket.QRCode))
+                                    @{
+                                        var qrCodeUrl = ViewBag.QRCodeUrls != null && ViewBag.QRCodeUrls.ContainsKey(ticket.Id) 
+                                            ? ViewBag.QRCodeUrls[ticket.Id] 
+                                            : null;
+                                    }
+                                    @if (!string.IsNullOrEmpty(qrCodeUrl))
                                     {
                                         <div class="ml-4">
-                                            <img src="@ticket.QRCode" alt="QR Code" class="w-20 h-20" />
+                                            <img src="@qrCodeUrl" alt="QR Code" class="w-20 h-20 rounded border-2 border-slate-600 shadow-lg bg-white p-1" />
                                         </div>
                                     }
                                     else

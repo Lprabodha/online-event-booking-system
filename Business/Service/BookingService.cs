@@ -371,15 +371,111 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
         }
 
+        public async Task<Booking?> GetBookingByIdOptimizedAsync(Guid bookingId)
+        {
+            // Optimized query that only loads the fields needed by the OrderDetails view
+            return await _context.Bookings
+                .Where(b => b.Id == bookingId)
+                .Select(b => new Booking
+                {
+                    Id = b.Id,
+                    BookingReference = b.BookingReference,
+                    Status = b.Status,
+                    CreatedAt = b.CreatedAt,
+                    CustomerId = b.CustomerId, // Include for ownership verification
+                    Event = new Event
+                    {
+                        Id = b.Event.Id,
+                        Title = b.Event.Title,
+                        Description = b.Event.Description,
+                        EventDate = b.Event.EventDate,
+                        EventTime = b.Event.EventTime,
+                        Image = b.Event.Image,
+                        AgeRestriction = b.Event.AgeRestriction,
+                        Venue = b.Event.Venue != null ? new Venue
+                        {
+                            Id = b.Event.Venue.Id,
+                            Name = b.Event.Venue.Name,
+                            Location = b.Event.Venue.Location,
+                            Capacity = b.Event.Venue.Capacity
+                        } : null,
+                        Category = b.Event.Category != null ? new Category
+                        {
+                            Id = b.Event.Category.Id,
+                            Name = b.Event.Category.Name
+                        } : null,
+                        Organizer = b.Event.Organizer != null ? new ApplicationUser
+                        {
+                            Id = b.Event.Organizer.Id,
+                            FullName = b.Event.Organizer.FullName
+                        } : null
+                    },
+                    Tickets = b.Tickets.Select(t => new Ticket
+                    {
+                        Id = t.Id,
+                        TicketNumber = t.TicketNumber,
+                        QRCode = t.QRCode,
+                        EventPrice = t.EventPrice != null ? new EventPrice
+                        {
+                            Id = t.EventPrice.Id,
+                            Price = t.EventPrice.Price,
+                            Category = t.EventPrice.Category,
+                            Description = t.EventPrice.Description
+                        } : null
+                    }).ToList()
+                })
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
+
 
         public async Task<List<Booking>> GetUserBookingsAsync(string userId)
         {
             return await _context.Bookings
                 .Include(b => b.Event)
+                    .ThenInclude(e => e.Venue)
                 .Include(b => b.Tickets)
                     .ThenInclude(t => t.EventPrice)
                 .Where(b => b.CustomerId == userId)
                 .OrderByDescending(b => b.CreatedAt)
+                .AsNoTracking() // Improve performance by not tracking entities
+                .ToListAsync();
+        }
+
+        public async Task<List<Booking>> GetUserBookingsOptimizedAsync(string userId)
+        {
+            // Optimized query that only loads the fields needed by the view
+            return await _context.Bookings
+                .Where(b => b.CustomerId == userId)
+                .Select(b => new Booking
+                {
+                    Id = b.Id,
+                    BookingReference = b.BookingReference,
+                    Status = b.Status,
+                    CreatedAt = b.CreatedAt,
+                    Event = new Event
+                    {
+                        Id = b.Event.Id,
+                        Title = b.Event.Title,
+                        EventDate = b.Event.EventDate,
+                        Venue = b.Event.Venue != null ? new Venue
+                        {
+                            Id = b.Event.Venue.Id,
+                            Name = b.Event.Venue.Name
+                        } : null
+                    },
+                    Tickets = b.Tickets.Select(t => new Ticket
+                    {
+                        Id = t.Id,
+                        EventPrice = t.EventPrice != null ? new EventPrice
+                        {
+                            Id = t.EventPrice.Id,
+                            Price = t.EventPrice.Price
+                        } : null
+                    }).ToList()
+                })
+                .OrderByDescending(b => b.CreatedAt)
+                .AsNoTracking()
                 .ToListAsync();
         }
 

@@ -23,7 +23,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
-                                <input type="text" id="fullName" value="@Model.FullName" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <input type="text" id="fullName" value="@(Model.FullName ?? "")" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
@@ -32,16 +32,16 @@
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">Contact Number</label>
-                                <input type="tel" id="contactNumber" value="@Model.ContactNumber" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <input type="tel" id="contactNumber" value="@(Model.ContactNumber ?? "")" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                             <div>
                                 <label class="block text-sm font-medium text-gray-300 mb-2">NIC Number</label>
-                                <input type="text" id="nic" value="@Model.NIC" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                                <input type="text" id="nic" value="@(Model.NIC ?? "")" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                         </div>
                         <div class="mt-6">
                             <label class="block text-sm font-medium text-gray-300 mb-2">Address</label>
-                            <textarea id="address" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none">@Model.Address</textarea>
+                            <textarea id="address" rows="3" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none">@(Model.Address ?? "")</textarea>
                         </div>
                         <div class="mt-8 flex justify-end space-x-4">
                             <button type="button" id="cancelBtn" class="px-6 py-3 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium">
@@ -62,7 +62,7 @@
                     <h3 class="text-lg font-bold mb-4">Profile Picture</h3>
                     <div class="text-center">
                         <div class="w-24 h-24 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="text-2xl font-bold text-white">@Model.FullName.Substring(0, 1).ToUpper()</span>
+                            <span class="text-2xl font-bold text-white">@(!string.IsNullOrEmpty(Model.FullName) ? Model.FullName.Substring(0, 1).ToUpper() : "U")</span>
                         </div>
                         <p class="text-gray-400 text-sm">Profile picture coming soon</p>
                     </div>
