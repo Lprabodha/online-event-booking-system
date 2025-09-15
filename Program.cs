@@ -74,7 +74,6 @@ try
     }
     else
     {
-        // If no credentials are provided, don't register the service
         builder.Services.AddSingleton<IAmazonS3>(provider => null!);
     }
 }
