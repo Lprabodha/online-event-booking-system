@@ -9,7 +9,7 @@
     var selectedSortBy = ViewBag.SelectedSortBy as string;
 }
 
-<div class="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+<div class="min-h-screen bg-dark-navy text-white">
     <!-- Enhanced Header Section -->
     <div class="relative overflow-hidden bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900">
         <!-- Animated Background Elements -->
@@ -19,54 +19,19 @@
             <div class="absolute bottom-20 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
         </div>
         
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-            <div class="text-center">
-                <div class="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full mb-6 animate-bounce">
-                    <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-                    </svg>
-                </div>
-                <h1 class="text-5xl md:text-7xl font-bold text-white mb-6 bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent">
-                    Discover Amazing Events
-                </h1>
-                <p class="text-xl md:text-2xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-                    Find and book tickets for the best events happening around you
-                </p>
-                <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <div class="flex items-center text-slate-300">
-                        <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
-                        </svg>
-                        <span>Easy Booking</span>
-                    </div>
-                    <div class="flex items-center text-slate-300">
-                        <svg class="w-5 h-5 mr-2 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Instant Confirmation</span>
-                    </div>
-                    <div class="flex items-center text-slate-300">
-                        <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        <span>Secure Payment</span>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- Enhanced Filters Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="bg-white/90 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/30 p-6 mb-8 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="bg-white/5 backdrop-blur-xl rounded-2xl shadow-lg border border-white/10 p-5 mb-6 relative overflow-hidden md:sticky md:top-20 z-30">
             <!-- Decorative Elements -->
             <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-purple-500/20 to-teal-500/20 rounded-full blur-2xl"></div>
             <div class="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-teal-500/20 to-purple-500/20 rounded-full blur-xl"></div>
             
             <div class="relative">
-                <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Find Your Perfect Event</h2>
+                <h2 class="text-xl font-bold text-white mb-4 text-center">Find Your Perfect Event</h2>
                 
-                <form method="get" action="/events" class="space-y-6">
+                <form id="eventsFilterForm" method="get" action="/events" class="space-y-4">
                     <!-- Enhanced Search Bar -->
                     <div class="flex flex-col lg:flex-row gap-4">
                         <div class="flex-1">
@@ -75,13 +40,13 @@
                                        name="search" 
                                        value="@searchTerm"
                                        placeholder="Search events, venues, or categories..." 
-                                       class="w-full px-4 py-3 pl-12 bg-white/95 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 text-base shadow group-hover:shadow-md">
-                                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                       class="w-full px-4 py-3 pl-12 bg-white/10 text-white placeholder-gray-400 border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500 transition-all duration-200 text-base">
+                                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-purple-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                                 </svg>
                             </div>
                         </div>
-                        <button type="submit" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-2xl font-bold text-base hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                        <button type="submit" class="px-5 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold text-sm hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow flex items-center justify-center gap-2">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                             </svg>
@@ -90,12 +55,12 @@
                     </div>
 
                     <!-- Enhanced Filter Options -->
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                         <!-- Category Filter -->
                         <div class="space-y-3">
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide">Category</label>
+                            <label class="block text-sm font-semibold text-slate-300 uppercase tracking-wide">Category</label>
                             <div class="relative">
-                                <select name="category" class="w-full px-4 py-3 bg-white/95 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 text-base shadow appearance-none cursor-pointer">
+                                <select name="category" onchange="this.form.submit()" class="w-full px-3 py-2 bg-white/10 text-white border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500 transition-all duration-200 text-sm appearance-none cursor-pointer">
                                     <option value="">All Categories</option>
                                     @foreach (var category in categories)
                                     {
@@ -104,7 +69,7 @@
                                         </option>
                                     }
                                 </select>
-                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -112,9 +77,9 @@
 
                         <!-- Date Filter -->
                         <div class="space-y-3">
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide">Date</label>
+                            <label class="block text-sm font-semibold text-slate-300 uppercase tracking-wide">Date</label>
                             <div class="relative">
-                                <select name="dateFilter" class="w-full px-4 py-3 bg-white/95 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 text-base shadow appearance-none cursor-pointer">
+                                <select name="dateFilter" onchange="this.form.submit()" class="w-full px-3 py-2 bg-white/10 text-white border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500 transition-all duration-200 text-sm appearance-none cursor-pointer">
                                     <option value="">All Dates</option>
                                     <option value="today" selected="@(selectedDateFilter == "today")">Today</option>
                                     <option value="tomorrow" selected="@(selectedDateFilter == "tomorrow")">Tomorrow</option>
@@ -122,7 +87,7 @@
                                     <option value="thismonth" selected="@(selectedDateFilter == "thismonth")">This Month</option>
                                     <option value="upcoming" selected="@(selectedDateFilter == "upcoming")">Upcoming</option>
                                 </select>
-                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -130,9 +95,9 @@
 
                         <!-- Sort By -->
                         <div class="space-y-3">
-                            <label class="block text-sm font-bold text-gray-700 uppercase tracking-wide">Sort By</label>
+                            <label class="block text-sm font-semibold text-slate-300 uppercase tracking-wide">Sort By</label>
                             <div class="relative">
-                                <select name="sortBy" class="w-full px-4 py-3 bg-white/95 border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-4 focus:ring-purple-500/20 focus:border-purple-500 transition-all duration-300 text-base shadow appearance-none cursor-pointer">
+                                <select name="sortBy" onchange="this.form.submit()" class="w-full px-3 py-2 bg-white/10 text-white border border-white/20 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-500/40 focus:border-purple-500 transition-all duration-200 text-sm appearance-none cursor-pointer">
                                     <option value="" selected="@(string.IsNullOrEmpty(selectedSortBy))">Latest First</option>
                                     <option value="date" selected="@(selectedSortBy == "date")">Date (Earliest)</option>
                                     <option value="date_desc" selected="@(selectedSortBy == "date_desc")">Date (Latest)</option>
@@ -140,7 +105,7 @@
                                     <option value="price" selected="@(selectedSortBy == "price")">Price (Low to High)</option>
                                     <option value="price_desc" selected="@(selectedSortBy == "price_desc")">Price (High to Low)</option>
                                 </select>
-                                <svg class="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </div>
@@ -165,7 +130,7 @@
 
         <!-- Enhanced Results Count -->
         <div class="mb-8">
-            <div class="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/30 p-6">
+            <div class="bg-white/5 backdrop-blur-xl rounded-xl shadow border border-white/10 p-4">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center space-x-4">
                         <div class="w-12 h-12 bg-gradient-to-r from-purple-500 to-teal-500 rounded-full flex items-center justify-center">
@@ -176,25 +141,25 @@
                         <div>
                             @if (Model?.Any() == true)
                             {
-                                <h3 class="text-xl font-bold text-gray-800">
-                                    <span class="text-3xl text-purple-600">@Model.Count()</span> event(s) found
+                                <h3 class="text-lg font-bold text-white">
+                                    <span class="text-2xl text-purple-400">@Model.Count()</span> event(s) found
                                 </h3>
                                 @if (!string.IsNullOrEmpty(searchTerm))
                                 {
-                                    <p class="text-gray-600">for "<span class="font-semibold text-purple-600">@searchTerm</span>"</p>
+                                    <p class="text-gray-300">for "<span class="font-semibold text-purple-400">@searchTerm</span>"</p>
                                 }
                             }
                             else
                             {
-                                <h3 class="text-xl font-bold text-gray-800">No events found</h3>
+                                <h3 class="text-lg font-bold text-white">No events found</h3>
                                 @if (!string.IsNullOrEmpty(searchTerm))
                                 {
-                                    <p class="text-gray-600">for "<span class="font-semibold text-purple-600">@searchTerm</span>"</p>
+                                    <p class="text-gray-300">for "<span class="font-semibold text-purple-400">@searchTerm</span>"</p>
                                 }
                             }
                         </div>
                     </div>
-                    <div class="hidden md:flex items-center space-x-2 text-sm text-gray-500">
+                    <div class="hidden md:flex items-center space-x-2 text-xs text-gray-400">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                         </svg>
@@ -207,89 +172,94 @@
         <!-- Enhanced Events Grid -->
         @if (Model?.Any() == true)
         {
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5" id="eventsGrid">
                 @foreach (var eventItem in Model ?? Enumerable.Empty<online_event_booking_system.Data.Entities.Event>())
                 {
-                    <div class="group bg-white/90 backdrop-blur-sm rounded-3xl shadow-xl border border-white/30 overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:scale-105 hover:-translate-y-2">
+                    <div class="group bg-white/5 backdrop-blur-xl rounded-2xl shadow border border-white/10 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col" data-title="@eventItem.Title" data-category="@eventItem.Category?.Name" data-venue="@eventItem.Venue?.Name">
                         <!-- Enhanced Event Image -->
-                        <div class="relative h-56 overflow-hidden">
-                            <img src="@(eventItem.Image ?? "/placeholder.svg?height=300&width=400")" 
-                                 alt="@eventItem.Title" 
-                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                            
+                        <div class="relative w-full" style="aspect-ratio: 16/9;">
+                            <picture>
+                                <source srcset="@(eventItem.Image ?? "/placeholder.svg?height=300&width=400")" />
+                                <img src="@(eventItem.Image ?? "/placeholder.svg?height=300&width=400")" 
+                                     alt="@eventItem.Title" 
+                                     class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" loading="lazy" decoding="async" onerror="this.src='/placeholder.svg'" />
+                            </picture>
+
                             <!-- Gradient Overlay -->
                             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-                            
+
                             <!-- Category Badge -->
-                            <div class="absolute top-4 left-4">
-                                <span class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                            <div class="absolute top-3 left-3">
+                                <span class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow">
                                     @eventItem.Category?.Name
                                 </span>
                             </div>
-                            
+
                             <!-- Price Badge -->
-                            <div class="absolute top-4 right-4">
+                            <div class="absolute top-3 right-3">
                                 @{
                                     var minPrice = eventItem.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
                                     var priceDisplay = minPrice > 0 ? $"LKR {minPrice:F0}" : "Free";
                                 }
-                                <span class="bg-white/95 text-gray-900 px-4 py-2 rounded-full text-sm font-bold shadow-lg backdrop-blur-sm">
+                                <span class="bg-white/90 text-gray-900 px-3 py-1.5 rounded-full text-xs font-semibold shadow backdrop-blur-sm">
                                     @priceDisplay
                                 </span>
                             </div>
-                            
+
                             <!-- Hover Overlay -->
-                            <div class="absolute inset-0 bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                                <a href="/events/@eventItem.Id" class="bg-white/90 text-purple-600 px-6 py-3 rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                                <a href="/events/@eventItem.Id" class="bg-white/90 text-purple-700 px-5 py-2.5 rounded-full font-semibold shadow transform translate-y-3 group-hover:translate-y-0 transition-transform duration-200 text-sm">
                                     View Details
                                 </a>
                             </div>
                         </div>
 
                         <!-- Enhanced Event Details -->
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2 group-hover:text-purple-600 transition-colors">
+                        <div class="p-4 flex-1 flex flex-col">
+                            <h3 class="text-lg font-bold text-white mb-2 line-clamp-2 group-hover:text-purple-300 transition-colors">
                                 @eventItem.Title
                             </h3>
-                            <p class="text-gray-600 text-sm mb-4 line-clamp-3 leading-relaxed">
+                            <p class="text-gray-300 text-sm mb-3 line-clamp-3 leading-relaxed flex-1">
                                 @eventItem.Description
                             </p>
                             
                             <!-- Enhanced Event Info -->
-                            <div class="space-y-3 mb-6">
-                                <div class="flex items-center text-gray-600 text-sm">
-                                    <div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div class="space-y-2 mb-4">
+                                <div class="flex items-center text-gray-300 text-sm">
+                                    <div class="w-8 h-8 bg-purple-500/10 rounded-full flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="font-semibold">@eventItem.EventDate.ToString("MMM dd, yyyy")</div>
-                                        <div class="text-xs text-gray-500">@eventItem.EventTime.ToString("h:mm tt")</div>
+                                        <div class="font-semibold text-white">@eventItem.EventDate.ToString("MMM dd, yyyy")</div>
+                                        <div class="text-[11px] text-gray-400">@eventItem.EventTime.ToString("h:mm tt")</div>
                                     </div>
                                 </div>
-                                <div class="flex items-center text-gray-600 text-sm">
-                                    <div class="w-8 h-8 bg-teal-100 rounded-full flex items-center justify-center mr-3">
-                                        <svg class="w-4 h-4 text-teal-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <div class="flex items-center text-gray-300 text-sm">
+                                    <div class="w-8 h-8 bg-teal-500/10 rounded-full flex items-center justify-center mr-3">
+                                        <svg class="w-4 h-4 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
                                         </svg>
                                     </div>
                                     <div>
-                                        <div class="font-semibold">@eventItem.Venue?.Name</div>
-                                        <div class="text-xs text-gray-500">Venue</div>
+                                        <div class="font-semibold text-white">@eventItem.Venue?.Name</div>
+                                        <div class="text-[11px] text-gray-400">Venue</div>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Enhanced Action Button -->
-                            <a href="/events/@eventItem.Id" 
-                               class="w-full inline-flex justify-center items-center px-6 py-4 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-2xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group">
-                                <span>View Details</span>
-                                <svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                                </svg>
-                            </a>
+                            <!-- Footer with action -->
+                            <div class="mt-auto">
+                                <a href="/events/@eventItem.Id" 
+                                   class="w-full inline-flex justify-center items-center px-4 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200 text-sm">
+                                    <span>View Details</span>
+                                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                                    </svg>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 }
@@ -361,4 +331,66 @@
     .group:hover .group-hover\:translate-x-1 {
         transform: translateX(0.25rem);
     }
+
+    /* Smooth sticky filter shadow on scroll */
+    .sticky.top-20 {
+        transition: box-shadow 200ms ease;
+    }
+    .sticky.top-20.is-pinned {
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    /* Aspect ratio fallback for browsers that don't support aspect-ratio */
+    .relative[style*="aspect-ratio"] {
+        position: relative;
+    }
+    .relative[style*="aspect-ratio"] img,
+    .relative[style*="aspect-ratio"] picture,
+    .relative[style*="aspect-ratio"] video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Make filter non-sticky on small screens for better UX */
+    @@media (max-width: 767px) {
+        .md\:sticky { position: static !important; }
+        .bg-white\/5 { padding: 1rem; }
+    }
+
 </style>
+
+@section Scripts {
+<script>
+    // Elevate filter bar on scroll
+    document.addEventListener('scroll', function() {
+        const bar = document.querySelector('.sticky.top-20');
+        if (!bar) return;
+        const pinned = window.scrollY > 40;
+        bar.classList.toggle('is-pinned', pinned);
+    });
+
+    // Optional: Client-side quick search filter (non-destructive)
+    const searchInput = document.querySelector('input[name="search"]');
+    const grid = document.getElementById('eventsGrid');
+    if (searchInput && grid) {
+        let t;
+        searchInput.addEventListener('input', function() {
+            clearTimeout(t);
+            t = setTimeout(() => {
+                const q = this.value.trim().toLowerCase();
+                grid.querySelectorAll('[data-title]')?.forEach(card => {
+                    const text = (
+                        (card.dataset.title || '') + ' ' +
+                        (card.dataset.category || '') + ' ' +
+                        (card.dataset.venue || '')
+                    ).toLowerCase();
+                    card.style.display = !q || text.includes(q) ? '' : 'none';
+                });
+            }, 200);
+        });
+    }
+</script>
+}

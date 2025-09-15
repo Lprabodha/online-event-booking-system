@@ -1,4 +1,5 @@
-﻿@{
+﻿@model online_event_booking_system.Models.View_Models.OrganizerDashboardViewModel
+@{
     ViewData["Title"] = "Organizer Dashboard";
     Layout = "_DashboardLayout";
 }
@@ -42,22 +43,22 @@
             <section aria-label="KPIs" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8">
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <p class="text-gray-400 text-sm">Total Revenue</p>
-                    <p class="text-3xl font-bold mt-2">LKR @((ViewBag.TotalRevenue ?? 0).ToString("N0"))</p>
+                    <p class="text-3xl font-bold mt-2">LKR @(Model.TotalRevenue.ToString("N0"))</p>
                     <p class="text-green-400 text-sm mt-1">All time revenue</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <p class="text-gray-400 text-sm">Total Bookings</p>
-                    <p class="text-3xl font-bold mt-2">@(ViewBag.TotalBookings ?? 0)</p>
+                    <p class="text-3xl font-bold mt-2">@Model.TotalBookings</p>
                     <p class="text-blue-400 text-sm mt-1">All time bookings</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition">
                     <p class="text-gray-400 text-sm">Published Events</p>
-                    <p class="text-3xl font-bold mt-2">@(ViewBag.PublishedEvents ?? 0)</p>
+                    <p class="text-3xl font-bold mt-2">@Model.PublishedEvents</p>
                     <p class="text-purple-400 text-sm mt-1">Currently live</p>
                 </div>
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 hover:bg-dark-navy transition hidden xl:block">
                     <p class="text-gray-400 text-sm">Total Events</p>
-                    <p class="text-3xl font-bold mt-2">@(ViewBag.TotalEvents ?? 0)</p>
+                    <p class="text-3xl font-bold mt-2">@Model.TotalEvents</p>
                     <p class="text-teal-400 text-sm mt-1">All time events</p>
                 </div>
             </section>
@@ -95,10 +96,10 @@
                 </section>
             </div>
 
-            <!-- My Events Table -->
+            <!-- My Events Table (Recent Events) -->
             <section aria-label="My Events" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mt-8">
                 <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-xl font-bold">My Events</h2>
+                    <h2 class="text-xl font-bold">My Recent Events</h2>
                     <a asp-controller="Organizer" asp-action="Events" class="text-purple-400 hover:text-purple-300 text-sm font-medium">View All</a>
                 </div>
                 <div class="overflow-x-auto">
@@ -115,32 +116,37 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @for (var i = 0; i < 6; i++)
+                            @if (Model.RecentEvents != null && Model.RecentEvents.Any())
                             {
-                                var statuses = new[] { "Draft", "Published", "Sold Out" };
-                                var status = statuses[i % 3];
-                                var badge = status == "Draft" ? "bg-yellow-500/20 text-yellow-400" : status == "Published" ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400";
-                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-                                    <td class="py-3">
-                                        <p class="text-white font-medium">Event Title @(i + 1)</p>
-                                        <p class="text-gray-400 text-sm">Organizer: You</p>
-                                    </td>
-                                    <td class="py-3 text-gray-300">Dec @(10 + i), 2024</td>
-                                    <td class="py-3 text-gray-300">Concert Hall</td>
-                                    <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @badge">@status</span></td>
-                                    <td class="py-3 text-gray-300">@(120 + i * 15)</td>
-                                    <td class="py-3 text-gray-300">$@(1800 + i * 250)</td>
-                                    <td class="py-3">
-                                        <div class="flex space-x-2">
-                                            <a href="#" class="text-purple-400 hover:text-purple-300" aria-label="View">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                                            </a>
-                                            <a asp-controller="Organizer" asp-action="EditEvent" asp-route-id="@(i+1)" class="text-blue-400 hover:text-blue-300" aria-label="Edit">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                foreach (var e in Model.RecentEvents)
+                                {
+                                    var tickets = e.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0;
+                                    var revenue = e.Bookings?.SelectMany(b => b.Tickets ?? new List<online_event_booking_system.Data.Entities.Ticket>())
+                                        .Where(t => t.Payment != null)
+                                        .Sum(t => t.Payment.Amount) ?? 0;
+                                    var badge = e.Status == "Draft" ? "bg-yellow-500/20 text-yellow-400" : e.IsPublished ? "bg-green-500/20 text-green-400" : "bg-red-500/20 text-red-400";
+                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                                        <td class="py-3">
+                                            <p class="text-white font-medium">@e.Title</p>
+                                            <p class="text-gray-400 text-sm">Organizer: You</p>
+                                        </td>
+                                        <td class="py-3 text-gray-300">@e.EventDate.ToString("MMM dd, yyyy")</td>
+                                        <td class="py-3 text-gray-300">@e.Venue?.Name</td>
+                                        <td class="py-3"><span class="px-3 py-1 rounded-full text-xs font-medium @badge">@(e.IsPublished ? "Published" : e.Status)</span></td>
+                                        <td class="py-3 text-gray-300">@tickets</td>
+                                        <td class="py-3 text-gray-300">LKR @revenue.ToString("N0")</td>
+                                        <td class="py-3">
+                                            <div class="flex space-x-2">
+                                                <a asp-controller="Events" asp-action="Details" asp-route-id="@e.Id" class="text-purple-400 hover:text-purple-300" aria-label="View">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                                                </a>
+                                                <a asp-controller="Organizer" asp-action="EditEvent" asp-route-id="@e.Id" class="text-blue-400 hover:text-blue-300" aria-label="Edit">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
@@ -179,18 +185,22 @@
                         <a asp-controller="Organizer" asp-action="Discounts" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl text-sm font-bold hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105">Create Discount</a>
                     </div>
                     <div class="space-y-4">
-                        @for (var i = 0; i < 3; i++)
+                        @if (Model.ActiveDiscounts != null && Model.ActiveDiscounts.Any())
                         {
-                            var codes = new[] { "EARLY20", "VIP15", "FLASH30" };
-                            var expiries = new[] { "Dec 31, 2024", "Jan 7, 2025", "Dec 20, 2024" };
-                            var amounts = new[] { "20% off", "15% off", "30% off" };
-                            <div class="p-4 bg-white/5 rounded-xl border border-purple-500/20 flex items-center justify-between">
-                                <div>
-                                    <p class="text-white font-semibold">@codes[i]</p>
-                                    <p class="text-gray-400 text-sm">Expires: @expiries[i]</p>
+                            foreach (var d in Model.ActiveDiscounts)
+                            {
+                                <div class="p-4 bg-white/5 rounded-xl border border-purple-500/20 flex items-center justify-between">
+                                    <div>
+                                        <p class="text-white font-semibold">@d.Code</p>
+                                        <p class="text-gray-400 text-sm">Expires: @d.ValidTo.ToString("MMM dd, yyyy")</p>
+                                    </div>
+                                    <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">@(d.Type == "Percent" ? ($"{d.Value:0}% off") : ($"LKR {d.Value:0} off"))</span>
                                 </div>
-                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-medium">@amounts[i]</span>
-                            </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="text-gray-400">No active discounts.</div>
                         }
                     </div>
                 </section>
