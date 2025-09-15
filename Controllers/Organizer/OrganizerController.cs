@@ -54,6 +54,28 @@ namespace online_event_booking_system.Controllers.Organizer
                 ViewBag.TotalBookings = totalBookings;
                 ViewBag.TotalRevenue = totalRevenue;
 
+                // Pre-compute initial sales chart data for faster first paint (default 7d)
+                var endDate = DateTime.UtcNow;
+                var startDate = endDate.AddDays(-7).Date;
+                var labels = new List<string>();
+                var salesData = new List<decimal>();
+
+                for (var date = startDate; date <= endDate.Date; date = date.AddDays(1))
+                {
+                    var daySales = events
+                        .SelectMany(e => e.Bookings ?? new List<Booking>())
+                        .Where(b => b.CreatedAt.Date == date && b.Status == "Confirmed")
+                        .SelectMany(b => b.Tickets ?? new List<Ticket>())
+                        .Where(t => t.Payment != null)
+                        .Sum(t => t.Payment.Amount);
+
+                    labels.Add(date.ToString("MMM dd"));
+                    salesData.Add(daySales);
+                }
+
+                ViewBag.SalesLabels = labels;
+                ViewBag.SalesData = salesData;
+
                 return View();
             }
             catch (Exception ex)

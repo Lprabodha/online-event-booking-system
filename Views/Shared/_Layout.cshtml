@@ -12,13 +12,13 @@
     <header class="fixed top-0 left-0 right-0 z-50 bg-dark-navy/80 backdrop-blur-xl border-b border-primary/30">
         <nav class="container mx-auto px-4 py-3">
             <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-3">
+                <a href="/" class="flex items-center space-x-3">
                     <img src="~/images/logo-main.png" alt="Star Events Logo" class="h-16 w-16 object-contain">
                     <div class="flex flex-col">
                         <span class="text-2xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text">Star - Events</span>
                         <span class="text-xs text-gray-400">Where Every Event Becomes a Memory</span>
                     </div>
-                </div>
+                </a>
                 
                 <div class="hidden md:flex items-center space-x-8">
                     @if (!User.Identity.IsAuthenticated)

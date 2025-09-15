@@ -43,6 +43,15 @@ namespace online_event_booking_system.Controllers.Customer
             var bookings = await _bookingService.GetUserBookingsAsync(userId);
             var payments = await _bookingService.GetUserPaymentsAsync(userId);
             var recentBookings = bookings.Take(3).ToList();
+
+            // Ensure event images use direct URLs for dashboard cards
+            foreach (var booking in recentBookings)
+            {
+                if (booking?.Event != null && !string.IsNullOrEmpty(booking.Event.Image))
+                {
+                    booking.Event.Image = _s3Service.GetDirectUrl(booking.Event.Image);
+                }
+            }
             var totalSpent = payments.Where(p => p.Status == "Completed").Sum(p => p.Amount);
             var upcomingEvents = bookings.Where(b => b.Status == "Confirmed" && b.Event.EventDate > DateTime.UtcNow).Count();
 
@@ -85,6 +94,15 @@ namespace online_event_booking_system.Controllers.Customer
                 if (!string.IsNullOrEmpty(category) && Guid.TryParse(category, out var categoryId))
                 {
                     events = events.Where(e => e.CategoryId == categoryId).ToList();
+                }
+
+                // Convert event image paths to direct URLs for faster loading
+                foreach (var e in events)
+                {
+                    if (!string.IsNullOrEmpty(e.Image))
+                    {
+                        e.Image = _s3Service.GetDirectUrl(e.Image);
+                    }
                 }
 
                 // Get categories for filter dropdown

@@ -249,6 +249,10 @@
         }, 3000);
     }
 
+    // Server-prepared initial data (faster first paint)
+    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesLabels ?? new List<string>()));
+    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesData ?? new List<decimal>()));
+
     // Chart initialization
     document.addEventListener('DOMContentLoaded', function() {
         // Wait for Chart.js to load, then initialize charts
@@ -287,23 +291,26 @@
         }
         
         try {
-            // Load real data from API
-            const response = await fetch('/organizer/api/sales-data?period=7d');
-            const data = await response.json();
-            
-            if (data.error) {
-                console.error('Error loading sales data:', data.error);
-                showNotification('Error loading sales data', 'error');
-                return;
+            let labels = initialSalesLabels;
+            let dataset = initialSalesData;
+
+            // If server didn't provide data (or it's empty), fallback to API
+            if (!Array.isArray(labels) || labels.length === 0 || !Array.isArray(dataset) || dataset.length === 0) {
+                const resp = await fetch('/organizer/api/sales-data?period=7d');
+                const json = await resp.json();
+                if (!json.error) {
+                    labels = json.labels;
+                    dataset = json.data;
+                }
             }
-            
+
             salesTrendChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: data.labels,
+                    labels: labels,
                     datasets: [{
                         label: 'Sales (LKR)',
-                        data: data.data,
+                        data: dataset,
                         borderColor: 'rgb(168, 85, 247)',
                         backgroundColor: 'rgba(168, 85, 247, 0.1)',
                         borderWidth: 3,
