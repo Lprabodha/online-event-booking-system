@@ -45,7 +45,7 @@
                                     </svg>
                                 </div>
                             </div>
-                            <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
+                            <button id="searchButton" type="button" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-bold text-base sm:text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg min-h-[44px]">
                                 Search Events
                             </button>
                         </div>
@@ -54,16 +54,16 @@
                 
                 <!-- Quick Filter Tags with Mobile Optimization -->
                 <div class="flex flex-wrap justify-center gap-2 sm:gap-3 mt-4 sm:mt-6">
-                    <button class="bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]">
+                    <button class="quick-filter bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]" data-query="Music">
                         🎵 Music
                     </button>
-                    <button class="bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]">
+                    <button class="quick-filter bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]" data-query="Sports">
                         🏈 Sports
                     </button>
-                    <button class="bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]">
+                    <button class="quick-filter bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]" data-query="Theater">
                         🎭 Theater
                     </button>
-                    <button class="bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]">
+                    <button class="quick-filter bg-dark-blue/50 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-medium hover:bg-purple-500/50 transition-all border border-gray-600 min-h-[44px]" data-query="Festival">
                         🎪 Festivals
                     </button>
                 </div>
@@ -641,6 +641,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         const quickFilters = document.querySelectorAll('.quick-filter');
+        const searchButton = document.getElementById('searchButton');
         
         // Add search input animation
         searchInput.addEventListener('focus', function() {
@@ -651,13 +652,29 @@
             this.parentElement.parentElement.classList.remove('ring-2', 'ring-purple-500/50');
         });
         
-        // Quick filter functionality
+        // Quick filter functionality: navigate to events with query
         quickFilters.forEach(filter => {
             filter.addEventListener('click', function() {
-                const filterText = this.textContent.trim();
-                searchInput.value = filterText;
-                searchInput.focus();
+                const query = this.dataset.query || this.textContent.trim();
+                window.location.href = `/events?search=${encodeURIComponent(query)}`;
             });
+        });
+
+        function submitSearch() {
+            const query = searchInput.value.trim();
+            const url = query ? `/events?search=${encodeURIComponent(query)}` : '/events';
+            window.location.href = url;
+        }
+
+        // Submit search on button click or Enter key
+        if (searchButton) {
+            searchButton.addEventListener('click', submitSearch);
+        }
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                submitSearch();
+            }
         });
         
         // Add smooth scrolling for anchor links

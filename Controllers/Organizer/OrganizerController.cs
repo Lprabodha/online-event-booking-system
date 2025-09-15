@@ -49,10 +49,33 @@ namespace online_event_booking_system.Controllers.Organizer
                     .Where(t => t.Payment != null)
                     .Sum(t => t.Payment.Amount);
 
-                ViewBag.TotalEvents = totalEvents;
-                ViewBag.PublishedEvents = publishedEvents;
-                ViewBag.TotalBookings = totalBookings;
-                ViewBag.TotalRevenue = totalRevenue;
+                // Prepare recent and top-selling events
+                var recentEvents = events
+                    .OrderByDescending(e => e.CreatedAt)
+                    .Take(5)
+                    .ToList();
+
+                // Convert images to direct URLs
+                foreach (var ev in recentEvents)
+                {
+                    if (!string.IsNullOrEmpty(ev.Image))
+                    {
+                        ev.Image = _s3Service.GetDirectUrl(ev.Image);
+                    }
+                }
+
+                var topSellingEvents = events
+                    .OrderByDescending(e => e.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0)
+                    .Take(5)
+                    .ToList();
+
+                foreach (var ev in topSellingEvents)
+                {
+                    if (!string.IsNullOrEmpty(ev.Image))
+                    {
+                        ev.Image = _s3Service.GetDirectUrl(ev.Image);
+                    }
+                }
 
                 // Pre-compute initial sales chart data for faster first paint (default 7d)
                 var endDate = DateTime.UtcNow;
@@ -73,15 +96,29 @@ namespace online_event_booking_system.Controllers.Organizer
                     salesData.Add(daySales);
                 }
 
-                ViewBag.SalesLabels = labels;
-                ViewBag.SalesData = salesData;
+                // Active discounts
+                var discounts = await _discountService.GetDiscountsByOrganizerAsync(organizerId);
+                var activeDiscounts = discounts.Where(d => d.IsActive).OrderByDescending(d => d.CreatedAt).Take(5).ToList();
 
-                return View();
+                var model = new online_event_booking_system.Models.View_Models.OrganizerDashboardViewModel
+                {
+                    TotalEvents = totalEvents,
+                    PublishedEvents = publishedEvents,
+                    TotalBookings = totalBookings,
+                    TotalRevenue = totalRevenue,
+                    RecentEvents = recentEvents,
+                    TopSellingEvents = topSellingEvents,
+                    ActiveDiscounts = activeDiscounts,
+                    SalesLabels = labels,
+                    SalesData = salesData
+                };
+
+                return View(model);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading organizer dashboard");
-                return View();
+                return View(new online_event_booking_system.Models.View_Models.OrganizerDashboardViewModel());
             }
         }
 
