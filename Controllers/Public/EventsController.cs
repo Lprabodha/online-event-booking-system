@@ -57,6 +57,10 @@ namespace online_event_booking_system.Controllers.Public
                     return NotFound();
                 }
 
+                // Debug logging to check if description is present
+                _logger.LogInformation("Event {EventId} - Title: {Title}, Description: {Description}", 
+                    id, eventEntity.Title, eventEntity.Description ?? "NULL");
+
                 // Process event image to convert S3 key to URL
                 if (!string.IsNullOrEmpty(eventEntity.Image))
                 {
