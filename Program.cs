@@ -108,12 +108,14 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // Repositories
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 builder.Services.AddScoped<IVenueRepository, VenueRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
 var app = builder.Build();
 
