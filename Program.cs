@@ -49,6 +49,24 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
+
+// Configure Google Authentication
+builder.Services.AddAuthentication()
+    .AddGoogle(options =>
+    {
+        var googleAuth = builder.Configuration.GetSection("Authentication:Google");
+        options.ClientId = googleAuth["ClientId"] ?? "";
+        options.ClientSecret = googleAuth["ClientSecret"] ?? "";
+        options.CallbackPath = "/signin-google";
+    })
+    .AddMicrosoftAccount(options =>
+    {
+        var microsoftAuth = builder.Configuration.GetSection("Authentication:Microsoft");
+        options.ClientId = microsoftAuth["ClientId"] ?? "";
+        options.ClientSecret = microsoftAuth["ClientSecret"] ?? "";
+        options.CallbackPath = "/signin-microsoft";
+    });
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 
@@ -108,12 +126,14 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IReportService, ReportService>();
 
 // Repositories
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IDiscountRepository, DiscountRepository>();
 builder.Services.AddScoped<IVenueRepository, VenueRepository>();
+builder.Services.AddScoped<IReportRepository, ReportRepository>();
 
 var app = builder.Build();
 

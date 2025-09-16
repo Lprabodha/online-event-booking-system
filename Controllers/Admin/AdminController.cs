@@ -560,11 +560,6 @@ namespace online_event_booking_system.Controllers.Admin
             return RedirectToAction(nameof(Venues));
         }
 
-        [HttpGet("admin/reports")]
-        public IActionResult Reports()
-        {
-            return View();
-        }
 
         [HttpGet("admin/settings")]
         public IActionResult Settings()

@@ -11,7 +11,7 @@ using online_event_booking_system.Data;
 namespace online_event_booking_system.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250912170703_init")]
+    [Migration("20250915173900_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -159,7 +159,8 @@ namespace online_event_booking_system.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Address")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -167,7 +168,11 @@ namespace online_event_booking_system.Migrations
 
                     b.Property<string>("ContactNumber")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
@@ -181,7 +186,8 @@ namespace online_event_booking_system.Migrations
 
                     b.Property<string>("FullName")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
@@ -196,7 +202,8 @@ namespace online_event_booking_system.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("NIC")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(20)
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -207,7 +214,8 @@ namespace online_event_booking_system.Migrations
                         .HasColumnType("varchar(256)");
 
                     b.Property<string>("OrganizationName")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("longtext");
@@ -381,10 +389,16 @@ namespace online_event_booking_system.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("AgeRestriction")
+                        .HasColumnType("longtext");
+
                     b.Property<Guid>("CategoryId")
                         .HasColumnType("char(36)");
 
                     b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
@@ -400,6 +414,9 @@ namespace online_event_booking_system.Migrations
                     b.Property<string>("Image")
                         .HasColumnType("longtext");
 
+                    b.Property<bool>("IsMultiDay")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<bool>("IsPublished")
                         .HasColumnType("tinyint(1)");
 
@@ -407,10 +424,30 @@ namespace online_event_booking_system.Migrations
                         .IsRequired()
                         .HasColumnType("varchar(255)");
 
+                    b.Property<string>("RefundPolicy")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("longtext");
+
+                    b.Property<DateTime?>("TicketSalesEnd")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("TicketSalesStart")
+                        .HasColumnType("datetime(6)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
+
+                    b.Property<int>("TotalCapacity")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime(6)");
@@ -443,20 +480,41 @@ namespace online_event_booking_system.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
                     b.Property<Guid>("EventId")
                         .HasColumnType("char(36)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<int?>("MaxQuantity")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("MinQuantity")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
 
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ValidFrom")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime?>("ValidUntil")
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
@@ -621,13 +679,15 @@ namespace online_event_booking_system.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ContactInfo")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime(6)");
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
 
                     b.Property<string>("Image")
                         .HasColumnType("longtext");

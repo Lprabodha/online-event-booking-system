@@ -5,3 +5,5 @@ obj/
 appsettings.json
 node_modules/
 wwwroot/css/app.css
+
+appsettings.Development.json
