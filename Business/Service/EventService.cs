@@ -111,6 +111,9 @@ namespace online_event_booking_system.Business.Service
                 .Include(e => e.Category)
                 .Include(e => e.Venue)
                 .Include(e => e.Prices)
+                .Include(e => e.Bookings)
+                    .ThenInclude(b => b.Tickets)
+                        .ThenInclude(t => t.Payment)
                 .Where(e => e.OrganizerId == organizerId && e.DeletedAt == null)
                 .OrderByDescending(e => e.CreatedAt)
                 .ToListAsync();
