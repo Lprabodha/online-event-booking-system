@@ -13,8 +13,15 @@ namespace online_event_booking_system.Models.View_Models
         public List<Event> TopSellingEvents { get; set; } = new();
         public List<Discount> ActiveDiscounts { get; set; } = new();
 
+        // Default (7d) for initial render
         public List<string> SalesLabels { get; set; } = new();
         public List<decimal> SalesData { get; set; } = new();
+
+        // Precomputed alternate ranges to avoid API calls from the view
+        public List<string> SalesLabels7d { get; set; } = new();
+        public List<decimal> SalesData7d { get; set; } = new();
+        public List<string> SalesLabels30d { get; set; } = new();
+        public List<decimal> SalesData30d { get; set; } = new();
     }
 }
 
