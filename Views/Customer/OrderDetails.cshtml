@@ -215,12 +215,18 @@
                     <div class="space-y-3">
                         @if (Model.Status == "Confirmed")
                         {
-                            <button onclick="window.print()" class="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                            <a href="/customer/booking/@Model.Id/tickets.pdf" class="w-full inline-flex items-center justify-center px-4 py-2 bg-purple-500/20 border border-purple-500/30 text-purple-400 rounded-lg hover:bg-purple-500/30 transition-all duration-200 font-medium text-sm">
                                 <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
-                                Print Tickets
-                            </button>
+                                Download Tickets (PDF)
+                            </a>
+                            <a href="/customer/booking/@Model.Id/invoice.pdf" class="w-full inline-flex items-center justify-center px-4 py-2 bg-teal-500/20 border border-teal-500/30 text-teal-400 rounded-lg hover:bg-teal-500/30 transition-all duration-200 font-medium text-sm">
+                                <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h10"></path>
+                                </svg>
+                                Download Invoice (PDF)
+                            </a>
                         }
                         else if (Model.Status == "Pending")
                         {

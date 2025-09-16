@@ -5,6 +5,7 @@
 }
 
 <!-- Customer Profile Container -->
+@Html.AntiForgeryToken()
 <div class="min-h-screen bg-dark-navy text-white pt-20">
     <!-- Main Content -->
     <div class="p-4 md:p-6 pt-8">
@@ -107,7 +108,7 @@
                                 <input type="password" id="confirmPassword" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
                             </div>
                             <button type="submit" id="changePasswordBtn" class="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg hover:from-purple-600 hover:to-teal-600 transition-all duration-200 font-medium">Change Password</button>
-                        </div>
+                    </div>
                     </form>
                 </div>
 

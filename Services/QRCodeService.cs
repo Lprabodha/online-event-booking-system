@@ -13,16 +13,20 @@ namespace online_event_booking_system.Services
             _logger = logger;
         }
 
+        // size parameter interpreted as target image width in pixels (not pixels-per-module)
         public string GenerateQRCode(string data, int size = 200)
         {
             try
             {
                 using var qrGenerator = new QRCoder.QRCodeGenerator();
-                using var qrCodeData = qrGenerator.CreateQrCode(data, QRCoder.QRCodeGenerator.ECCLevel.Q);
+                // Use medium ECC to reduce module density and file size
+                using var qrCodeData = qrGenerator.CreateQrCode(data, QRCoder.QRCodeGenerator.ECCLevel.M);
 
                 // Use PngByteQRCode renderer which returns PNG bytes
                 using var pngRenderer = new QRCoder.PngByteQRCode(qrCodeData);
-                var imageBytes = pngRenderer.GetGraphic(size);
+                var modules = qrCodeData.ModuleMatrix.Count;
+                var pixelsPerModule = Math.Max(2, size / Math.Max(1, modules));
+                var imageBytes = pngRenderer.GetGraphic(pixelsPerModule);
                 return "data:image/png;base64," + Convert.ToBase64String(imageBytes);
             }
             catch (Exception ex)
@@ -32,16 +36,19 @@ namespace online_event_booking_system.Services
             }
         }
 
+        // size parameter interpreted as target image width in pixels (not pixels-per-module)
         public byte[] GenerateQRCodeBytes(string data, int size = 200)
         {
             try
             {
                 using var qrGenerator = new QRCoder.QRCodeGenerator();
-                using var qrCodeData = qrGenerator.CreateQrCode(data, QRCoder.QRCodeGenerator.ECCLevel.Q);
+                using var qrCodeData = qrGenerator.CreateQrCode(data, QRCoder.QRCodeGenerator.ECCLevel.M);
 
                 // Use PngByteQRCode renderer which returns PNG bytes
                 using var pngRenderer = new QRCoder.PngByteQRCode(qrCodeData);
-                return pngRenderer.GetGraphic(size);
+                var modules = qrCodeData.ModuleMatrix.Count;
+                var pixelsPerModule = Math.Max(2, size / Math.Max(1, modules));
+                return pngRenderer.GetGraphic(pixelsPerModule);
             }
             catch (Exception ex)
             {
@@ -66,7 +73,7 @@ namespace online_event_booking_system.Services
                 };
 
                 var jsonData = System.Text.Json.JsonSerializer.Serialize(ticketData);
-                return GenerateQRCode(jsonData, 256); // Larger size for better scanning
+                return GenerateQRCode(jsonData, 256);
             }
             catch (Exception ex)
             {
@@ -81,7 +88,7 @@ namespace online_event_booking_system.Services
             {
                 // Create a simple, readable QR code data format
                 var qrData = $"TICKET:{ticketNumber}|EVENT:{eventId}|CUSTOMER:{customerId}|ID:{ticketId}";
-                return GenerateQRCode(qrData, 256);
+                return GenerateQRCode(qrData, 220);
             }
             catch (Exception ex)
             {
@@ -90,7 +97,7 @@ namespace online_event_booking_system.Services
             }
         }
 
-        public byte[] GenerateTicketQRCodeBytes(Guid ticketId, Guid eventId, string customerId, string ticketNumber, int size = 256)
+        public byte[] GenerateTicketQRCodeBytes(Guid ticketId, Guid eventId, string customerId, string ticketNumber, int size = 220)
         {
             try
             {

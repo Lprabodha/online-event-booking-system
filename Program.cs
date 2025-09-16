@@ -127,6 +127,7 @@ builder.Services.AddScoped<IDiscountService, DiscountService>();
 builder.Services.AddScoped<IVenueService, VenueService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IReportService, ReportService>();
+builder.Services.AddScoped<ICustomerPdfService, CustomerPdfService>();
 
 // Repositories
 builder.Services.AddScoped<IAdminRepository, AdminRepository>();
