@@ -486,6 +486,27 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        public async Task<List<Event>> GetEventsNextWeekAsync(int count = 6)
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var startOfNextWeek = startOfWeek.AddDays(7);
+            var endOfNextWeek = startOfNextWeek.AddDays(7);
+
+            return await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished &&
+                           e.Status == "Published" &&
+                           e.DeletedAt == null &&
+                           e.EventDate >= startOfNextWeek &&
+                           e.EventDate < endOfNextWeek)
+                .OrderBy(e => e.EventDate)
+                .Take(count)
+                .ToListAsync();
+        }
+
         /// <summary>
         /// Helper method to convert event image paths to URLs
         /// </summary>
@@ -496,7 +517,7 @@ namespace online_event_booking_system.Business.Service
 
             try
             {
-                return await _s3Service.GetImageUrlAsync(imagePath);
+                return _s3Service.GetDirectUrl(imagePath);
             }
             catch (Exception ex)
             {

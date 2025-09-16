@@ -260,8 +260,13 @@
     }
 
     // Server-prepared initial data (faster first paint)
-    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesLabels ?? new List<string>()));
-    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesData ?? new List<decimal>()));
+    // Use model-provided precomputed data to avoid API calls
+    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesLabels ?? new List<string>()));
+    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesData ?? new List<decimal>()));
+    const labels7d = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesLabels7d ?? new List<string>()));
+    const data7d = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesData7d ?? new List<decimal>()));
+    const labels30d = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesLabels30d ?? new List<string>()));
+    const data30d = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesData30d ?? new List<decimal>()));
 
     // Chart initialization
     document.addEventListener('DOMContentLoaded', function() {
@@ -304,14 +309,10 @@
             let labels = initialSalesLabels;
             let dataset = initialSalesData;
 
-            // If server didn't provide data (or it's empty), fallback to API
+            // If server didn't provide data (or it's empty), fallback to 7d precomputed arrays
             if (!Array.isArray(labels) || labels.length === 0 || !Array.isArray(dataset) || dataset.length === 0) {
-                const resp = await fetch('/organizer/api/sales-data?period=7d');
-                const json = await resp.json();
-                if (!json.error) {
-                    labels = json.labels;
-                    dataset = json.data;
-                }
+                labels = labels7d;
+                dataset = data7d;
             }
 
             salesTrendChart = new Chart(ctx, {
@@ -378,6 +379,10 @@
             loadingIndicator.classList.add('hidden');
             chartCanvas.classList.remove('hidden');
         }
+        } catch (error) {
+            console.error('Error building sales chart:', error);
+            showNotification('Error building sales chart', 'error');
+        }
     }
 
     // Update Sales Trend Chart
@@ -395,24 +400,15 @@
         event.target.classList.remove('bg-dark-navy', 'text-gray-300');
         event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
 
-        try {
-            // Load real data from API
-            const response = await fetch(`/organizer/api/sales-data?period=${period}`);
-            const data = await response.json();
-            
-            if (data.error) {
-                console.error('Error loading sales data:', data.error);
-                showNotification('Error loading sales data', 'error');
-                return;
-            }
-            
-            salesTrendChart.data.labels = data.labels;
-            salesTrendChart.data.datasets[0].data = data.data;
-            salesTrendChart.update();
-        } catch (error) {
-            console.error('Error updating sales trend:', error);
-            showNotification('Error updating sales data', 'error');
+        // Swap dataset locally using precomputed arrays
+        if (period === '7d') {
+            salesTrendChart.data.labels = labels7d;
+            salesTrendChart.data.datasets[0].data = data7d;
+        } else {
+            salesTrendChart.data.labels = labels30d;
+            salesTrendChart.data.datasets[0].data = data30d;
         }
+        salesTrendChart.update();
     }
 </script>
 

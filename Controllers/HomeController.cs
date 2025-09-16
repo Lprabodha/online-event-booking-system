@@ -30,15 +30,15 @@ public class HomeController : Controller
             // Fetch active categories for the browse by category section
             var categories = (await _categoryService.GetActiveCategoriesAsync()).ToList();
             
-            // Fetch upcoming, latest, and this week's events
+            // Fetch upcoming, latest, and next week's events
             var upcomingEvents = await _eventService.GetUpcomingEventsAsync(6);
             var latestEvents = await _eventService.GetLatestEventsAsync(4);
-            var eventsThisWeek = await _eventService.GetEventsThisWeekAsync(6);
+            var eventsNextWeek = await _eventService.GetEventsNextWeekAsync(6);
             
             // Process event images to convert S3 keys to URLs
             await ProcessEventImagesAsync(upcomingEvents);
             await ProcessEventImagesAsync(latestEvents);
-            await ProcessEventImagesAsync(eventsThisWeek);
+            await ProcessEventImagesAsync(eventsNextWeek);
             
             // Create a view model to pass all data
             var viewModel = new HomePageViewModel
@@ -46,7 +46,7 @@ public class HomeController : Controller
                 Categories = categories,
                 UpcomingEvents = upcomingEvents,
                 LatestEvents = latestEvents,
-                EventsThisWeek = eventsThisWeek
+                EventsNextWeek = eventsNextWeek
             };
             
             return View(viewModel);
@@ -121,6 +121,12 @@ public class HomeController : Controller
                     var weekStart = now.Date.AddDays(-(int)now.DayOfWeek);
                     var weekEnd = weekStart.AddDays(7);
                     events = events.Where(e => e.EventDate.Date >= weekStart && e.EventDate.Date < weekEnd).ToList();
+                    break;
+                case "nextweek":
+                    var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+                    var startOfNextWeek = startOfWeek.AddDays(7);
+                    var endOfNextWeek = startOfNextWeek.AddDays(7);
+                    events = events.Where(e => e.EventDate.Date >= startOfNextWeek && e.EventDate.Date < endOfNextWeek).ToList();
                     break;
                 case "thismonth":
                     events = events.Where(e => e.EventDate.Month == now.Month && e.EventDate.Year == now.Year).ToList();

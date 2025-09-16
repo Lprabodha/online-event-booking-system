@@ -77,23 +77,37 @@ namespace online_event_booking_system.Controllers.Organizer
                     }
                 }
 
-                // Pre-compute initial sales chart data for faster first paint (default 7d)
-                var endDate = DateTime.UtcNow;
-                var startDate = endDate.AddDays(-7).Date;
-                var labels = new List<string>();
-                var salesData = new List<decimal>();
+                // Pre-compute sales data ranges to avoid API calls
+                var endDate = DateTime.UtcNow.Date;
+                var start7 = endDate.AddDays(-7);
+                var start30 = endDate.AddDays(-30);
 
-                for (var date = startDate; date <= endDate.Date; date = date.AddDays(1))
+                var labels7 = new List<string>();
+                var data7 = new List<decimal>();
+                for (var d = start7; d <= endDate; d = d.AddDays(1))
                 {
                     var daySales = events
                         .SelectMany(e => e.Bookings ?? new List<Booking>())
-                        .Where(b => b.CreatedAt.Date == date && b.Status == "Confirmed")
+                        .Where(b => b.CreatedAt.Date == d && b.Status == "Confirmed")
                         .SelectMany(b => b.Tickets ?? new List<Ticket>())
                         .Where(t => t.Payment != null)
                         .Sum(t => t.Payment.Amount);
+                    labels7.Add(d.ToString("MMM dd"));
+                    data7.Add(daySales);
+                }
 
-                    labels.Add(date.ToString("MMM dd"));
-                    salesData.Add(daySales);
+                var labels30 = new List<string>();
+                var data30 = new List<decimal>();
+                for (var d = start30; d <= endDate; d = d.AddDays(1))
+                {
+                    var daySales = events
+                        .SelectMany(e => e.Bookings ?? new List<Booking>())
+                        .Where(b => b.CreatedAt.Date == d && b.Status == "Confirmed")
+                        .SelectMany(b => b.Tickets ?? new List<Ticket>())
+                        .Where(t => t.Payment != null)
+                        .Sum(t => t.Payment.Amount);
+                    labels30.Add(d.ToString("MMM dd"));
+                    data30.Add(daySales);
                 }
 
                 // Active discounts
@@ -109,8 +123,12 @@ namespace online_event_booking_system.Controllers.Organizer
                     RecentEvents = recentEvents,
                     TopSellingEvents = topSellingEvents,
                     ActiveDiscounts = activeDiscounts,
-                    SalesLabels = labels,
-                    SalesData = salesData
+                    SalesLabels = labels7,
+                    SalesData = data7,
+                    SalesLabels7d = labels7,
+                    SalesData7d = data7,
+                    SalesLabels30d = labels30,
+                    SalesData30d = data30
                 };
 
                 return View(model);

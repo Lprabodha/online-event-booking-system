@@ -192,7 +192,7 @@
     </div>
 </section>
 
-<!-- Upcoming This Week Section -->
+<!-- Upcoming Next Week Section (replaces This Week) -->
 <section class="py-24 bg-gradient-to-br from-slate-800 to-slate-900 relative overflow-hidden">
     <div class="absolute inset-0 opacity-10">
         <div class="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-orange-400 to-red-400 rounded-full blur-3xl"></div>
@@ -201,14 +201,14 @@
     
     <div class="container mx-auto px-4 relative z-10">
         <div class="text-center mb-16 px-4">
-            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Upcoming This Week</h2>
-            <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto text-pretty">Don't miss these exciting events happening this week</p>
+            <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6">Upcoming Next Week</h2>
+            <p class="text-lg sm:text-xl text-gray-300 max-w-3xl mx-auto text-pretty">Plan ahead with these exciting events happening next week</p>
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 px-4">
-            @if (Model.EventsThisWeek != null && Model.EventsThisWeek.Any())
+            @if (Model.EventsNextWeek != null && Model.EventsNextWeek.Any())
             {
-                @foreach (var evt in Model.EventsThisWeek.Take(6))
+                @foreach (var evt in Model.EventsNextWeek.Take(6))
                 {
                     var minPrice = evt.Prices?.Where(p => p.IsActive).Min(p => p.Price) ?? 0;
                     var maxPrice = evt.Prices?.Where(p => p.IsActive).Max(p => p.Price) ?? 0;
@@ -236,25 +236,10 @@
                                 <span class="bg-white/90 backdrop-blur-sm text-slate-800 text-sm font-bold px-3 py-1 rounded-full shadow-lg">@priceDisplay</span>
                             </div>
                             
-                            <!-- Urgency Badge -->
-                            @if (isToday)
-                            {
-                                <div class="absolute bottom-3 left-3">
-                                    <span class="bg-red-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">TODAY!</span>
-                                </div>
-                            }
-                            else if (isTomorrow)
-                            {
-                                <div class="absolute bottom-3 left-3">
-                                    <span class="bg-orange-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-pulse">TOMORROW!</span>
-                                </div>
-                            }
-                            else if (isThisWeek)
-                            {
-                                <div class="absolute bottom-3 left-3">
-                                    <span class="bg-yellow-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">@daysUntilEvent days left</span>
-                                </div>
-                            }
+                            <!-- Label for next week items -->
+                            <div class="absolute bottom-3 left-3">
+                                <span class="bg-yellow-500/90 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">Next Week</span>
+                            </div>
                             
                             <!-- Date & Time -->
                             <div class="absolute bottom-3 right-3">
@@ -294,25 +279,25 @@
             }
             else
             {
-                <!-- Fallback content when no events this week -->
+                <!-- Fallback content when no events next week -->
                 <div class="col-span-full text-center py-12">
                     <div class="w-16 h-16 bg-slate-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-slate-400" fill="currentColor" viewBox="0 0 20 20">
                             <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"></path>
                         </svg>
                     </div>
-                    <h3 class="text-xl font-semibold text-white mb-2">No Events This Week</h3>
-                    <p class="text-slate-400">Check back later for events happening this week.</p>
+                    <h3 class="text-xl font-semibold text-white mb-2">No Events Next Week</h3>
+                    <p class="text-slate-400">Check back later for events happening next week.</p>
                 </div>
             }
         </div>
         
         <!-- View All Events Button -->
-        @if (Model.EventsThisWeek != null && Model.EventsThisWeek.Count() > 6)
+        @if (Model.EventsNextWeek != null && Model.EventsNextWeek.Count() > 6)
         {
             <div class="text-center mt-12">
-                <a href="/Events?filter=thisweek" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
-                    <span>View All This Week's Events</span>
+                <a href="/Events?filter=nextweek" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
+                    <span>View All Next Week's Events</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
                     </svg>

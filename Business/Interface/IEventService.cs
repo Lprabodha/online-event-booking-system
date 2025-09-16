@@ -24,5 +24,6 @@ namespace online_event_booking_system.Business.Interface
         Task<List<Event>> GetLatestEventsAsync(int count = 4);
         Task<List<Event>> GetRelatedEventsAsync(Guid eventId, int count = 3);
         Task<List<Event>> GetEventsThisWeekAsync(int count = 6);
+        Task<List<Event>> GetEventsNextWeekAsync(int count = 6);
     }
 }
