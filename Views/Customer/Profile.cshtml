@@ -92,20 +92,23 @@
                 <!-- Security Settings -->
                 <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h3 class="text-lg font-bold mb-4">Security</h3>
-                    <div class="space-y-3">
-                        <button class="w-full px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm text-left">
-                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"></path>
-                            </svg>
-                            Change Password
-                        </button>
-                        <button class="w-full px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm text-left">
-                            <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
-                            </svg>
-                            Two-Factor Authentication
-                        </button>
-                    </div>
+                    <form id="changePasswordForm">
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Current Password</label>
+                                <input type="password" id="currentPassword" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">New Password</label>
+                                <input type="password" id="newPassword" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300 mb-2">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent">
+                            </div>
+                            <button type="submit" id="changePasswordBtn" class="w-full px-4 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-lg hover:from-purple-600 hover:to-teal-600 transition-all duration-200 font-medium">Change Password</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Quick Actions -->
@@ -142,6 +145,8 @@
         const form = document.getElementById('profileForm');
         const saveBtn = document.getElementById('saveBtn');
         const cancelBtn = document.getElementById('cancelBtn');
+        const changePasswordForm = document.getElementById('changePasswordForm');
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
         
         // Store original values
         const originalValues = {
@@ -202,6 +207,42 @@
                 // Reset button state
                 saveBtn.disabled = false;
                 saveBtn.innerHTML = 'Save Changes';
+            }
+        });
+
+        // Change password submit
+        changePasswordForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const payload = {
+                CurrentPassword: document.getElementById('currentPassword').value,
+                NewPassword: document.getElementById('newPassword').value,
+                ConfirmPassword: document.getElementById('confirmPassword').value
+            };
+            changePasswordBtn.disabled = true;
+            const originalText = changePasswordBtn.innerHTML;
+            changePasswordBtn.innerHTML = 'Changing...';
+            try {
+                const response = await fetch('/customer/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showNotification('Password changed successfully!', 'success');
+                    changePasswordForm.reset();
+                } else {
+                    showNotification(result.message || 'Failed to change password', 'error');
+                }
+            } catch (err) {
+                console.error(err);
+                showNotification('Error changing password', 'error');
+            } finally {
+                changePasswordBtn.disabled = false;
+                changePasswordBtn.innerHTML = originalText;
             }
         });
 

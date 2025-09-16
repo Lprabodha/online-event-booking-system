@@ -18,19 +18,25 @@ namespace online_event_booking_system.Controllers.Customer
         private readonly ITicketQRService _ticketQRService;
         private readonly IS3Service _s3Service;
         private readonly ILogger<CustomerController> _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public CustomerController(
             IBookingService bookingService, 
             ApplicationDbContext context, 
             ITicketQRService ticketQRService,
             IS3Service s3Service,
-            ILogger<CustomerController> logger)
+            ILogger<CustomerController> logger,
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _bookingService = bookingService;
             _context = context;
             _ticketQRService = ticketQRService;
             _s3Service = s3Service;
             _logger = logger;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
         [HttpGet("customer")]
@@ -176,6 +182,35 @@ namespace online_event_booking_system.Controllers.Customer
             {
                 return Json(new { success = false, message = "Error updating profile" });
             }
+        }
+
+        [HttpPost("customer/change-password")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ChangePassword([FromBody] online_event_booking_system.Models.View_Models.ChangePasswordViewModel model)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return Json(new { success = false, message = "Unauthorized" });
+
+            if (!ModelState.IsValid)
+            {
+                var firstError = ModelState.Values.SelectMany(v => v.Errors).FirstOrDefault()?.ErrorMessage ?? "Invalid input";
+                return Json(new { success = false, message = firstError });
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+                return Json(new { success = false, message = "User not found" });
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!result.Succeeded)
+            {
+                var error = result.Errors.FirstOrDefault()?.Description ?? "Failed to change password";
+                return Json(new { success = false, message = error });
+            }
+
+            await _signInManager.RefreshSignInAsync(user);
+            return Json(new { success = true, message = "Password changed successfully" });
         }
 
         [HttpGet("customer/loyalty")]
