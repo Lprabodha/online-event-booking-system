@@ -64,6 +64,7 @@ namespace online_event_booking_system.Models.View_Models
 
     public class EventPriceViewModel
     {
+        public Guid? Id { get; set; }
         [Required(ErrorMessage = "Price category name is required")]
         [StringLength(100, MinimumLength = 2, ErrorMessage = "Price category must be between 2 and 100 characters")]
         public string Category { get; set; } = string.Empty;

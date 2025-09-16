@@ -18,19 +18,22 @@ namespace online_event_booking_system.Controllers.Customer
         private readonly ITicketQRService _ticketQRService;
         private readonly IS3Service _s3Service;
         private readonly ILogger<CustomerController> _logger;
+        private readonly ITicketPdfService _ticketPdfService;
 
         public CustomerController(
             IBookingService bookingService, 
             ApplicationDbContext context, 
             ITicketQRService ticketQRService,
             IS3Service s3Service,
-            ILogger<CustomerController> logger)
+            ILogger<CustomerController> logger,
+            ITicketPdfService ticketPdfService)
         {
             _bookingService = bookingService;
             _context = context;
             _ticketQRService = ticketQRService;
             _s3Service = s3Service;
             _logger = logger;
+            _ticketPdfService = ticketPdfService;
         }
 
         [HttpGet("customer")]
@@ -232,6 +235,25 @@ namespace online_event_booking_system.Controllers.Customer
 
             ViewBag.QRCodeUrls = qrCodeUrls;
             return View(booking);
+        }
+
+        [HttpGet("customer/booking/{id}/tickets.pdf")]
+        public async Task<IActionResult> DownloadTicketsPdf(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account");
+
+            var booking = await _bookingService.GetBookingByIdAsync(id);
+            if (booking == null || booking.CustomerId != userId)
+                return NotFound();
+
+            var pdf = await _ticketPdfService.GenerateBookingTicketsPdfAsync(booking);
+            if (pdf == null || pdf.Length == 0)
+                return BadRequest("Could not generate PDF");
+
+            var fileName = $"tickets-{booking.BookingReference}.pdf";
+            return File(pdf, "application/pdf", fileName);
         }
 
         [HttpPost("customer/booking/{id}/cancel")]

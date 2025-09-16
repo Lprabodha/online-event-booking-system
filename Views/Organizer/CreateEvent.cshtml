@@ -114,8 +114,9 @@
 
                             <div>
                                 <label asp-for="TotalCapacity" class="block text-sm font-medium text-gray-300 mb-2">Total Capacity *</label>
-                                <input asp-for="TotalCapacity" type="number" min="1" max="100000" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
+                                <input asp-for="TotalCapacity" id="TotalCapacity" type="number" min="1" max="100000" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
                                 <span asp-validation-for="TotalCapacity" class="text-red-400 text-sm mt-1"></span>
+                                <p id="CapacityMismatchError" class="text-red-400 text-xs mt-1 hidden">Total capacity must equal the sum of all ticket quantities.</p>
                             </div>
                         </div>
                         
@@ -153,7 +154,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
                             <label asp-for="EventDate" class="block text-sm font-medium text-gray-300 mb-2">Start Date *</label>
-                            <input asp-for="EventDate" type="date" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer">
+                            <input asp-for="EventDate" type="date" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm cursor-pointer" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddMonths(6).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="EventDate" class="text-red-400 text-sm mt-1"></span>
                         </div>
                         
@@ -440,23 +441,34 @@
 
         // Capacity validation
         function updateCapacityValidation() {
-            const totalCapacity = document.getElementById('TotalCapacity').value || 0;
+            const totalCapacityEl = document.getElementById('TotalCapacity');
+            const submitBtn = document.getElementById('submitBtn');
+            const errorText = document.getElementById('CapacityMismatchError');
+            const totalCapacity = parseInt(totalCapacityEl.value) || 0;
             const stockInputs = document.querySelectorAll('input[name*="EventPrices"][name*="Stock"]');
             let totalStock = 0;
-            
             stockInputs.forEach(input => {
                 totalStock += parseInt(input.value) || 0;
             });
-            
-            document.getElementById('totalCapacityDisplay').textContent = totalStock;
-            document.getElementById('maxCapacityDisplay').textContent = totalCapacity;
-            
-            const validationDiv = document.querySelector('.bg-blue-500/10');
-            if (totalStock == totalCapacity) {
-                validationDiv.className = 'p-4 bg-green-500/10 border border-green-500/20 rounded-xl';
-            } else {
-                validationDiv.className = 'p-4 bg-red-500/10 border border-red-500/20 rounded-xl';
+            // Update preview counters
+            const totalDisplay = document.getElementById('totalCapacityDisplay');
+            const maxDisplay = document.getElementById('maxCapacityDisplay');
+            if (totalDisplay) totalDisplay.textContent = totalStock;
+            if (maxDisplay) maxDisplay.textContent = totalCapacity;
+            // Toggle banner color
+            const validationDiv = document.querySelector('.bg-blue-500/10, .bg-green-500/10, .bg-red-500/10');
+            if (validationDiv) {
+                validationDiv.className = (totalStock === totalCapacity)
+                    ? 'p-4 bg-green-500/10 border border-green-500/20 rounded-xl'
+                    : 'p-4 bg-red-500/10 border border-red-500/20 rounded-xl';
             }
+            // Show inline error (do not block submission; server validates as well)
+            const hasTickets = stockInputs.length > 0;
+            const capacityValid = hasTickets && totalStock === totalCapacity && totalCapacity > 0;
+            if (errorText) {
+                if (!capacityValid) errorText.classList.remove('hidden'); else errorText.classList.add('hidden');
+            }
+            // Keep submit enabled to allow server-side validation flow
         }
 
         // Form validation and submission
@@ -510,6 +522,9 @@
                 
                 if (!isValid) {
                     e.preventDefault();
+                    // reset loading state if blocked
+                    setLoadingState(submitBtn, false);
+                    isSubmitting = false;
                 }
             });
             
@@ -600,6 +615,7 @@
                 form.appendChild(draftInput);
                 
                 // Submit form
+                // For draft, allow mismatch but keep server-side checks; ensure main submit disabled state doesn't block draft
                 form.submit();
             });
         });

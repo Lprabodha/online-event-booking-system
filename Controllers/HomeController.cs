@@ -30,15 +30,17 @@ public class HomeController : Controller
             // Fetch active categories for the browse by category section
             var categories = (await _categoryService.GetActiveCategoriesAsync()).ToList();
             
-            // Fetch upcoming, latest, and this week's events
+            // Fetch upcoming, latest, this week's, and next week's events
             var upcomingEvents = await _eventService.GetUpcomingEventsAsync(6);
             var latestEvents = await _eventService.GetLatestEventsAsync(4);
             var eventsThisWeek = await _eventService.GetEventsThisWeekAsync(6);
+            var eventsNextWeek = await _eventService.GetEventsNextWeekAsync(6);
             
             // Process event images to convert S3 keys to URLs
             await ProcessEventImagesAsync(upcomingEvents);
             await ProcessEventImagesAsync(latestEvents);
             await ProcessEventImagesAsync(eventsThisWeek);
+            await ProcessEventImagesAsync(eventsNextWeek);
             
             // Create a view model to pass all data
             var viewModel = new HomePageViewModel
@@ -46,7 +48,8 @@ public class HomeController : Controller
                 Categories = categories,
                 UpcomingEvents = upcomingEvents,
                 LatestEvents = latestEvents,
-                EventsThisWeek = eventsThisWeek
+                EventsThisWeek = eventsThisWeek,
+                EventsNextWeek = eventsNextWeek
             };
             
             return View(viewModel);
@@ -163,7 +166,8 @@ public class HomeController : Controller
         {
             if (!string.IsNullOrEmpty(eventItem.Image))
             {
-                eventItem.Image = await _s3Service.GetImageUrlAsync(eventItem.Image);
+                // Use direct URL builder for correctness and performance (S3 or CDN)
+                eventItem.Image = _s3Service.GetDirectUrl(eventItem.Image);
             }
         }
     }

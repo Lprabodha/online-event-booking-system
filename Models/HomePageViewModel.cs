@@ -8,5 +8,6 @@ namespace online_event_booking_system.Models
         public List<Event> UpcomingEvents { get; set; } = new List<Event>();
         public List<Event> LatestEvents { get; set; } = new List<Event>();
         public List<Event> EventsThisWeek { get; set; } = new List<Event>();
+        public List<Event> EventsNextWeek { get; set; } = new List<Event>();
     }
 }

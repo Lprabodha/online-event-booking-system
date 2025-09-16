@@ -69,8 +69,8 @@
                     <div class="flex items-center justify-between mb-6">
                         <h2 class="text-xl font-bold">Sales Trend</h2>
                         <div class="flex space-x-2" role="tablist" aria-label="Sales range tabs">
-                            <button onclick="updateSalesTrend('7d')" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
-                            <button onclick="updateSalesTrend('30d')" role="tab" aria-selected="false" class="px-4 py-2 bg-dark-navy text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
+                            <button onclick="updateSalesTrend('7d', this)" role="tab" aria-selected="true" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">7D</button>
+                            <button onclick="updateSalesTrend('30d', this)" role="tab" aria-selected="false" class="px-4 py-2 bg-dark-navy text-gray-300 rounded-xl text-sm font-semibold hover:bg-white/20 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/60">30D</button>
                         </div>
                     </div>
                     <div class="h-64 relative">
@@ -260,8 +260,8 @@
     }
 
     // Server-prepared initial data (faster first paint)
-    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesLabels ?? new List<string>()));
-    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.SalesData ?? new List<decimal>()));
+    const initialSalesLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesLabels ?? new List<string>()));
+    const initialSalesData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SalesData ?? new List<decimal>()));
 
     // Chart initialization
     document.addEventListener('DOMContentLoaded', function() {
@@ -381,7 +381,7 @@
     }
 
     // Update Sales Trend Chart
-    async function updateSalesTrend(period) {
+    async function updateSalesTrend(period, el) {
         if (!salesTrendChart) {
             console.error('Sales trend chart not initialized');
             return;
@@ -392,8 +392,10 @@
             btn.classList.remove('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
             btn.classList.add('bg-dark-navy', 'text-gray-300');
         });
-        event.target.classList.remove('bg-dark-navy', 'text-gray-300');
-        event.target.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+        if (el) {
+            el.classList.remove('bg-dark-navy', 'text-gray-300');
+            el.classList.add('bg-gradient-to-r', 'from-purple-500', 'to-teal-500');
+        }
 
         try {
             // Load real data from API

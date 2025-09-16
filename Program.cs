@@ -99,6 +99,9 @@ builder.Services.AddScoped<IQRCodeService, QRCodeService>();
 // Ticket QR Service
 builder.Services.AddScoped<ITicketQRService, TicketQRService>();
 
+// Ticket PDF Service
+builder.Services.AddScoped<ITicketPdfService, TicketPdfService>();
+
 // Booking Service
 builder.Services.AddScoped<IBookingService, BookingService>();
 

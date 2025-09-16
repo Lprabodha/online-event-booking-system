@@ -513,6 +513,16 @@ namespace online_event_booking_system.Controllers.Organizer
                     return View(model);
                 }
 
+                // Validate event date is within next 6 months
+                var maxDate = DateTime.Today.AddMonths(6);
+                if (model.EventDate > maxDate)
+                {
+                    ModelState.AddModelError("EventDate", $"Event date must be within the next 6 months (on or before {maxDate:yyyy-MM-dd}).");
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    return View(model);
+                }
+
                 // Validate total capacity matches sum of ticket stocks
                 var totalTicketStock = model.EventPrices.Sum(ep => ep.Stock);
                 if (totalTicketStock != model.TotalCapacity)
@@ -639,10 +649,40 @@ namespace online_event_booking_system.Controllers.Organizer
                     return View(model);
                 }
 
-                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-                await _eventService.UpdateEventAsync(id, model, organizerId);
+                // Enforce event date within next 6 months and not in the past
+                if (model.EventDate < DateTime.Today)
+                {
+                    ModelState.AddModelError("EventDate", "Event date must be in the future");
+                }
+                var maxEditDate = DateTime.Today.AddMonths(6);
+                if (model.EventDate > maxEditDate)
+                {
+                    ModelState.AddModelError("EventDate", $"Event date must be within the next 6 months (on or before {maxEditDate:yyyy-MM-dd}).");
+                }
+                if (!ModelState.IsValid)
+                {
+                    model.Categories = await _eventService.GetCategoriesAsync();
+                    model.Venues = await _eventService.GetVenuesAsync();
+                    model.EventPrices ??= new List<EventPriceViewModel>();
+                    return View(model);
+                }
 
-                TempData["SuccessMessage"] = $"Event '{model.Title}' has been updated successfully!";
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                // Support Save as Draft for edit as in create
+                var isDraft = Request.Form["IsDraft"].ToString().Equals("true", StringComparison.OrdinalIgnoreCase);
+
+                var updated = await _eventService.UpdateEventAsync(id, model, organizerId);
+
+                if (isDraft)
+                {
+                    // Set to Draft explicitly
+                    await _eventService.UpdateEventStatusAsync(id, organizerId, "Draft");
+                    TempData["SuccessMessage"] = $"Event '{model.Title}' saved as Draft.";
+                }
+                else
+                {
+                    TempData["SuccessMessage"] = $"Event '{model.Title}' has been updated successfully!";
+                }
                 return RedirectToAction("Events");
             }
             catch (ArgumentException ex)

@@ -162,7 +162,7 @@ namespace online_event_booking_system.Business.Service
             eventEntity.RefundPolicy = model.RefundPolicy;
 
             // Handle image update
-            if (model.ImageFile != null)
+            if (model.ImageFile != null && model.ImageFile.Length > 0)
             {
                 var imageKey = await _s3Service.UploadFileAsync(model.ImageFile, "events");
                 eventEntity.Image = imageKey; // Save the S3 bucket path/key, not presigned URL
@@ -172,32 +172,56 @@ namespace online_event_booking_system.Business.Service
                 eventEntity.Image = model.ImageUrl;
             }
 
-            // Update event prices
+            // Update event prices (update existing by Id, add new, remove missing)
             var existingPrices = await _context.EventPrices
                 .Where(ep => ep.EventId == id)
                 .ToListAsync();
 
-            _context.EventPrices.RemoveRange(existingPrices);
+            var incomingById = (model.EventPrices ?? new List<EventPriceViewModel>())
+                .Where(p => p.Id.HasValue && p.Id.Value != Guid.Empty)
+                .ToDictionary(p => p.Id!.Value, p => p);
 
-            if (model.EventPrices != null)
+            // Update or delete existing
+            foreach (var existing in existingPrices)
             {
-                foreach (var priceModel in model.EventPrices)
+                if (incomingById.TryGetValue(existing.Id, out var incoming))
                 {
-                    var eventPrice = new EventPrice
-                    {
-                        Id = Guid.NewGuid(),
-                        EventId = eventEntity.Id,
-                        Category = priceModel.Category,
-                        Price = priceModel.Price,
-                        Stock = priceModel.Stock,
-                        IsActive = priceModel.IsActive,
-                        CreatedAt = DateTime.UtcNow,
-                        // Additional fields
-                        Description = priceModel.Description,
-                        PriceType = priceModel.PriceType ?? "Standard"
-                    };
-                    _context.EventPrices.Add(eventPrice);
+                    existing.Category = incoming.Category;
+                    existing.Price = incoming.Price;
+                    existing.Stock = incoming.Stock;
+                    existing.IsActive = incoming.IsActive;
+                    existing.Description = incoming.Description;
+                    existing.PriceType = incoming.PriceType ?? existing.PriceType;
+                    existing.UpdatedAt = DateTime.UtcNow;
+                    _context.EventPrices.Update(existing);
                 }
+                else
+                {
+                    // Not present in incoming list -> remove
+                    _context.EventPrices.Remove(existing);
+                }
+            }
+
+            // Add new prices (no Id)
+            var newPrices = (model.EventPrices ?? new List<EventPriceViewModel>())
+                .Where(p => !p.Id.HasValue || p.Id.Value == Guid.Empty)
+                .ToList();
+
+            foreach (var priceModel in newPrices)
+            {
+                var eventPrice = new EventPrice
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = eventEntity.Id,
+                    Category = priceModel.Category,
+                    Price = priceModel.Price,
+                    Stock = priceModel.Stock,
+                    IsActive = priceModel.IsActive,
+                    CreatedAt = DateTime.UtcNow,
+                    Description = priceModel.Description,
+                    PriceType = priceModel.PriceType ?? "Standard"
+                };
+                _context.EventPrices.Add(eventPrice);
             }
 
             await _context.SaveChangesAsync();
@@ -481,6 +505,27 @@ namespace online_event_booking_system.Business.Service
                            e.DeletedAt == null &&
                            e.EventDate >= startOfWeek &&
                            e.EventDate < endOfWeek)
+                .OrderBy(e => e.EventDate)
+                .Take(count)
+                .ToListAsync();
+        }
+
+        public async Task<List<Event>> GetEventsNextWeekAsync(int count = 6)
+        {
+            var now = DateTime.UtcNow;
+            var startOfWeek = now.Date.AddDays(-(int)now.DayOfWeek);
+            var startOfNextWeek = startOfWeek.AddDays(7);
+            var endOfNextWeek = startOfNextWeek.AddDays(7);
+
+            return await _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Venue)
+                .Include(e => e.Prices)
+                .Where(e => e.IsPublished &&
+                           e.Status == "Published" &&
+                           e.DeletedAt == null &&
+                           e.EventDate >= startOfNextWeek &&
+                           e.EventDate < endOfNextWeek)
                 .OrderBy(e => e.EventDate)
                 .Take(count)
                 .ToListAsync();

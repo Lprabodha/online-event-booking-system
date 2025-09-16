@@ -15,6 +15,7 @@ namespace online_event_booking_system.Business.Service
         private readonly IEmailService _emailService;
         private readonly ITicketQRService _ticketQRService;
         private readonly ILogger<BookingService> _logger;
+        private readonly ITicketPdfService _ticketPdfService;
 
         public BookingService(
             ApplicationDbContext context,
@@ -22,7 +23,8 @@ namespace online_event_booking_system.Business.Service
             IQRCodeService qrCodeService,
             IEmailService emailService,
             ITicketQRService ticketQRService,
-            ILogger<BookingService> logger)
+            ILogger<BookingService> logger,
+            ITicketPdfService ticketPdfService)
         {
             _context = context;
             _paymentService = paymentService;
@@ -30,6 +32,7 @@ namespace online_event_booking_system.Business.Service
             _emailService = emailService;
             _ticketQRService = ticketQRService;
             _logger = logger;
+            _ticketPdfService = ticketPdfService;
         }
 
         public async Task<CheckoutViewModel> GetCheckoutDataAsync(Guid eventId)
@@ -345,8 +348,59 @@ namespace online_event_booking_system.Business.Service
                 _context.Bookings.Update(booking);
                 await _context.SaveChangesAsync();
 
-                // Send comprehensive booking email with all tickets
-                await SendComprehensiveBookingEmailAsync(booking);
+                // Send comprehensive booking email with all tickets and attach PDF
+                try
+                {
+                    var pdf = await _ticketPdfService.GenerateBookingTicketsPdfAsync(booking);
+
+                    // Build ticket infos with async QR URL resolution
+                    var ticketInfoTasks = booking.Tickets.Select(async t =>
+                    {
+                        var qrUrl = await _ticketQRService.GetQRCodeUrlAsync(t.QRCode);
+                        return new online_event_booking_system.Helper.TicketInfo
+                        {
+                            TicketNumber = t.TicketNumber,
+                            Category = t.EventPrice?.Category ?? "General Admission",
+                            Description = t.EventPrice?.Description ?? "Standard ticket",
+                            Price = t.EventPrice?.Price ?? 0,
+                            QRCodeUrl = qrUrl
+                        };
+                    }).ToList();
+
+                    var ticketInfos = (await Task.WhenAll(ticketInfoTasks)).ToList();
+
+                    var emailBody = online_event_booking_system.Helper.EmailTemplates.GetMultiTicketBookingTemplate(
+                        customerName: booking.Customer.FullName,
+                        eventName: booking.Event.Title,
+                        eventDate: booking.Event.EventDate,
+                        venueName: booking.Event.Venue?.Name ?? "TBA",
+                        bookingReference: booking.BookingReference,
+                        tickets: ticketInfos
+                    );
+
+                    if (pdf != null && pdf.Length > 0)
+                    {
+                        await _emailService.SendEmailWithAttachmentAsync(
+                            booking.Customer.Email!,
+                            $"Your Tickets for {booking.Event.Title} - Star Events",
+                            emailBody,
+                            pdf,
+                            $"tickets-{booking.BookingReference}.pdf",
+                            "application/pdf");
+                    }
+                    else
+                    {
+                        await _emailService.SendEmailAsync(
+                            booking.Customer.Email!,
+                            $"Your Tickets for {booking.Event.Title} - Star Events",
+                            emailBody);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Error sending comprehensive booking email with PDF for booking {BookingId}", booking.Id);
+                    await SendComprehensiveBookingEmailAsync(booking);
+                }
 
                 // Award loyalty points
                 await AwardLoyaltyPointsAsync(booking.CustomerId, booking.Tickets.Count);

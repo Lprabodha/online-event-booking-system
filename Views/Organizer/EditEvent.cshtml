@@ -16,10 +16,14 @@
                         <p class="text-gray-400">Update your event details and settings</p>
                     </div>
                     <div class="mt-4 md:mt-0 flex space-x-3">
-                        <button class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200">
+                        @{
+                            var eventEntityHeader = ViewBag.EventEntity as online_event_booking_system.Data.Entities.Event;
+                            var eventIdHeader = eventEntityHeader?.Id.ToString() ?? (ViewContext.RouteData.Values["id"]?.ToString() ?? string.Empty);
+                        }
+                        <a href="@Url.Action("Details", "Events", new { id = eventIdHeader })" class="bg-white/10 border border-white/20 text-white px-4 py-2 rounded-xl hover:bg-white/20 transition-all duration-200">
                             View Event
-                        </button>
-                        <button class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                        </a>
+                        <button type="submit" form="editEventForm" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
                             Save Changes
                         </button>
                     </div>
@@ -30,12 +34,14 @@
             <section aria-label="Event Status" class="mb-8">
                 @{
                     var eventEntity = ViewBag.EventEntity as online_event_booking_system.Data.Entities.Event;
-                    var statusClass = eventEntity?.IsPublished == true ? "from-green-500/20 to-teal-500/20 border-green-500/30" : "from-yellow-500/20 to-orange-500/20 border-yellow-500/30";
-                    var statusDotClass = eventEntity?.IsPublished == true ? "bg-green-400" : "bg-yellow-400";
-                    var statusText = eventEntity?.IsPublished == true ? "Event is Live" : "Event is Draft";
-                    var statusDescription = eventEntity?.IsPublished == true ? "This event is currently published and accepting ticket sales" : "This event is in draft mode and not yet published";
+                    var isPublished = eventEntity?.IsPublished ?? false;
+                    var statusClass = isPublished ? "from-green-500/20 to-teal-500/20" : "from-yellow-500/20 to-orange-500/20";
+                    var borderClass = isPublished ? "border-green-500/30" : "border-yellow-500/30";
+                    var statusDotClass = isPublished ? "bg-green-400" : "bg-yellow-400";
+                    var statusText = isPublished ? "Event is Live" : "Event is Draft";
+                    var statusDescription = isPublished ? "This event is currently published and accepting ticket sales" : "This event is in draft mode and not yet published";
                 }
-                <div class="bg-gradient-to-r @statusClass border @statusClass.Split(' ')[1] rounded-2xl p-4">
+                <div class="bg-gradient-to-r @statusClass border @borderClass rounded-2xl p-4">
                     <div class="flex items-center space-x-3">
                         <div class="w-3 h-3 @statusDotClass rounded-full @(eventEntity?.IsPublished == true ? "animate-pulse" : "")"></div>
                         <div>
@@ -79,7 +85,7 @@
             </section>
 
             <!-- Event Edit Form -->
-            <form asp-action="EditEvent" asp-route-id="@ViewContext.RouteData.Values["id"]" method="post" enctype="multipart/form-data" class="space-y-8">
+            <form id="editEventForm" asp-action="EditEvent" asp-route-id="@(ViewContext.RouteData.Values["id"])" method="post" enctype="multipart/form-data" class="space-y-8">
                 @Html.AntiForgeryToken()
                 <!-- Basic Information -->
                 <section aria-label="Basic Information" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
@@ -135,14 +141,14 @@
                                 <div class="relative">
                                     @if (!string.IsNullOrEmpty(Model.ImageUrl))
                                     {
-                                        <img src="@Model.ImageUrl" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
+                                        <img id="currentEventImage" src="@Model.ImageUrl" alt="Event" class="w-full h-48 object-cover rounded-xl mb-4">
                                     }
                                     else
                                     {
-                                    <img src="~/images/placeholder.svg" alt="Event image" class="w-full h-48 object-cover rounded-xl mb-4">
+                                        <img id="currentEventImage" src="~/images/placeholder.svg" alt="Placeholder" class="w-full h-48 object-cover rounded-xl mb-4">
                                     }
                                 </div>
-                                <input asp-for="ImageFile" type="file" accept="image/*" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                                <input asp-for="ImageFile" id="ImageFile" type="file" accept="image/*" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
                                 <span asp-validation-for="ImageFile" class="text-red-400 text-sm"></span>
                                 <input asp-for="ImageUrl" type="hidden" />
                             </div>
@@ -156,7 +162,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         <div>
                             <label asp-for="EventDate" class="block text-sm font-medium text-gray-300 mb-2">Start Date *</label>
-                            <input asp-for="EventDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm">
+                            <input asp-for="EventDate" type="date" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" min="@DateTime.Today.ToString("yyyy-MM-dd")" max="@DateTime.Today.AddMonths(6).ToString("yyyy-MM-dd")">
                             <span asp-validation-for="EventDate" class="text-red-400 text-sm"></span>
                         </div>
                         
@@ -188,8 +194,9 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <label asp-for="TotalCapacity" class="block text-sm font-medium text-gray-300 mb-2">Total Capacity *</label>
-                                <input asp-for="TotalCapacity" type="number" min="1" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
+                                <input asp-for="TotalCapacity" id="TotalCapacity" type="number" min="1" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500 backdrop-blur-sm" placeholder="Maximum attendees">
                                 <span asp-validation-for="TotalCapacity" class="text-red-400 text-sm"></span>
+                                <p id="CapacityMismatchError" class="text-red-400 text-xs mt-1 hidden">Total capacity must equal the sum of all ticket quantities.</p>
                             </div>
                             
                             <div>
@@ -287,23 +294,43 @@
                 </section>
 
                 <!-- Event Analytics -->
+                @{
+                    // Make ViewBag analytics values null-safe to avoid runtime binder issues
+                    var totalTicketsSoldObj = ViewBag.TotalTicketsSold;
+                    var totalTicketsSold = totalTicketsSoldObj != null ? totalTicketsSoldObj.ToString() : "0";
+
+                    decimal totalRevenueVal = 0m;
+                    if (ViewBag.TotalRevenue != null)
+                    {
+                        try { totalRevenueVal = Convert.ToDecimal(ViewBag.TotalRevenue); } catch { totalRevenueVal = 0m; }
+                    }
+
+                    double capacityUsedVal = 0.0;
+                    if (ViewBag.CapacityUsedPercentage != null)
+                    {
+                        try { capacityUsedVal = Convert.ToDouble(ViewBag.CapacityUsedPercentage); } catch { capacityUsedVal = 0.0; }
+                    }
+
+                    var remainingTicketsObj = ViewBag.RemainingTickets;
+                    var remainingTickets = remainingTicketsObj != null ? remainingTicketsObj.ToString() : "0";
+                }
                 <section aria-label="Event Analytics" class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h2 class="text-xl font-bold mb-6">Event Performance</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-green-400">@ViewBag.TotalTicketsSold</p>
+                            <p class="text-3xl font-bold text-green-400">@totalTicketsSold</p>
                             <p class="text-gray-400 text-sm">Tickets Sold</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-blue-400">LKR @ViewBag.TotalRevenue.ToString("N2")</p>
+                            <p class="text-3xl font-bold text-blue-400">LKR @totalRevenueVal.ToString("N2")</p>
                             <p class="text-gray-400 text-sm">Revenue</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-purple-400">@ViewBag.CapacityUsedPercentage.ToString("F1")%</p>
+                            <p class="text-3xl font-bold text-purple-400">@capacityUsedVal.ToString("F1")%</p>
                             <p class="text-gray-400 text-sm">Capacity Used</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-teal-400">@ViewBag.RemainingTickets</p>
+                            <p class="text-3xl font-bold text-teal-400">@remainingTickets</p>
                             <p class="text-gray-400 text-sm">Remaining</p>
                         </div>
                     </div>
@@ -477,6 +504,9 @@
             const form = document.querySelector('form');
             const submitBtn = document.getElementById('submitBtn');
             const draftBtn = document.getElementById('draftBtn');
+            const imageInput = document.getElementById('ImageFile');
+            const currentImg = document.getElementById('currentEventImage');
+            const totalCapacityEl = document.getElementById('TotalCapacity');
 
             if (form && submitBtn) {
                 // Handle form submission
@@ -517,6 +547,45 @@
                     // Submit form
                     form.submit();
                 });
+            }
+
+            // Live preview selected image
+            if (imageInput && currentImg) {
+                imageInput.addEventListener('change', function() {
+                    const file = this.files && this.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = function(evt) {
+                        currentImg.src = evt.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                });
+            }
+
+            // Capacity validation for edit: disable submit on mismatch
+            function updateCapacityValidationEdit() {
+                const errorText = document.getElementById('CapacityMismatchError');
+                const stockInputs = document.querySelectorAll('input[name*="EventPrices"][name*="Stock"]');
+                let totalStock = 0;
+                stockInputs.forEach(input => totalStock += parseInt(input.value) || 0);
+                const totalCapacity = parseInt(totalCapacityEl?.value) || 0;
+                const hasTickets = stockInputs.length > 0;
+                const capacityValid = hasTickets && totalStock === totalCapacity && totalCapacity > 0;
+                if (errorText) {
+                    if (!capacityValid) errorText.classList.remove('hidden'); else errorText.classList.add('hidden');
+                }
+                if (submitBtn) submitBtn.disabled = !capacityValid;
+            }
+
+            if (totalCapacityEl) {
+                totalCapacityEl.addEventListener('input', updateCapacityValidationEdit);
+                document.addEventListener('input', function(e) {
+                    if (e.target && e.target.name && e.target.name.includes('EventPrices') && e.target.name.includes('Stock')) {
+                        updateCapacityValidationEdit();
+                    }
+                });
+                // Initialize
+                updateCapacityValidationEdit();
             }
         });
 

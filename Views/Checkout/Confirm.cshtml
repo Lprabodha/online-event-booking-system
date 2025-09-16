@@ -120,7 +120,7 @@
                                                                 ? ViewBag.QRCodeUrls[ticket.Id] 
                                                                 : ticket.QRCode; // Fallback to direct path
                                                         }
-                                                        <img src="@qrCodeUrl" alt="QR Code" class="w-36 h-36 rounded-xl border-2 border-slate-600 shadow-2xl bg-white p-2" />
+                                                        <img src="@qrCodeUrl" alt="QR Code" class="w-36 h-36 rounded-xl border-2 border-slate-600 shadow-2xl bg-white p-2" loading="lazy" decoding="async" />
                                                         <a href="@qrCodeUrl" download="@($"ticket-{ticket.TicketNumber}.png")" 
                                                            class="absolute -bottom-2 -right-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white p-3 rounded-full shadow-xl hover:from-blue-600 hover:to-blue-700 transition-all transform hover:scale-110"
                                                            title="Download QR Code">
@@ -290,6 +290,15 @@
                         </svg>
                         Browse More Events
                     </a>
+                    @if (Model.Status == "Confirmed")
+                    {
+                        <a href="@Url.Action("DownloadTicketsPdf","Customer", new { id = Model.Id })" class="w-full inline-flex justify-center items-center px-6 py-3 border border-transparent shadow-xl text-sm font-bold rounded-xl text-white bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 transition-all duration-300 transform hover:scale-105">
+                            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download Tickets (PDF)
+                        </a>
+                    }
                 </div>
             </div>
         </div>

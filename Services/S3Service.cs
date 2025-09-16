@@ -2,6 +2,7 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
 using System.Text;
+using online_event_booking_system.Models;
 
 namespace online_event_booking_system.Services
 {
@@ -9,12 +10,16 @@ namespace online_event_booking_system.Services
     {
         private readonly IAmazonS3? _s3Client;
         private readonly string _bucketName;
+        private readonly string _region;
+        private readonly string? _cdnBaseUrl;
         private readonly ILogger<S3Service> _logger;
 
         public S3Service(IAmazonS3? s3Client, IConfiguration configuration, ILogger<S3Service> logger)
         {
             _s3Client = s3Client;
-            _bucketName = configuration["AWS:S3BucketName"] ?? "event-booking-images";
+            _bucketName = configuration["AWS:S3BucketName"] ?? configuration["AWS:S3BucketName"] ?? "event-booking-images";
+            _region = configuration["AWS:Region"] ?? "us-east-1";
+            _cdnBaseUrl = configuration["AWS:CdnBaseUrl"];
             _logger = logger;
         }
 
@@ -51,6 +56,9 @@ namespace online_event_booking_system.Services
                     ContentType = file.ContentType,
                     ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
                 };
+
+                // Long-term caching for immutable assets like QR codes and images
+                request.Headers.CacheControl = "public, max-age=31536000, immutable";
 
                 await _s3Client.PutObjectAsync(request);
                 return key;
@@ -114,6 +122,9 @@ namespace online_event_booking_system.Services
                     ContentType = contentType,
                     ServerSideEncryptionMethod = ServerSideEncryptionMethod.AES256
                 };
+
+                // Long-term caching for immutable assets like QR codes and images
+                request.Headers.CacheControl = "public, max-age=31536000, immutable";
 
                 await _s3Client.PutObjectAsync(request);
                 return key;
@@ -197,8 +208,7 @@ namespace online_event_booking_system.Services
                 if (key.StartsWith("/"))
                     return key;
 
-                // Use the specific AWS URL provided by user
-                return $"https://tunercats.s3.us-east-1.amazonaws.com/{key}";
+                return BuildPublicUrl(key);
             }
             catch (Exception ex)
             {
@@ -222,8 +232,7 @@ namespace online_event_booking_system.Services
                 if (imagePath.StartsWith("/"))
                     return imagePath;
 
-                // Use the specific AWS URL provided by user
-                return $"https://tunercats.s3.us-east-1.amazonaws.com/{imagePath}";
+                return BuildPublicUrl(imagePath);
             }
             catch (Exception ex)
             {
@@ -247,14 +256,24 @@ namespace online_event_booking_system.Services
             if (key.StartsWith("/"))
                 return key;
 
-            // Use the specific AWS URL provided by user
-            return $"https://tunercats.s3.us-east-1.amazonaws.com/{key}";
+            return BuildPublicUrl(key);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error generating direct URL for key: {Key}", key);
             return key;
         }
+    }
+
+    private string BuildPublicUrl(string key)
+    {
+        if (!string.IsNullOrEmpty(_cdnBaseUrl))
+        {
+            return _cdnBaseUrl!.TrimEnd('/') + "/" + key.TrimStart('/');
+        }
+
+        // Default to virtual-hosted–style S3 URL
+        return $"https://{_bucketName}.s3.{_region}.amazonaws.com/{key}";
     }
     }
 }
