@@ -12,6 +12,7 @@
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="4.0.3" />
     <PackageReference Include="AWSSDK.S3" Version="4.0.7.1" />
     <PackageReference Include="ClosedXML" Version="0.105.0" />
+    <PackageReference Include="iTextSharp.LGPLv2.Core" Version="3.7.6" />
     <PackageReference Include="MailKit" Version="4.13.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.13" />
@@ -22,7 +23,6 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="MimeKit" Version="4.13.0" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
-    <PackageReference Include="QuestPDF" Version="2025.7.1" />
     <PackageReference Include="Stripe.net" Version="45.4.0" />
     <PackageReference Include="QRCoder" Version="1.6.0" />
   </ItemGroup>

@@ -3,9 +3,8 @@ using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Models;
 using online_event_booking_system.Repository.Interface;
 using online_event_booking_system.Data.Entities;
-using QuestPDF.Fluent;
-using QuestPDF.Helpers;
-using QuestPDF.Infrastructure;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 using System.Text;
 
 namespace online_event_booking_system.Business.Service
@@ -25,10 +24,10 @@ namespace online_event_booking_system.Business.Service
             {
                 case "events":
                     var events = await _reportRepository.GetEventsAsync(dateFrom, dateTo, category, organizer);
-                    return GenerateFile(events, format, "Events");
+                    return GenerateEventReport(events, format, dateFrom, dateTo, category, organizer);
                 case "users":
                     var users = await _reportRepository.GetUsersAsync(dateFrom, dateTo, role);
-                    return GenerateFile(users, format, "Users");
+                    return GenerateUserReport(users, format, dateFrom, dateTo, role);
                 case "organizers":
                     var organizers = await _reportRepository.GetOrganizersAsync(dateFrom, dateTo);
                     return GenerateFile(organizers, format, "Organizers");
@@ -77,6 +76,67 @@ namespace online_event_booking_system.Business.Service
             return allReports.OrderByDescending(r => r.Generated);
         }
 
+        // Generate User Report with specific columns and formatting
+        private byte[] GenerateUserReport(IEnumerable<ApplicationUser> users, string format, DateTime? dateFrom, DateTime? dateTo, string role)
+        {
+            var userData = users.Select(u => new UserReportData
+            {
+                FullName = u.FullName ?? "",
+                Username = u.UserName ?? "",
+                Email = u.Email ?? "",
+                NIC = u.NIC ?? "",
+                Address = u.Address ?? "",
+                Status = u.IsActive ? "Active" : "Inactive",
+                CreatedAt = u.CreatedAt.ToString("MMM dd, yyyy"),
+                Role = role ?? "All Roles"
+            }).ToList();
+
+            var filterDetails = $"Date Range: {(dateFrom?.ToString("MMM dd, yyyy") ?? "All")} - {(dateTo?.ToString("MMM dd, yyyy") ?? "All")} | Role: {role ?? "All"}";
+
+            if (format.ToLower() == "excel")
+            {
+                return GenerateUserExcel(userData, filterDetails);
+            }
+            else if (format.ToLower() == "pdf")
+            {
+                return GenerateUserPdf(userData, filterDetails);
+            }
+            else
+            {
+                return GenerateFile(userData, format, "Users");
+            }
+        }
+
+        // Generate Event Report with specific columns and formatting
+        private byte[] GenerateEventReport(IEnumerable<Event> events, string format, DateTime? dateFrom, DateTime? dateTo, string category, string organizer)
+        {
+            var eventData = events.Select(e => new EventReportData
+            {
+                EventTitle = e.Title ?? "",
+                Category = e.Category?.Name ?? "",
+                Organizer = e.Organizer?.FullName ?? "",
+                EventDate = e.EventDate.ToString("MMM dd, yyyy"),
+                Capacity = e.TotalCapacity,
+                Status = e.Status?.ToString() ?? "",
+                CreatedDate = e.CreatedAt.ToString("MMM dd, yyyy")
+            }).ToList();
+
+            var filterDetails = $"Date Range: {(dateFrom?.ToString("MMM dd, yyyy") ?? "All")} - {(dateTo?.ToString("MMM dd, yyyy") ?? "All")} | Category: {category ?? "All"} | Organizer: {organizer ?? "All"}";
+
+            if (format.ToLower() == "excel")
+            {
+                return GenerateEventExcel(eventData, filterDetails);
+            }
+            else if (format.ToLower() == "pdf")
+            {
+                return GenerateEventPdf(eventData, filterDetails);
+            }
+            else
+            {
+                return GenerateFile(eventData, format, "Events");
+            }
+        }
+
         private byte[] GenerateFile<T>(IEnumerable<T> data, string format, string sheetName)
         {
             if (format.ToLower() == "excel")
@@ -110,60 +170,58 @@ namespace online_event_booking_system.Business.Service
             return stream.ToArray();
         }
 
-        // Generates a PDF file using QuestPDF
+        // Generates a PDF file using iTextSharp
         private byte[] GeneratePdf<T>(IEnumerable<T> data, string reportTitle)
         {
-            var document = Document.Create(container =>
+            using var memoryStream = new MemoryStream();
+            var document = new Document(PageSize.A4, 25, 25, 30, 30);
+            var writer = PdfWriter.GetInstance(document, memoryStream);
+            
+            document.Open();
+
+            // Add title
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, new BaseColor(0, 0, 255));
+            var title = new Paragraph(reportTitle + " Report", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            document.Add(title);
+            document.Add(new Paragraph("\n"));
+
+            // Create table
+            var properties = typeof(T).GetProperties();
+            var table = new PdfPTable(properties.Length);
+            table.WidthPercentage = 100;
+
+            // Add headers
+            var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8);
+            foreach (var prop in properties)
             {
-                container.Page(page =>
+                var cell = new PdfPCell(new Phrase(prop.Name, headerFont));
+                cell.BackgroundColor = new BaseColor(211, 211, 211);
+                cell.Padding = 5;
+                table.AddCell(cell);
+            }
+
+            // Add data rows
+            var dataFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            foreach (var item in data)
+            {
+                foreach (var prop in properties)
                 {
-                    page.Margin(25);
+                    var value = prop.GetValue(item);
+                    var displayValue = value switch
+                    {
+                        DateTime dt => dt.ToString("MMM dd, yyyy"),
+                        null => "",
+                        _ => value?.ToString() ?? ""
+                    };
+                    table.AddCell(new PdfPCell(new Phrase(displayValue, dataFont)) { Padding = 5 });
+                }
+            }
 
-                    page.Header()
-                        .Text(reportTitle + " Report")
-                        .SemiBold().FontSize(18).FontColor(Colors.Blue.Medium);
+            document.Add(table);
+            document.Close();
 
-                    page.Content()
-                        .PaddingVertical(1, Unit.Centimetre)
-                        .Table(table =>
-                        {
-                            var properties = typeof(T).GetProperties();
-                            
-                            table.ColumnsDefinition(columns =>
-                            {
-                                // Create columns based on the number of properties
-                                for (int i = 0; i < properties.Length; i++)
-                                {
-                                    columns.RelativeColumn();
-                                }
-                            });
-
-                            // Header row
-                            foreach (var prop in properties)
-                            {
-                                table.Cell().Background(Colors.Grey.Lighten3).Padding(5).Text(prop.Name).SemiBold();
-                            }
-
-                            // Data rows
-                            foreach (var item in data)
-                            {
-                                foreach (var prop in properties)
-                                {
-                                    var value = prop.GetValue(item);
-                                    var displayValue = value switch
-                                    {
-                                        DateTime dt => dt.ToString("MMM dd, yyyy"),
-                                        null => "",
-                                        _ => value.ToString()
-                                    };
-                                    table.Cell().Padding(5).Text(displayValue);
-                                }
-                            }
-                        });
-                });
-            });
-
-            return document.GeneratePdf();
+            return memoryStream.ToArray();
         }
 
         // Generates a CSV file manually
@@ -182,5 +240,237 @@ namespace online_event_booking_system.Business.Service
 
             return Encoding.UTF8.GetBytes(csvContent.ToString());
         }
+
+        // Generate User Excel Report
+        private byte[] GenerateUserExcel(List<UserReportData> userData, string filterDetails)
+        {
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("User Report");
+
+            // Add title and filter details
+            worksheet.Cell(1, 1).Value = "USER REPORT";
+            worksheet.Cell(1, 1).Style.Font.Bold = true;
+            worksheet.Cell(1, 1).Style.Font.FontSize = 16;
+            worksheet.Cell(1, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
+
+            worksheet.Cell(2, 1).Value = "Generated Date: " + DateTime.Now.ToString("MMM dd, yyyy HH:mm");
+            worksheet.Cell(3, 1).Value = "Filter Details: " + filterDetails;
+
+            // Add headers
+            var headers = new[] { "Full Name", "Username", "Email", "NIC", "Address", "Status", "Created At", "Role" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                worksheet.Cell(5, i + 1).Value = headers[i];
+                worksheet.Cell(5, i + 1).Style.Font.Bold = true;
+                worksheet.Cell(5, i + 1).Style.Fill.BackgroundColor = XLColor.Gray;
+            }
+
+            // Add data
+            int row = 6;
+            foreach (var user in userData)
+            {
+                worksheet.Cell(row, 1).Value = user.FullName;
+                worksheet.Cell(row, 2).Value = user.Username;
+                worksheet.Cell(row, 3).Value = user.Email;
+                worksheet.Cell(row, 4).Value = user.NIC;
+                worksheet.Cell(row, 5).Value = user.Address;
+                worksheet.Cell(row, 6).Value = user.Status;
+                worksheet.Cell(row, 7).Value = user.CreatedAt;
+                worksheet.Cell(row, 8).Value = user.Role;
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        // Generate Event Excel Report
+        private byte[] GenerateEventExcel(List<EventReportData> eventData, string filterDetails)
+        {
+            using var workbook = new XLWorkbook();
+            var worksheet = workbook.Worksheets.Add("Event Report");
+
+            // Add title and filter details
+            worksheet.Cell(1, 1).Value = "EVENT REPORT";
+            worksheet.Cell(1, 1).Style.Font.Bold = true;
+            worksheet.Cell(1, 1).Style.Font.FontSize = 16;
+            worksheet.Cell(1, 1).Style.Fill.BackgroundColor = XLColor.LightBlue;
+
+            worksheet.Cell(2, 1).Value = "Generated Date: " + DateTime.Now.ToString("MMM dd, yyyy HH:mm");
+            worksheet.Cell(3, 1).Value = "Filter Details: " + filterDetails;
+
+            // Add headers
+            var headers = new[] { "Event Title", "Category", "Organizer", "Event Date", "Capacity", "Status", "Created Date" };
+            for (int i = 0; i < headers.Length; i++)
+            {
+                worksheet.Cell(5, i + 1).Value = headers[i];
+                worksheet.Cell(5, i + 1).Style.Font.Bold = true;
+                worksheet.Cell(5, i + 1).Style.Fill.BackgroundColor = XLColor.Gray;
+            }
+
+            // Add data
+            int row = 6;
+            foreach (var eventItem in eventData)
+            {
+                worksheet.Cell(row, 1).Value = eventItem.EventTitle;
+                worksheet.Cell(row, 2).Value = eventItem.Category;
+                worksheet.Cell(row, 3).Value = eventItem.Organizer;
+                worksheet.Cell(row, 4).Value = eventItem.EventDate;
+                worksheet.Cell(row, 5).Value = eventItem.Capacity;
+                worksheet.Cell(row, 6).Value = eventItem.Status;
+                worksheet.Cell(row, 7).Value = eventItem.CreatedDate;
+                row++;
+            }
+
+            // Auto-fit columns
+            worksheet.Columns().AdjustToContents();
+
+            using var stream = new MemoryStream();
+            workbook.SaveAs(stream);
+            return stream.ToArray();
+        }
+
+        // Generate User PDF Report
+        private byte[] GenerateUserPdf(List<UserReportData> userData, string filterDetails)
+        {
+            using var memoryStream = new MemoryStream();
+            var document = new Document(PageSize.A4, 25, 25, 30, 30);
+            var writer = PdfWriter.GetInstance(document, memoryStream);
+            
+            document.Open();
+
+            // Add title
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, new BaseColor(0, 0, 255));
+            var title = new Paragraph("USER REPORT", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            document.Add(title);
+            document.Add(new Paragraph("\n"));
+
+            // Add generation date and filter details
+            var infoFont = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+            document.Add(new Paragraph($"Generated Date: {DateTime.Now:MMM dd, yyyy HH:mm}", infoFont));
+            document.Add(new Paragraph($"Filter Details: {filterDetails}", infoFont));
+            document.Add(new Paragraph("\n"));
+
+            // Create table
+            var table = new PdfPTable(8); // 8 columns including email
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 2f, 1.5f, 2f, 1.5f, 2f, 1f, 1.5f, 1f });
+
+            // Add headers
+            var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8);
+            var headers = new[] { "Full Name", "Username", "Email", "NIC", "Address", "Status", "Created At", "Role" };
+            foreach (var header in headers)
+            {
+                var cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.BackgroundColor = new BaseColor(211, 211, 211);
+                cell.Padding = 5;
+                table.AddCell(cell);
+            }
+
+            // Add data rows
+            var dataFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            foreach (var user in userData)
+            {
+                table.AddCell(new PdfPCell(new Phrase(user.FullName, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.Username, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.Email, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.NIC, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.Address, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.Status, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.CreatedAt, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(user.Role, dataFont)) { Padding = 5 });
+            }
+
+            document.Add(table);
+            document.Close();
+
+            return memoryStream.ToArray();
+        }
+
+        // Generate Event PDF Report
+        private byte[] GenerateEventPdf(List<EventReportData> eventData, string filterDetails)
+        {
+            using var memoryStream = new MemoryStream();
+            var document = new Document(PageSize.A4, 25, 25, 30, 30);
+            var writer = PdfWriter.GetInstance(document, memoryStream);
+            
+            document.Open();
+
+            // Add title
+            var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18, new BaseColor(0, 0, 255));
+            var title = new Paragraph("EVENT REPORT", titleFont);
+            title.Alignment = Element.ALIGN_CENTER;
+            document.Add(title);
+            document.Add(new Paragraph("\n"));
+
+            // Add generation date and filter details
+            var infoFont = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+            document.Add(new Paragraph($"Generated Date: {DateTime.Now:MMM dd, yyyy HH:mm}", infoFont));
+            document.Add(new Paragraph($"Filter Details: {filterDetails}", infoFont));
+            document.Add(new Paragraph("\n"));
+
+            // Create table
+            var table = new PdfPTable(7); // 7 columns
+            table.WidthPercentage = 100;
+            table.SetWidths(new float[] { 2.5f, 1.5f, 2f, 1.5f, 1f, 1.5f, 1.5f });
+
+            // Add headers
+            var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 8);
+            var headers = new[] { "Event Title", "Category", "Organizer", "Event Date", "Capacity", "Status", "Created Date" };
+            foreach (var header in headers)
+            {
+                var cell = new PdfPCell(new Phrase(header, headerFont));
+                cell.BackgroundColor = new BaseColor(211, 211, 211);
+                cell.Padding = 5;
+                table.AddCell(cell);
+            }
+
+            // Add data rows
+            var dataFont = FontFactory.GetFont(FontFactory.HELVETICA, 8);
+            foreach (var eventItem in eventData)
+            {
+                table.AddCell(new PdfPCell(new Phrase(eventItem.EventTitle, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.Category, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.Organizer, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.EventDate, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.Capacity.ToString(), dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.Status, dataFont)) { Padding = 5 });
+                table.AddCell(new PdfPCell(new Phrase(eventItem.CreatedDate, dataFont)) { Padding = 5 });
+            }
+
+            document.Add(table);
+            document.Close();
+
+            return memoryStream.ToArray();
+        }
+    }
+
+    // Data classes for report generation
+    public class UserReportData
+    {
+        public string FullName { get; set; } = "";
+        public string Username { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string NIC { get; set; } = "";
+        public string Address { get; set; } = "";
+        public string Status { get; set; } = "";
+        public string CreatedAt { get; set; } = "";
+        public string Role { get; set; } = "";
+    }
+
+    public class EventReportData
+    {
+        public string EventTitle { get; set; } = "";
+        public string Category { get; set; } = "";
+        public string Organizer { get; set; } = "";
+        public string EventDate { get; set; } = "";
+        public int Capacity { get; set; }
+        public string Status { get; set; } = "";
+        public string CreatedDate { get; set; } = "";
     }
 }
