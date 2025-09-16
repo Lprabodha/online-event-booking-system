@@ -40,7 +40,7 @@ namespace online_event_booking_system.Services
                     eventId, 
                     customerId, 
                     ticketNumber, 
-                    300); // Higher resolution for better quality
+                    220);
 
                 if (qrCodeBytes == null || qrCodeBytes.Length == 0)
                 {

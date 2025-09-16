@@ -7,6 +7,7 @@ using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Services;
 using System.Security.Claims;
 using System.Linq;
+using Microsoft.AspNetCore.Identity;
 
 namespace online_event_booking_system.Controllers.Customer
 {
@@ -20,6 +21,7 @@ namespace online_event_booking_system.Controllers.Customer
         private readonly ILogger<CustomerController> _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly ICustomerPdfService _customerPdfService;
 
         public CustomerController(
             IBookingService bookingService, 
@@ -28,7 +30,8 @@ namespace online_event_booking_system.Controllers.Customer
             IS3Service s3Service,
             ILogger<CustomerController> logger,
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager,
+            ICustomerPdfService customerPdfService)
         {
             _bookingService = bookingService;
             _context = context;
@@ -37,6 +40,7 @@ namespace online_event_booking_system.Controllers.Customer
             _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
+            _customerPdfService = customerPdfService;
         }
 
         [HttpGet("customer")]
@@ -267,6 +271,38 @@ namespace online_event_booking_system.Controllers.Customer
 
             ViewBag.QRCodeUrls = qrCodeUrls;
             return View(booking);
+        }
+
+        [HttpGet("customer/booking/{id}/tickets.pdf")]
+        public async Task<IActionResult> DownloadTickets(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account");
+
+            var booking = await _bookingService.GetBookingByIdAsync(id);
+            if (booking == null || booking.CustomerId != userId)
+                return NotFound();
+
+            var bytes = await _customerPdfService.GenerateTicketsPdfAsync(booking);
+            var fileName = $"tickets_{booking.BookingReference}.pdf";
+            return File(bytes, "application/pdf", fileName);
+        }
+
+        [HttpGet("customer/booking/{id}/invoice.pdf")]
+        public async Task<IActionResult> DownloadInvoice(Guid id)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userId))
+                return RedirectToAction("Login", "Account");
+
+            var booking = await _bookingService.GetBookingByIdAsync(id);
+            if (booking == null || booking.CustomerId != userId)
+                return NotFound();
+
+            var bytes = await _customerPdfService.GenerateInvoicePdfAsync(booking);
+            var fileName = $"invoice_{booking.BookingReference}.pdf";
+            return File(bytes, "application/pdf", fileName);
         }
 
         [HttpPost("customer/booking/{id}/cancel")]

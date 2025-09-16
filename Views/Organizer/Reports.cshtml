@@ -215,11 +215,11 @@
                                 var statusClass = new Func<string, string>(s => s == "Completed" ? "bg-green-500/20 text-green-400" : s == "Published" || s == "Live" ? "bg-blue-500/20 text-blue-400" : s == "Upcoming" ? "bg-yellow-500/20 text-yellow-400" : "bg-white/10 text-gray-300");
                                 foreach (var row in Model.TopEvents)
                                 {
-                                    <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
-                                        <td class="py-3">
+                                <tr class="border-b border-white/5 hover:bg-white/5 transition-all">
+                                    <td class="py-3">
                                             <p class="text-white font-medium">@row.Title</p>
                                             <p class="text-gray-400 text-sm">@row.EventId</p>
-                                        </td>
+                                    </td>
                                         <td class="py-3 text-gray-300">@row.EventDate:MMM dd, yyyy</td>
                                         <td class="py-3 text-gray-300">@row.TicketsSold</td>
                                         <td class="py-3 text-gray-300">$@row.Revenue.ToString("N0")</td>
@@ -248,17 +248,17 @@
                         @if (Model.CategorySales != null && Model.CategorySales.Any())
                         {
                             foreach (var cs in Model.CategorySales)
-                            {
-                                <div class="flex items-center justify-between">
-                                    <div class="flex items-center space-x-3">
+                        {
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-3">
                                         <div class="w-3 h-3 @cs.ColorClass rounded-full"></div>
                                         <span class="text-gray-300">@cs.CategoryName</span>
-                                    </div>
+                                </div>
                                     <span class="text-white font-semibold">@cs.Percentage%</span>
-                                </div>
-                                <div class="w-full bg-dark-navy rounded-full h-2">
+                            </div>
+                            <div class="w-full bg-dark-navy rounded-full h-2">
                                     <div class="@cs.ColorClass h-2 rounded-full" style="width: @cs.Percentage%"></div>
-                                </div>
+                            </div>
                             }
                         }
                         else
@@ -275,14 +275,14 @@
                         @if (Model.RecentActivities != null && Model.RecentActivities.Any())
                         {
                             foreach (var a in Model.RecentActivities)
-                            {
-                                <div class="flex items-start space-x-3">
-                                    <div class="w-2 h-2 bg-green-400 rounded-full mt-2"></div>
-                                    <div>
+                        {
+                            <div class="flex items-start space-x-3">
+                                <div class="w-2 h-2 bg-green-400 rounded-full mt-2"></div>
+                                <div>
                                         <p class="text-white text-sm">@a.Description</p>
                                         <p class="text-gray-400 text-xs">@a.WhenText</p>
-                                    </div>
                                 </div>
+                            </div>
                             }
                         }
                         else
@@ -479,7 +479,7 @@
             const data7 = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueData7d ?? new List<decimal>()));
             const labels30 = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueLabels30d ?? new List<string>()));
             const data30 = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.RevenueData30d ?? new List<decimal>()));
-
+            
             revenueChart = new Chart(ctx, {
                 type: 'line',
                 data: {
