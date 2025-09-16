@@ -1,0 +1,66 @@
+@model IEnumerable<online_event_booking_system.Data.Entities.ApplicationUser>
+@using Microsoft.AspNetCore.Identity
+@using online_event_booking_system.Data.Entities
+@inject UserManager<ApplicationUser> UserManager
+
+@if (Model != null && Model.Any())
+{
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-white/5 border-b border-white/10">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Full Name</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Email</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Contact Number</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Role</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Created Date</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10">
+                @foreach (var user in Model)
+                {
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="px-6 py-4 text-white">@user.FullName</td>
+                        <td class="px-6 py-4 text-gray-300">@user.Email</td>
+                        <td class="px-6 py-4 text-gray-300">@user.ContactNumber</td>
+                        <td class="px-6 py-4">
+                            @{
+                                var userRoles = await UserManager.GetRolesAsync(user);
+                                var role = userRoles.FirstOrDefault() ?? "User";
+                                var roleColor = role switch
+                                {
+                                    "Admin" => "bg-red-500/20 text-red-400",
+                                    "Organizer" => "bg-blue-500/20 text-blue-400",
+                                    "Customer" => "bg-green-500/20 text-green-400",
+                                    _ => "bg-gray-500/20 text-gray-400"
+                                };
+                            }
+                            <span class="px-3 py-1 @roleColor rounded-full text-sm font-medium">@role</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-300">@user.CreatedAt.ToString("MMM dd, yyyy")</td>
+                        <td class="px-6 py-4">
+                            @if (user.IsActive)
+                            {
+                                <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-medium">Active</span>
+                            }
+                            else
+                            {
+                                <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm font-medium">Inactive</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4 text-sm text-gray-400">
+        <p>Total Users: @Model.Count()</p>
+    </div>
+}
+else
+{
+    <div class="text-center text-gray-400 py-8">
+        <p>No users found for the selected criteria.</p>
+    </div>
+}

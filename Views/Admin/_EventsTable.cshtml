@@ -1,0 +1,57 @@
+@model IEnumerable<online_event_booking_system.Data.Entities.Event>
+
+@if (Model != null && Model.Any())
+{
+    <div class="overflow-x-auto">
+        <table class="w-full">
+            <thead class="bg-white/5 border-b border-white/10">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Event Title</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Category</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Organizer</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Event Date</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Capacity</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Status</th>
+                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-300">Created Date</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10">
+                @foreach (var evt in Model)
+                {
+                    <tr class="hover:bg-white/5 transition-colors">
+                        <td class="px-6 py-4 text-white">@evt.Title</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-sm font-medium">@evt.Category?.Name</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-300">@evt.Organizer?.FullName</td>
+                        <td class="px-6 py-4 text-gray-300">@evt.EventDate.ToString("MMM dd, yyyy")</td>
+                        <td class="px-6 py-4 text-gray-300">@evt.TotalCapacity</td>
+                        <td class="px-6 py-4">
+                            @{
+                                var statusColor = evt.Status switch
+                                {
+                                    "Published" => "bg-green-500/20 text-green-400",
+                                    "Draft" => "bg-yellow-500/20 text-yellow-400",
+                                    "Cancelled" => "bg-red-500/20 text-red-400",
+                                    "Completed" => "bg-blue-500/20 text-blue-400",
+                                    _ => "bg-gray-500/20 text-gray-400"
+                                };
+                            }
+                            <span class="px-3 py-1 @statusColor rounded-full text-sm font-medium">@evt.Status</span>
+                        </td>
+                        <td class="px-6 py-4 text-gray-300">@evt.CreatedAt.ToString("MMM dd, yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <div class="mt-4 text-sm text-gray-400">
+        <p>Total Events: @Model.Count()</p>
+    </div>
+}
+else
+{
+    <div class="text-center text-gray-400 py-8">
+        <p>No events found for the selected criteria.</p>
+    </div>
+}

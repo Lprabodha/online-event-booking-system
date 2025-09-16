@@ -2,6 +2,7 @@
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Models;
 using online_event_booking_system.Repository.Interface;
+using online_event_booking_system.Data.Entities;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -18,15 +19,15 @@ namespace online_event_booking_system.Business.Service
             _reportRepository = reportRepository;
         }
 
-        public async Task<byte[]> GenerateReportAsync(string reportType, string format, DateTime? dateFrom, DateTime? dateTo, string category, string status)
+        public async Task<byte[]> GenerateReportAsync(string reportType, string format, DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null, string role = null)
         {
             switch (reportType.ToLower())
             {
                 case "events":
-                    var events = await _reportRepository.GetEventsAsync(dateFrom, dateTo, category, status);
+                    var events = await _reportRepository.GetEventsAsync(dateFrom, dateTo, category, organizer);
                     return GenerateFile(events, format, "Events");
                 case "users":
-                    var users = await _reportRepository.GetUsersAsync(dateFrom, dateTo);
+                    var users = await _reportRepository.GetUsersAsync(dateFrom, dateTo, role);
                     return GenerateFile(users, format, "Users");
                 case "organizers":
                     var organizers = await _reportRepository.GetOrganizersAsync(dateFrom, dateTo);
@@ -37,6 +38,16 @@ namespace online_event_booking_system.Business.Service
                 default:
                     throw new NotImplementedException($"Report type '{reportType}' is not supported.");
             }
+        }
+
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(DateTime? dateFrom, DateTime? dateTo, string role = null)
+        {
+            return await _reportRepository.GetUsersAsync(dateFrom, dateTo, role);
+        }
+
+        public async Task<IEnumerable<Event>> GetEventsAsync(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null)
+        {
+            return await _reportRepository.GetEventsAsync(dateFrom, dateTo, category, organizer);
         }
 
         public async Task<IEnumerable<RecentReport>> GetRecentReportsAsync(DateTime? dateFrom, DateTime? dateTo)
@@ -116,25 +127,36 @@ namespace online_event_booking_system.Business.Service
                         .PaddingVertical(1, Unit.Centimetre)
                         .Table(table =>
                         {
+                            var properties = typeof(T).GetProperties();
+                            
                             table.ColumnsDefinition(columns =>
                             {
-                                // Adjust columns based on the properties of your models
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
+                                // Create columns based on the number of properties
+                                for (int i = 0; i < properties.Length; i++)
+                                {
+                                    columns.RelativeColumn();
+                                }
                             });
 
-                            var properties = typeof(T).GetProperties();
+                            // Header row
                             foreach (var prop in properties)
                             {
                                 table.Cell().Background(Colors.Grey.Lighten3).Padding(5).Text(prop.Name).SemiBold();
                             }
 
+                            // Data rows
                             foreach (var item in data)
                             {
                                 foreach (var prop in properties)
                                 {
-                                    table.Cell().Padding(5).Text(prop.GetValue(item)?.ToString() ?? "");
+                                    var value = prop.GetValue(item);
+                                    var displayValue = value switch
+                                    {
+                                        DateTime dt => dt.ToString("MMM dd, yyyy"),
+                                        null => "",
+                                        _ => value.ToString()
+                                    };
+                                    table.Cell().Padding(5).Text(displayValue);
                                 }
                             }
                         });

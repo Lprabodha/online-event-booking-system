@@ -14,9 +14,13 @@ namespace online_event_booking_system.Repository.Service
             _context = context;
         }
 
-        public async Task<IEnumerable<Event>> GetEventsAsync(DateTime? from, DateTime? to, string category = null, string status = null)
+        public async Task<IEnumerable<Event>> GetEventsAsync(DateTime? from, DateTime? to, string category = null, string organizer = null)
         {
-            var query = _context.Events.AsQueryable();
+            var query = _context.Events
+                .Include(e => e.Category)
+                .Include(e => e.Organizer)
+                .Include(e => e.Venue)
+                .AsQueryable();
 
             if (from.HasValue)
             {
@@ -30,23 +34,21 @@ namespace online_event_booking_system.Repository.Service
 
             if (!string.IsNullOrEmpty(category) && category != "All Categories")
             {
-                // Assuming Category has a name or some identifiable property
                 query = query.Where(e => e.Category.Name == category);
             }
 
-            if (!string.IsNullOrEmpty(status) && status != "All Status")
+            if (!string.IsNullOrEmpty(organizer) && organizer != "All Organizers")
             {
-                query = query.Where(e => e.Status == status);
+                query = query.Where(e => e.OrganizerId == organizer);
             }
 
             return await query.ToListAsync();
         }
 
-        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(DateTime? from, DateTime? to)
+        public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(DateTime? from, DateTime? to, string role = null)
         {
             var query = _context.Users.AsQueryable();
 
-            // Assuming you've added a CreatedAt column to ApplicationUser
             if (from.HasValue)
             {
                 query = query.Where(u => u.CreatedAt.Date >= from.Value.Date);
@@ -57,7 +59,17 @@ namespace online_event_booking_system.Repository.Service
                 query = query.Where(u => u.CreatedAt.Date <= to.Value.Date);
             }
 
-            return await query.ToListAsync();
+            if (!string.IsNullOrEmpty(role) && role != "All Roles")
+            {
+                var roleEntity = await _context.Roles.FirstOrDefaultAsync(r => r.Name == role);
+                if (roleEntity != null)
+                {
+                    var userIdsInRole = _context.UserRoles.Where(ur => ur.RoleId == roleEntity.Id).Select(ur => ur.UserId);
+                    query = query.Where(u => userIdsInRole.Contains(u.Id));
+                }
+            }
+
+            return await query.OrderByDescending(u => u.CreatedAt).ToListAsync();
         }
 
         public async Task<IEnumerable<ApplicationUser>> GetOrganizersAsync(DateTime? from, DateTime? to)
