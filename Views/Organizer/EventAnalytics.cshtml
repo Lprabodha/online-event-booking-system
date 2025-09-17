@@ -1,0 +1,85 @@
+@model online_event_booking_system.Models.View_Models.EventAnalyticsViewModel
+@{
+    ViewData["Title"] = "Event Analytics";
+    Layout = "_DashboardLayout";
+}
+
+<div class="min-h-screen bg-dark-navy text-white pt-20">
+    <div class="p-4 md:p-6 pt-8">
+            <div class="mb-8">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-2">@Model.Title - Analytics</h1>
+                <p class="text-gray-400">Sales, revenue and attendees</p>
+            </div>
+
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-green-400">@Model.TicketsSold</div>
+                    <div class="text-gray-400 text-sm">Tickets Sold</div>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-blue-400">LKR @Model.TotalRevenue.ToString("N2")</div>
+                    <div class="text-gray-400 text-sm">Total Revenue</div>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-purple-400">LKR @Model.AverageTicketPrice.ToString("N2")</div>
+                    <div class="text-gray-400 text-sm">Avg. Ticket Price</div>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 text-center">
+                    <div class="text-3xl font-bold text-teal-400">@Model.TicketsRemaining</div>
+                    <div class="text-gray-400 text-sm">Remaining</div>
+                </div>
+            </section>
+
+            <section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
+                <h2 class="text-xl font-bold mb-4">Discounts</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-emerald-400">@Model.ActiveDiscounts</div>
+                        <div class="text-gray-400 text-sm">Active Discounts</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-emerald-400">@Model.DiscountCodesUsed</div>
+                        <div class="text-gray-400 text-sm">Discount Uses</div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                <h2 class="text-xl font-bold mb-4">Buyers</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left">
+                        <thead class="text-gray-300 border-b border-white/10">
+                            <tr>
+                                <th class="py-3 pr-4">Name</th>
+                                <th class="py-3 pr-4">Email</th>
+                                <th class="py-3 pr-4">Tickets</th>
+                                <th class="py-3 pr-4">Amount</th>
+                                <th class="py-3">Last Purchase</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/10">
+                        @if (Model.Buyers != null && Model.Buyers.Any())
+                        {
+                            foreach (var b in Model.Buyers)
+                            {
+                                <tr>
+                                    <td class="py-3 pr-4 text-white">@b.CustomerName</td>
+                                    <td class="py-3 pr-4 text-gray-300">@b.Email</td>
+                                    <td class="py-3 pr-4 text-gray-300">@b.TicketsPurchased</td>
+                                    <td class="py-3 pr-4 text-gray-300">LKR @b.AmountPaid.ToString("N2")</td>
+                                    <td class="py-3 text-gray-300">@b.LastPurchaseAt.ToString("MMM dd, yyyy")</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="py-6 text-center text-gray-400">No buyers yet.</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+    </div>
+</div>

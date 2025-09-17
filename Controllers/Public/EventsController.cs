@@ -92,12 +92,12 @@ namespace online_event_booking_system.Controllers.Public
                         break;
                 }
                 
-                // Process event images to convert S3 keys to URLs
+                // Process event images to use direct S3/CDN URLs
                 foreach (var eventItem in events)
                 {
                     if (!string.IsNullOrEmpty(eventItem.Image))
                     {
-                        eventItem.Image = await _s3Service.GetImageUrlAsync(eventItem.Image);
+                        eventItem.Image = _s3Service.GetDirectUrl(eventItem.Image);
                     }
                 }
 
@@ -136,10 +136,16 @@ namespace online_event_booking_system.Controllers.Public
                 _logger.LogInformation("Event {EventId} - Title: {Title}, Description: {Description}", 
                     id, eventEntity.Title, eventEntity.Description ?? "NULL");
 
-                // Process event image to convert S3 key to URL
+                // Process event image to use direct S3/CDN URL
                 if (!string.IsNullOrEmpty(eventEntity.Image))
                 {
-                    eventEntity.Image = await _s3Service.GetImageUrlAsync(eventEntity.Image);
+                    eventEntity.Image = _s3Service.GetDirectUrl(eventEntity.Image);
+                }
+
+                // Process venue image if present
+                if (!string.IsNullOrEmpty(eventEntity.Venue?.Image))
+                {
+                    eventEntity.Venue.Image = _s3Service.GetDirectUrl(eventEntity.Venue.Image);
                 }
 
                 // Get related events
@@ -150,7 +156,7 @@ namespace online_event_booking_system.Controllers.Public
                 {
                     if (!string.IsNullOrEmpty(relatedEvent.Image))
                     {
-                        relatedEvent.Image = await _s3Service.GetImageUrlAsync(relatedEvent.Image);
+                        relatedEvent.Image = _s3Service.GetDirectUrl(relatedEvent.Image);
                     }
                 }
 

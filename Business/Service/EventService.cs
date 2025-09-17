@@ -528,5 +528,67 @@ namespace online_event_booking_system.Business.Service
                 return imagePath; // Fallback to original path
             }
         }
+
+        public async Task<EventAnalyticsViewModel?> GetEventAnalyticsAsync(Guid eventId, string? restrictToOrganizerId = null)
+        {
+            var query = _context.Events
+                .Include(e => e.Bookings)
+                    .ThenInclude(b => b.Customer)
+                .Include(e => e.Bookings)
+                    .ThenInclude(b => b.Tickets)
+                        .ThenInclude(t => t.Payment)
+                .Include(e => e.Discounts)
+                .AsQueryable();
+
+            query = query.Where(e => e.Id == eventId);
+            if (!string.IsNullOrEmpty(restrictToOrganizerId))
+            {
+                query = query.Where(e => e.OrganizerId == restrictToOrganizerId);
+            }
+
+            var ev = await query.FirstOrDefaultAsync();
+            if (ev == null)
+                return null;
+
+            var confirmedBookings = ev.Bookings?.Where(b => b.Status == "Confirmed").ToList() ?? new List<Booking>();
+            var tickets = confirmedBookings.SelectMany(b => b.Tickets ?? new List<Ticket>()).ToList();
+            var paidTickets = tickets.Where(t => t.Payment != null && t.IsPaid).ToList();
+            var ticketsSold = paidTickets.Count;
+            var totalRevenue = paidTickets.Sum(t => t.Payment!.Amount);
+            var avgPrice = ticketsSold > 0 ? Math.Round(totalRevenue / ticketsSold, 2) : 0m;
+
+            var buyers = confirmedBookings
+                .GroupBy(b => new { b.CustomerId, b.Customer.FullName, b.Customer.Email })
+                .Select(g => new EventBuyerViewModel
+                {
+                    CustomerId = g.Key.CustomerId,
+                    CustomerName = g.Key.FullName ?? "Customer",
+                    Email = g.Key.Email ?? string.Empty,
+                    TicketsPurchased = g.SelectMany(b => b.Tickets ?? new List<Ticket>()).Count(),
+                    AmountPaid = g.SelectMany(b => b.Tickets ?? new List<Ticket>())
+                                   .Where(t => t.Payment != null)
+                                   .Sum(t => t.Payment!.Amount),
+                    LastPurchaseAt = g.Max(b => b.CreatedAt)
+                })
+                .OrderByDescending(b => b.AmountPaid)
+                .ToList();
+
+            var model = new EventAnalyticsViewModel
+            {
+                EventId = ev.Id,
+                Title = ev.Title,
+                OrganizerId = ev.OrganizerId,
+                TotalCapacity = ev.TotalCapacity,
+                TicketsSold = ticketsSold,
+                TicketsRemaining = Math.Max(0, ev.TotalCapacity - ticketsSold),
+                TotalRevenue = totalRevenue,
+                AverageTicketPrice = avgPrice,
+                DiscountCodesUsed = ev.Discounts?.Sum(d => d.UsedCount) ?? 0,
+                ActiveDiscounts = ev.Discounts?.Count(d => d.IsActive) ?? 0,
+                Buyers = buyers
+            };
+
+            return model;
+        }
     }
 }

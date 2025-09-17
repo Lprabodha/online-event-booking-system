@@ -70,7 +70,7 @@
             </div>
             
             <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center px-4 sm:px-6">
-                <a href="/Events" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-2xl font-bold text-base sm:text-lg lg:text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl min-h-[44px] flex items-center justify-center">
+                <a href="/events" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-2xl font-bold text-base sm:text-lg lg:text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl min-h-[44px] flex items-center justify-center">
                     Explore All Events
                 </a>
                 <a href="/Identity/Account/Register" class="border-2 border-white bg-transparent text-white px-6 sm:px-8 lg:px-12 py-3 sm:py-4 lg:py-5 rounded-2xl font-bold text-base sm:text-lg lg:text-xl hover:bg-gradient-to-r from-purple-500 to-teal-500 hover:text-dark-navy transition-all transform hover:scale-105 backdrop-blur-sm min-h-[44px] flex items-center justify-center">
@@ -181,7 +181,7 @@
         @if (Model.UpcomingEvents != null && Model.UpcomingEvents.Count() > 3)
         {
             <div class="text-center mt-12">
-                <a href="/Events" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
+                <a href="/events" class="inline-flex items-center gap-2 bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg">
                     <span>View All Events</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
@@ -270,7 +270,7 @@
                                 <span>@evt.Venue?.Name</span>
                             </div>
                             
-                            <a href="/Events/Details/@evt.Id" class="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-3 rounded-xl font-bold text-sm hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
+                            <a href="/events/@evt.Id" class="block w-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-center py-3 rounded-xl font-bold text-sm hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
                                 View Details
                             </a>
                         </div>
@@ -296,7 +296,7 @@
         @if (Model.EventsNextWeek != null && Model.EventsNextWeek.Count() > 6)
         {
             <div class="text-center mt-12">
-                <a href="/Events?filter=nextweek" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
+                <a href="/events?filter=nextweek" class="inline-flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-orange-600 hover:to-red-600 transition-all transform hover:scale-105 shadow-lg">
                     <span>View All Next Week's Events</span>
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
@@ -378,7 +378,7 @@
         
         <!-- View More Button -->
         <div class="text-center mt-16 px-4">
-            <a href="/Events?filter=latest" class="inline-flex items-center bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl">
+            <a href="/events?filter=latest" class="inline-flex items-center bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl">
                 View More Latest Events
                 <svg class="w-5 h-5 sm:w-6 sm:h-6 ml-2 sm:ml-3" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clip-rule="evenodd"></path>
@@ -583,7 +583,7 @@
                     <a href="/Identity/Account/Register" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-8 py-4 rounded-2xl font-bold text-lg hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-2xl">
                         Get Started Today
                     </a>
-                    <a href="/Events" class="border-2 border-white bg-transparent text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-dark-navy transition-all transform hover:scale-105 backdrop-blur-sm">
+                    <a href="/events" class="border-2 border-white bg-transparent text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-dark-navy transition-all transform hover:scale-105 backdrop-blur-sm">
                         Browse Events
                     </a>
                 </div>
