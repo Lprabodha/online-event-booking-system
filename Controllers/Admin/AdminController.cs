@@ -44,6 +44,52 @@ namespace online_event_booking_system.Controllers.Admin
             try
             {
                 var users = await _adminService.GetAllUsers();
+
+                // User growth (last 6 months)
+                var now = DateTime.UtcNow;
+                var growthLabels = new List<string>();
+                var growthData = new List<int>();
+                for (int i = 5; i >= 0; i--)
+                {
+                    var month = new DateTime(now.Year, now.Month, 1).AddMonths(-i);
+                    growthLabels.Add(month.ToString("MMM"));
+                    var count = users.Count(u => u.CreatedAt.Year == month.Year && u.CreatedAt.Month == month.Month);
+                    growthData.Add(count);
+                }
+                ViewBag.UserGrowthLabels = growthLabels;
+                ViewBag.UserGrowthData = growthData;
+
+                // User activity - daily logins (last 7 days)
+                var activityLabels = new List<string>();
+                var activityData = new List<int>();
+                for (int i = 6; i >= 0; i--)
+                {
+                    var day = now.Date.AddDays(-i);
+                    activityLabels.Add(day.ToString("MMM dd"));
+                    var count = users.Count(u => u.LastLogin.HasValue && u.LastLogin.Value.Date == day);
+                    activityData.Add(count);
+                }
+                ViewBag.UserActivityLabels = activityLabels;
+                ViewBag.UserActivityData = activityData;
+
+                // Recent activity (registrations and logins)
+                var recent = new List<object>();
+                recent.AddRange(users
+                    .OrderByDescending(u => u.CreatedAt)
+                    .Take(3)
+                    .Select(u => new { Type = "register", Title = "New user registered", Subtitle = u.Email ?? u.UserName, When = (now - u.CreatedAt).TotalMinutes }));
+
+                recent.AddRange(users
+                    .Where(u => u.LastLogin.HasValue)
+                    .OrderByDescending(u => u.LastLogin!.Value)
+                    .Take(2)
+                    .Select(u => new { Type = "login", Title = "User logged in", Subtitle = u.Email ?? u.UserName, When = (now - u.LastLogin!.Value).TotalMinutes }));
+
+                ViewBag.RecentActivity = recent
+                    .OrderBy(x => ((double)x.GetType().GetProperty("When")!.GetValue(x)!).CompareTo(0))
+                    .Take(5)
+                    .ToList();
+
                 return View(users);
             }
             catch (Exception ex)
