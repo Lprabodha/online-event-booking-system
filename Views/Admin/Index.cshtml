@@ -127,44 +127,28 @@
                 <div class="lg:col-span-2 bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
                     <h3 class="text-lg font-bold text-white mb-6">Recent Activity</h3>
                     <div class="space-y-4">
-                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
-                            <div class="w-10 h-10 bg-green-500/20 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-white font-medium">New user registered</p>
-                                <p class="text-gray-400 text-sm">john.doe@example.com joined the platform</p>
-                            </div>
-                            <span class="text-gray-400 text-sm">2 min ago</span>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
-                            <div class="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-white font-medium">User profile updated</p>
-                                <p class="text-gray-400 text-sm">jane.smith@example.com updated their profile</p>
-                            </div>
-                            <span class="text-gray-400 text-sm">15 min ago</span>
-                        </div>
-                        
-                        <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
-                            <div class="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
-                                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-white font-medium">System backup completed</p>
-                                <p class="text-gray-400 text-sm">Daily backup process finished successfully</p>
-                            </div>
-                            <span class="text-gray-400 text-sm">1 hour ago</span>
-                        </div>
+                        @if (ViewBag.RecentActivity != null)
+                        {
+                            foreach (var a in ViewBag.RecentActivity)
+                            {
+                                var type = (string)a.GetType().GetProperty("Type").GetValue(a);
+                                var title = (string)a.GetType().GetProperty("Title").GetValue(a);
+                                var subtitle = (string)a.GetType().GetProperty("Subtitle").GetValue(a);
+                                var minutes = (double)a.GetType().GetProperty("When").GetValue(a);
+                                <div class="flex items-center space-x-4 p-4 bg-white/5 rounded-xl">
+                                    <div class="w-10 h-10 @(type=="register"?"bg-green-500/20":"bg-blue-500/20") rounded-full flex items-center justify-center">
+                                        <svg class="w-5 h-5 @(type=="register"?"text-green-400":"text-blue-400")" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-white font-medium">@title</p>
+                                        <p class="text-gray-400 text-sm">@subtitle</p>
+                                    </div>
+                                    <span class="text-gray-400 text-sm">@Math.Max(1, (int)minutes) min ago</span>
+                                </div>
+                            }
+                        }
                     </div>
                 </div>
 
@@ -239,13 +223,15 @@
     function initializeCharts() {
         // User Growth Chart
         const growthCtx = document.getElementById('userGrowthChart').getContext('2d');
+        const growthLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.UserGrowthLabels ?? new List<string>()));
+        const growthData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.UserGrowthData ?? new List<int>()));
         userGrowthChart = new Chart(growthCtx, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                labels: growthLabels.length ? growthLabels : ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
                 datasets: [{
                     label: 'New Users',
-                    data: [12, 19, 3, 5, 2, 3],
+                    data: growthData.length ? growthData : [12, 19, 3, 5, 2, 3],
                     borderColor: 'rgb(168, 85, 247)',
                     backgroundColor: 'rgba(168, 85, 247, 0.1)',
                     borderWidth: 3,
@@ -290,13 +276,15 @@
 
         // User Activity Chart
         const activityCtx = document.getElementById('userActivityChart').getContext('2d');
+        const activityLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.UserActivityLabels ?? new List<string>()));
+        const activityData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.UserActivityData ?? new List<int>()));
         userActivityChart = new Chart(activityCtx, {
             type: 'bar',
             data: {
-                labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                labels: activityLabels.length ? activityLabels : ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
                 datasets: [{
                     label: 'Daily Logins',
-                    data: [65, 59, 80, 81, 56, 55, 40],
+                    data: activityData.length ? activityData : [65, 59, 80, 81, 56, 55, 40],
                     backgroundColor: 'rgba(20, 184, 166, 0.8)',
                     borderColor: 'rgb(20, 184, 166)',
                     borderWidth: 1,
