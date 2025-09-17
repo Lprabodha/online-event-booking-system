@@ -5,6 +5,8 @@ using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Models.View_Models;
+using online_event_booking_system.Services;
+using online_event_booking_system.Business.Interface;
 
 namespace online_event_booking_system.Controllers.Admin
 {
@@ -14,6 +16,8 @@ namespace online_event_booking_system.Controllers.Admin
         private readonly IAdminService _adminService;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IVenueService _venueService;
+        private readonly IEventService _eventService;
+        private readonly IS3Service _s3Service;
 
         /// <summary>
         /// Constructor for AdminController
@@ -21,11 +25,13 @@ namespace online_event_booking_system.Controllers.Admin
         /// <param name="adminService"></param>
         /// <param name="userManager"></param>
         /// <param name="venueService"></param>
-        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService)
+        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService, IS3Service s3Service, IEventService eventService)
         {
             _adminService = adminService;
             _userManager = userManager;
             _venueService = venueService;
+            _s3Service = s3Service;
+            _eventService = eventService;
         }
 
         /// <summary>
@@ -288,6 +294,14 @@ namespace online_event_booking_system.Controllers.Admin
             {
                 // Get all events with related data
                 var events = await _adminService.GetAllEventsAsync();
+                // Ensure image paths are direct S3/CDN URLs
+                foreach (var e in events)
+                {
+                    if (!string.IsNullOrEmpty(e.Image))
+                    {
+                        e.Image = _s3Service.GetDirectUrl(e.Image);
+                    }
+                }
                 
                 // Apply search filter
                 if (!string.IsNullOrEmpty(search))
@@ -346,6 +360,29 @@ namespace online_event_booking_system.Controllers.Admin
             catch (Exception ex)
             {
                 return View(new List<object>());
+            }
+        }
+
+        /// <summary>
+        /// Admin view: per-event analytics (tickets sold, buyers, revenue)
+        /// </summary>
+        [HttpGet("admin/event-analytics/{id}")]
+        public async Task<IActionResult> EventAnalytics(Guid id)
+        {
+            try
+            {
+                var analytics = await _eventService.GetEventAnalyticsAsync(id);
+                if (analytics == null)
+                {
+                    TempData["ErrorMessage"] = "Event not found.";
+                    return RedirectToAction(nameof(Events));
+                }
+                return View("~/Views/Organizer/EventAnalytics.cshtml", analytics);
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Unable to load analytics.";
+                return RedirectToAction(nameof(Events));
             }
         }
 

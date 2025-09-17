@@ -10,7 +10,7 @@ using online_event_booking_system.Services;
 
 namespace online_event_booking_system.Controllers.Organizer
 {
-    [Authorize(Roles = "Organizer")]
+    [Authorize(Roles = "Organizer,Admin")]
     public class OrganizerController : Controller
     {
         private readonly IEventService _eventService;
@@ -32,6 +32,20 @@ namespace online_event_booking_system.Controllers.Organizer
             _logger = logger;
             _s3Service = s3Service;
         }
+
+        [HttpGet("organizer/event-analytics/{id}")]
+        public async Task<IActionResult> EventAnalytics(Guid id)
+        {
+            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var analytics = await _eventService.GetEventAnalyticsAsync(id, organizerId);
+            if (analytics == null)
+            {
+                TempData["ErrorMessage"] = "Event not found or access denied.";
+                return RedirectToAction("Events");
+            }
+            return View("~/Views/Organizer/EventAnalytics.cshtml", analytics);
+        }
+        
         [HttpGet("organizer")]
         public async Task<IActionResult> Index()
         {
