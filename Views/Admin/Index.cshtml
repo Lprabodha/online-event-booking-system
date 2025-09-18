@@ -121,6 +121,26 @@
                 </div>
             </div>
 
+            <!-- Platform Performance Charts -->
+            <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-white">Events Created & Tickets Sold (30d)</h3>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="perfChart"></canvas>
+                    </div>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <div class="flex items-center justify-between mb-6">
+                        <h3 class="text-lg font-bold text-white">Revenue (30d)</h3>
+                    </div>
+                    <div class="h-64">
+                        <canvas id="revenueChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <!-- System Overview -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
                 <!-- Recent Activity -->
@@ -321,6 +341,35 @@
                     }
                 }
             }
+        });
+
+        // Performance charts
+        const perfLabels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.PerfLabels ?? new List<string>()));
+        const perfEvents = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.PerfEvents ?? new List<int>()));
+        const perfTickets = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.PerfTickets ?? new List<int>()));
+        const perfRevenue = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ViewBag.PerfRevenue ?? new List<decimal>()));
+
+        const perfCtx = document.getElementById('perfChart').getContext('2d');
+        new Chart(perfCtx, {
+            type: 'bar',
+            data: {
+                labels: perfLabels,
+                datasets: [
+                    { label: 'Events', data: perfEvents, backgroundColor: 'rgba(99,102,241,0.7)', borderRadius: 6, borderSkipped: false },
+                    { label: 'Tickets', data: perfTickets, backgroundColor: 'rgba(52,211,153,0.7)', borderRadius: 6, borderSkipped: false }
+                ]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: 'rgba(255,255,255,0.8)' } } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } }, y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } } } }
+        });
+
+        const revCtx = document.getElementById('revenueChart').getContext('2d');
+        new Chart(revCtx, {
+            type: 'line',
+            data: {
+                labels: perfLabels,
+                datasets: [{ label: 'Revenue (LKR)', data: perfRevenue, borderColor: 'rgba(16,185,129,1)', backgroundColor: 'rgba(16,185,129,0.15)', fill: true, borderWidth: 3, tension: 0.4 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: 'rgba(255,255,255,0.8)' } } }, scales: { x: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } }, y: { ticks: { color: 'rgba(255,255,255,0.7)' }, grid: { color: 'rgba(255,255,255,0.1)' } } } }
         });
     }
 

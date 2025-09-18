@@ -72,6 +72,27 @@ namespace online_event_booking_system.Controllers.Admin
                 ViewBag.UserActivityLabels = activityLabels;
                 ViewBag.UserActivityData = activityData;
 
+                // Platform performance: events created, tickets sold, revenue (last 30 days)
+                var context = HttpContext.RequestServices.GetRequiredService<online_event_booking_system.Data.ApplicationDbContext>();
+                var start30 = now.Date.AddDays(-30);
+                var perfLabels = new List<string>();
+                var eventsData = new List<int>();
+                var ticketsData = new List<int>();
+                var revenueData = new List<decimal>();
+                for (var d = start30; d <= now.Date; d = d.AddDays(1))
+                {
+                    perfLabels.Add(d.ToString("MMM dd"));
+                    eventsData.Add(await context.Events.CountAsync(e => e.CreatedAt.Date == d));
+                    var dayTickets = await context.Tickets.CountAsync(t => t.PurchaseDate.Date == d && t.IsPaid);
+                    ticketsData.Add(dayTickets);
+                    var dayRevenue = await context.Payments.Where(p => p.Status == "Completed" && p.PaidAt.Date == d).SumAsync(p => (decimal?)p.Amount) ?? 0m;
+                    revenueData.Add(dayRevenue);
+                }
+                ViewBag.PerfLabels = perfLabels;
+                ViewBag.PerfEvents = eventsData;
+                ViewBag.PerfTickets = ticketsData;
+                ViewBag.PerfRevenue = revenueData;
+
                 // Recent activity (registrations and logins)
                 var recent = new List<object>();
                 recent.AddRange(users
