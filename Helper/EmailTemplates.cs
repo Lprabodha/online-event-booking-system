@@ -2,6 +2,67 @@
 {
     public static class EmailTemplates
     {
+        public static string GetAdminWeeklyReportTemplate(DateTime weekStart, DateTime weekEnd, int newUsers, int eventsCreated, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents, List<(string Organizer, decimal Sales)> topOrganizers)
+        {
+            var eventRows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
+            if (string.IsNullOrEmpty(eventRows)) eventRows = "<tr><td colspan='3' style='padding:12px;text-align:center;color:#6b7280'>No event sales this week</td></tr>";
+            var orgRows = string.Join("", topOrganizers.Select(o => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{o.Organizer}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {o.Sales:N2}</td></tr>"));
+            if (string.IsNullOrEmpty(orgRows)) orgRows = "<tr><td colspan='2' style='padding:12px;text-align:center;color:#6b7280'>No organizer sales this week</td></tr>";
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Weekly Report {weekStart:MMM dd} - {weekEnd:MMM dd}</title>
+    <style>
+        body {{ margin:0; padding:0; background:#f8f9fa; color:#1f2937; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
+        .wrap {{ padding:24px 12px; }}
+        .card {{ max-width:800px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.06); }}
+        .hdr {{ background:linear-gradient(135deg,#4f46e5,#06b6d4); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
+        .content {{ padding:22px 20px; line-height:1.6; }}
+        .kpis {{ display:flex; gap:10px; flex-wrap:wrap; }}
+        .kpi {{ flex:1 1 180px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }}
+        .kpi h4 {{ margin:0 0 6px; color:#6b7280; font-size:12px; letter-spacing:.3px; }}
+        .kpi p {{ margin:0; font-weight:800; font-size:18px; color:#111827; }}
+        .table {{ width:100%; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-top:14px; overflow:hidden; }}
+        .footer {{ text-align:center; color:#6b7280; font-size:12px; padding:0 0 22px; }}
+    </style>
+    </head>
+    <body>
+        <div class='wrap'>
+            <div class='card'>
+                <div class='hdr'>⭐ Star Events — Weekly Report ({weekStart:MMM dd} - {weekEnd:MMM dd})</div>
+                <div class='content'>
+                    <div class='kpis'>
+                        <div class='kpi'><h4>New Users</h4><p>{newUsers}</p></div>
+                        <div class='kpi'><h4>Events Created</h4><p>{eventsCreated}</p></div>
+                        <div class='kpi'><h4>Tickets Sold</h4><p>{ticketsSold}</p></div>
+                        <div class='kpi'><h4>Gross Revenue</h4><p>LKR {revenue:N2}</p></div>
+                    </div>
+
+                    <h3 style='margin:18px 0 8px'>Top Events</h3>
+                    <div class='table'>
+                        <table style='width:100%; border-collapse:collapse;'>
+                            <thead><tr><th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Event</th><th style='text-align:center;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Tickets</th><th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th></tr></thead>
+                            <tbody>{eventRows}</tbody>
+                        </table>
+                    </div>
+
+                    <h3 style='margin:18px 0 8px'>Top Organizers</h3>
+                    <div class='table'>
+                        <table style='width:100%; border-collapse:collapse;'>
+                            <thead><tr><th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Organizer</th><th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th></tr></thead>
+                            <tbody>{orgRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='footer'>© {DateTime.Now.Year} Star Events</div>
+            </div>
+        </div>
+    </body>
+    </html>";
+        }
         public static string GetOrganizerDailySummaryTemplate(string organizerName, DateTime date, int eventsCount, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents)
         {
             var rows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
