@@ -7,5 +7,6 @@
     {
         Task SendEmailAsync(string toEmail, string subject, string body);
         Task SendEmailWithAttachmentAsync(string toEmail, string subject, string body, byte[] attachmentData, string attachmentFileName, string attachmentContentType);
+        Task SendRefundEmailAsync(string toEmail, string customerName, string eventTitle, DateTime eventDate, decimal amount, string bookingReference);
     }
 }

@@ -27,32 +27,39 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                                 </svg>
                             </button>
-                            <div id="exportDropdown" class="absolute right-0 mt-2 w-48 bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-lg z-10 hidden">
+                            <div id="exportDropdown" class="absolute right-0 mt-2 w-56 bg-dark-navy/95 backdrop-blur-xl border border-white/10 rounded-xl shadow-lg z-10 hidden">
                                 <div class="py-2">
-                                    <button onclick="exportReport('pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="downloadOrganizerReport('events','pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
-                                        <span>Export as PDF</span>
+                                        <span>Download Events (PDF)</span>
                                     </button>
-                                    <button onclick="exportReport('csv')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="downloadOrganizerReport('events','csv')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                                         </svg>
-                                        <span>Export as CSV</span>
+                                        <span>Download Events (CSV)</span>
                                     </button>
-                                    <button onclick="exportReport('excel')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
+                                    <button onclick="downloadOrganizerReport('events','excel')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
                                         <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
                                         </svg>
-                                        <span>Export as Excel</span>
+                                        <span>Download Events (Excel)</span>
+                                    </button>
+                                    <div class="border-t border-white/10 my-1"></div>
+                                    <button onclick="downloadOrganizerReport('users','pdf')" class="w-full px-4 py-3 text-left text-white hover:bg-dark-navy transition-all duration-200 flex items-center space-x-3">
+                                        <svg class="w-4 h-4 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                        </svg>
+                                        <span>Download Customers (PDF)</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Quick PDF Download -->
-                        <button onclick="exportReport('pdf')" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
+                        <button onclick="downloadOrganizerReport('events','pdf')" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-2 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all transform hover:scale-105 shadow-lg flex items-center space-x-2">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                             </svg>
@@ -378,28 +385,30 @@
             }
         });
 
-        // Export functionality
-        function exportReport(format) {
-            const dropdown = document.getElementById('exportDropdown');
-            dropdown.classList.add('hidden');
-            
-            // Show loading state
-            const button = event.target.closest('button');
-            const originalText = button.innerHTML;
-            button.innerHTML = '<svg class="animate-spin w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Exporting...';
-            button.disabled = true;
-            
-            // Simulate export process
-            setTimeout(() => {
-                button.innerHTML = originalText;
-                button.disabled = false;
-                
-                // Show success message
-                showNotification(`Report exported as ${format.toUpperCase()} successfully!`, 'success');
-                
-                // In a real application, this would trigger the actual download
-                console.log(`Exporting report as ${format}`);
-            }, 2000);
+        // Trigger real download using Admin/Reports backend (scoped to organizer via filters on server)
+        function downloadOrganizerReport(type, format) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/Admin/Reports/Download';
+            form.style.display = 'none';
+
+            const inputs = {
+                reportType: type,
+                format: format,
+                // Organizer filtering is applied server-side based on the current user's role/context if needed
+            };
+
+            Object.entries(inputs).forEach(([name, value]) => {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = name;
+                input.value = value;
+                form.appendChild(input);
+            });
+
+            document.body.appendChild(form);
+            form.submit();
+            document.body.removeChild(form);
         }
 
         // Notification system

@@ -43,6 +43,9 @@ namespace online_event_booking_system.Business.Service
                 case "users":
                     var users = await _reportRepository.GetUsersAsync(dateFrom, dateTo, role);
                     return GenerateUserReport(users, format, dateFrom, dateTo, role);
+                case "revenue":
+                    var revenueRows = await _reportRepository.GetRevenueAsync(dateFrom, dateTo, category, organizer);
+                    return GenerateFile(revenueRows, format, "Revenue");
                 case "organizers":
                     var organizers = await _reportRepository.GetOrganizersAsync(dateFrom, dateTo);
                     return GenerateFile(organizers, format, "Organizers");
@@ -110,6 +113,13 @@ namespace online_event_booking_system.Business.Service
             }));
 
             return allReports.OrderByDescending(r => r.Generated);
+        }
+
+        public async Task<IEnumerable<RevenueReportRow>> GetRevenueAsync(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null)
+        {
+            // Delegate to repository when available; build from GetEventsAsync + tickets otherwise
+            // Here we use repository method to keep data access centralized
+            return await _reportRepository.GetRevenueAsync(dateFrom, dateTo, category, organizer);
         }
 
         // Generate User Report with specific columns and formatting
@@ -181,6 +191,8 @@ namespace online_event_booking_system.Business.Service
                 return GenerateFile(eventData, format, "Events");
             }
         }
+
+        // Revenue report row model exposed via Models namespace
 
         /// <summary>
         /// Generic file generator for different formats

@@ -11,4 +11,13 @@
         public DateTime Generated { get; set; }
         public string FileName { get; set; }
     }
+
+    public class RevenueReportRow
+    {
+        public DateTime Date { get; set; }
+        public int Orders { get; set; }
+        public int Tickets { get; set; }
+        public decimal Revenue { get; set; }
+        public decimal AvgTicketPrice { get; set; }
+    }
 }

@@ -94,7 +94,7 @@ public class HomeController : Controller
     /// <param name="dateFilter"></param>
     /// <returns></returns>
     [HttpGet("events/filtered")]
-    public async Task<IActionResult> FilteredEvents(string? search, string? category, string? dateFilter)
+    public async Task<IActionResult> FilteredEvents(string? search, string? category, string? dateFilter, string? location)
     {
         try
         {
@@ -108,7 +108,17 @@ public class HomeController : Controller
                     e.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                     (e.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
                     (e.Venue?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                    (e.Category?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    (e.Category?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (e.Venue?.Location?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
+                ).ToList();
+            }
+
+            // Apply explicit location filter
+            if (!string.IsNullOrWhiteSpace(location))
+            {
+                events = events.Where(e =>
+                    (e.Venue?.Location?.Contains(location, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                    (e.Venue?.Name?.Contains(location, StringComparison.OrdinalIgnoreCase) ?? false)
                 ).ToList();
             }
 
@@ -157,6 +167,7 @@ public class HomeController : Controller
             ViewBag.SearchTerm = search;
             ViewBag.SelectedCategory = category;
             ViewBag.SelectedDateFilter = dateFilter;
+            ViewBag.SelectedLocation = location;
             ViewBag.Categories = categories;
             
             return View("~/Views/Events/Index.cshtml", events);

@@ -9,6 +9,7 @@ namespace online_event_booking_system.Services
         Task<bool> RefundPaymentAsync(string paymentIntentId, decimal? amount = null);
         Task<Customer> CreateOrGetStripeCustomerAsync(ApplicationUser user);
         Task<bool> ValidatePaymentAsync(string paymentIntentId);
+    Task<bool> RefundPaymentAsync(string transactionId);
     }
     /// <summary>
     /// Represents a payment intent with relevant details.

@@ -123,6 +123,12 @@ namespace online_event_booking_system.Services
             }
         }
 
+        // IPaymentService implementation overload without amount
+        public async Task<bool> RefundPaymentAsync(string transactionId)
+        {
+            return await RefundPaymentAsync(transactionId, null);
+        }
+
         /// <summary>
         /// Create or get an existing Stripe customer for the given user
         /// </summary>

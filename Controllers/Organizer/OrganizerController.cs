@@ -1158,9 +1158,20 @@ namespace online_event_booking_system.Controllers.Organizer
                 .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
                 .ToListAsync();
 
+            // Load organizer events with any active discount
+            var events = await _eventService.GetEventsByOrganizerAsync(organizerId);
+            var eventOptions = events.Select(e => new PromoEventOption
+            {
+                Id = e.Id,
+                Title = e.Title,
+                DiscountCode = e.Discounts?.FirstOrDefault(d => d.IsActive)?.Code,
+                HasActiveDiscount = e.Discounts?.Any(d => d.IsActive) ?? false
+            }).ToList();
+
             var model = new OrganizerEmailViewModel
             {
-                Recipients = recipients
+                Recipients = recipients,
+                Events = eventOptions
             };
             return View("~/Views/Organizer/EmailCompose.cshtml", model);
         }
@@ -1183,6 +1194,15 @@ namespace online_event_booking_system.Controllers.Organizer
                     .OrderBy(u => u.FullName)
                     .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
                     .ToListAsync();
+                // reload events list too
+                var events = await _eventService.GetEventsByOrganizerAsync(organizerId);
+                model.Events = events.Select(e => new PromoEventOption
+                {
+                    Id = e.Id,
+                    Title = e.Title,
+                    DiscountCode = e.Discounts?.FirstOrDefault(d => d.IsActive)?.Code,
+                    HasActiveDiscount = e.Discounts?.Any(d => d.IsActive) ?? false
+                }).ToList();
                 TempData["ErrorMessage"] = "Please fill subject/body and select at least one recipient.";
                 return View("~/Views/Organizer/EmailCompose.cshtml", model);
             }
@@ -1195,12 +1215,28 @@ namespace online_event_booking_system.Controllers.Organizer
                     .Select(u => new { u.Email, u.FullName })
                     .ToListAsync();
 
+                string? ctaUrl = null;
+                string? ctaText = model.CtaText;
+                if (model.EventId.HasValue)
+                {
+                    // Link to public event details
+                    ctaUrl = Url.Content($"/events/{model.EventId.Value}");
+                    if (string.IsNullOrWhiteSpace(ctaText)) ctaText = "Book Now";
+                    // If event has active discount, append code hint in message
+                    var ev = await _eventService.GetEventByIdAsync(model.EventId.Value);
+                    var discount = ev?.Discounts?.FirstOrDefault(d => d.IsActive);
+                    if (discount != null && !string.IsNullOrWhiteSpace(discount.Code))
+                    {
+                        model.Body += $"\n\nUse promo code: {discount.Code} to get your discount!";
+                    }
+                }
+
                 var body = online_event_booking_system.Helper.EmailTemplates.GetEventPromoTemplate(
                     organizer?.FullName ?? "Organizer",
                     model.Subject,
                     model.Body,
-                    null,
-                    null
+                    ctaText,
+                    ctaUrl
                 );
 
                 foreach (var r in recipients)
