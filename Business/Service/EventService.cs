@@ -60,26 +60,42 @@ namespace online_event_booking_system.Business.Service
 
                 _context.Events.Add(eventEntity);
 
-                // Add event prices
-                if (model.EventPrices != null)
-                {
-                    foreach (var priceModel in model.EventPrices)
+                // Normalize and add event prices safely
+                var prices = (model.EventPrices ?? new List<EventPriceViewModel>())
+                    .Where(p => p != null)
+                    .Select(p => new EventPriceViewModel
                     {
-                        var eventPrice = new EventPrice
-                        {
-                            Id = Guid.NewGuid(),
-                            EventId = eventEntity.Id,
-                            Category = priceModel.Category,
-                            Price = priceModel.Price,
-                            Stock = priceModel.Stock,
-                            IsActive = priceModel.IsActive,
-                            CreatedAt = DateTime.UtcNow,
-                            // Additional fields
-                            Description = priceModel.Description,
-                            PriceType = priceModel.PriceType ?? "Standard"
-                        };
-                        _context.EventPrices.Add(eventPrice);
-                    }
+                        Category = p.Category?.Trim() ?? string.Empty,
+                        Price = p.Price,
+                        Stock = p.Stock,
+                        IsActive = p.IsActive,
+                        Description = p.Description,
+                        PriceType = string.IsNullOrWhiteSpace(p.PriceType) ? "Standard" : p.PriceType
+                    })
+                    .Where(p => !string.IsNullOrWhiteSpace(p.Category) && p.Stock > 0 && p.Price >= 0)
+                    .ToList();
+
+                if (!prices.Any())
+                {
+                    throw new ArgumentException("Please add at least one valid ticket type with name, price, and stock.");
+                }
+
+                foreach (var priceModel in prices)
+                {
+                    var eventPrice = new EventPrice
+                    {
+                        Id = Guid.NewGuid(),
+                        EventId = eventEntity.Id,
+                        Category = priceModel.Category,
+                        Price = priceModel.Price,
+                        Stock = priceModel.Stock,
+                        IsActive = priceModel.IsActive,
+                        CreatedAt = DateTime.UtcNow,
+                        // Additional fields
+                        Description = priceModel.Description,
+                        PriceType = priceModel.PriceType ?? "Standard"
+                    };
+                    _context.EventPrices.Add(eventPrice);
                 }
 
                 await _context.SaveChangesAsync();
@@ -182,25 +198,41 @@ namespace online_event_booking_system.Business.Service
 
             _context.EventPrices.RemoveRange(existingPrices);
 
-            if (model.EventPrices != null)
-            {
-                foreach (var priceModel in model.EventPrices)
+            var prices = (model.EventPrices ?? new List<EventPriceViewModel>())
+                .Where(p => p != null)
+                .Select(p => new EventPriceViewModel
                 {
-                    var eventPrice = new EventPrice
-                    {
-                        Id = Guid.NewGuid(),
-                        EventId = eventEntity.Id,
-                        Category = priceModel.Category,
-                        Price = priceModel.Price,
-                        Stock = priceModel.Stock,
-                        IsActive = priceModel.IsActive,
-                        CreatedAt = DateTime.UtcNow,
-                        // Additional fields
-                        Description = priceModel.Description,
-                        PriceType = priceModel.PriceType ?? "Standard"
-                    };
-                    _context.EventPrices.Add(eventPrice);
-                }
+                    Category = p.Category?.Trim() ?? string.Empty,
+                    Price = p.Price,
+                    Stock = p.Stock,
+                    IsActive = p.IsActive,
+                    Description = p.Description,
+                    PriceType = string.IsNullOrWhiteSpace(p.PriceType) ? "Standard" : p.PriceType
+                })
+                .Where(p => !string.IsNullOrWhiteSpace(p.Category) && p.Stock > 0 && p.Price >= 0)
+                .ToList();
+
+            if (!prices.Any())
+            {
+                throw new ArgumentException("Please add at least one valid ticket type with name, price, and stock.");
+            }
+
+            foreach (var priceModel in prices)
+            {
+                var eventPrice = new EventPrice
+                {
+                    Id = Guid.NewGuid(),
+                    EventId = eventEntity.Id,
+                    Category = priceModel.Category,
+                    Price = priceModel.Price,
+                    Stock = priceModel.Stock,
+                    IsActive = priceModel.IsActive,
+                    CreatedAt = DateTime.UtcNow,
+                    // Additional fields
+                    Description = priceModel.Description,
+                    PriceType = priceModel.PriceType ?? "Standard"
+                };
+                _context.EventPrices.Add(eventPrice);
             }
 
             await _context.SaveChangesAsync();
