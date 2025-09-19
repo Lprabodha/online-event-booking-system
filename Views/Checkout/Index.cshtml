@@ -267,9 +267,9 @@
                             <span>Service Fee</span>
                             <span id="serviceFee" class="font-bold">LKR 0.00</span>
                         </div>
-                        <div class="flex items-center justify-between text-green-400">
-                            <span>Early Bird Discount</span>
-                            <span id="discount">-LKR 15.00</span>
+                        <div id="discountRow" class="flex items-center justify-between text-green-400 hidden">
+                            <span>Discount</span>
+                            <span id="discount">-LKR 0.00</span>
                         </div>
                         <div class="border-t border-slate-700 pt-4">
                             <div class="flex items-center justify-between text-2xl font-bold">
@@ -545,9 +545,9 @@
                     orderItemsEl.innerHTML = orderItemsHtml;
                 }
 
-                // Calculate fees and totals
-                const serviceFee = subtotal * 0.08; // 8% service fee
-                const discount = getDiscountAmount();
+                // Calculate fees and totals (no service fee to match server)
+                const serviceFee = 0;
+                const discount = getDiscountAmount(subtotal);
                 const total = subtotal + serviceFee - discount;
 
                 // Update display elements
@@ -556,6 +556,10 @@
                 // processingFee removed
                 updateElementText('discount', `-LKR ${discount.toFixed(2)}`);
                 updateElementText('total', `LKR ${total.toFixed(2)}`);
+                const discountRow = document.getElementById('discountRow');
+                if (discountRow) {
+                    discountRow.classList.toggle('hidden', discount <= 0.0001);
+                }
                 
             } catch (error) {
             }
@@ -569,9 +573,22 @@
             }
         }
 
-        // Get discount amount
-        function getDiscountAmount() {
-            return appliedDiscount ? appliedDiscount.amount : 0;
+        // Get discount amount based on current subtotal and appliedDiscount
+        function getDiscountAmount(subtotal) {
+            if (!appliedDiscount) return 0;
+            let amount = 0;
+            if (appliedDiscount.type && typeof appliedDiscount.value === 'number') {
+                if ((appliedDiscount.type || '').toLowerCase() === 'percent') {
+                    amount = subtotal * (appliedDiscount.value / 100);
+                } else {
+                    amount = appliedDiscount.value;
+                }
+            } else if (typeof appliedDiscount.amount === 'number') {
+                amount = appliedDiscount.amount;
+            }
+            if (amount < 0) amount = 0;
+            if (amount > subtotal) amount = subtotal;
+            return amount;
         }
 
         // Handle discount code application
@@ -602,18 +619,18 @@
                 const result = await response.json();
                 
                 if (result.valid) {
-                    // Apply a 10% discount for demo
-                    const subtotalText = document.getElementById('subtotal').textContent || '$0.00';
-                    const subtotalValue = parseFloat(subtotalText.replace('$', '')) || 0;
-                    
+                    // Apply server-provided discount data
                     appliedDiscount = {
                         code: discountCode,
-                        amount: subtotalValue * 0.1
+                        type: result.type,
+                        value: result.value
                     };
                     showDiscountMessage('Discount code applied successfully!', 'success');
                     updateOrderSummary();
                 } else {
+                    appliedDiscount = null;
                     showDiscountMessage(result.message || 'Invalid discount code.', 'error');
+                    updateOrderSummary();
                 }
             } catch (error) {
                 showDiscountMessage('Error validating discount code.', 'error');
