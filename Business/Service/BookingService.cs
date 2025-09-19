@@ -622,21 +622,28 @@ namespace online_event_booking_system.Business.Service
                     .Include(b => b.Tickets)
                     .FirstOrDefaultAsync(b => b.Id == bookingId && b.CustomerId == userId);
 
-                if (booking == null || booking.Status != "Confirmed")
+                if (booking == null || booking.Status == "Cancelled")
                     return false;
 
-                // Check if cancellation is allowed (e.g., within 24 hours of event)
-                var eventData = await _context.Events.FindAsync(booking.EventId);
-                if (eventData != null && eventData.EventDate <= DateTime.UtcNow.AddHours(24))
+                // Only enforce the 24-hour rule for confirmed bookings
+                if (booking.Status == "Confirmed")
+                {
+                    var eventData = await _context.Events.FindAsync(booking.EventId);
+                    if (eventData != null && eventData.EventDate <= DateTime.UtcNow.AddHours(24))
+                        return false;
+                }
+
+                // Allow cancellation for Pending or Confirmed bookings
+                if (booking.Status != "Pending" && booking.Status != "Confirmed")
                     return false;
 
                 booking.Status = "Cancelled";
                 booking.UpdatedAt = DateTime.UtcNow;
 
-                // Mark tickets as cancelled
+                // Mark tickets as effectively unusable
                 foreach (var ticket in booking.Tickets)
                 {
-                    ticket.IsUsed = true; // Mark as used to prevent further use
+                    ticket.IsUsed = true;
                     ticket.UsedAt = DateTime.UtcNow;
                     _context.Tickets.Update(ticket);
                 }
