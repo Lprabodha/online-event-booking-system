@@ -678,6 +678,7 @@ namespace online_event_booking_system.Controllers.Admin
             return View();
         }
 
+        [HttpPost]
         [HttpPost("admin/email-weekly-report")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendWeeklyReport()
