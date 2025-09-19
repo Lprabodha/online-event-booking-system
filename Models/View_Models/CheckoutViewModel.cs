@@ -15,6 +15,7 @@ namespace online_event_booking_system.Models.View_Models
         public decimal ProcessingFee { get; set; }
         public decimal Total { get; set; }
         public string? StripePublishableKey { get; set; }
+        public int AvailableLoyaltyPoints { get; set; }
     }
 
     public class CheckoutTicketItem
@@ -52,6 +53,9 @@ namespace online_event_booking_system.Models.View_Models
         public string LastName { get; set; } = string.Empty;
 
         public string? PhoneNumber { get; set; }
+
+        [Range(0, int.MaxValue)]
+        public int RedeemPoints { get; set; } = 0;
     }
 
     public class TicketPurchase
