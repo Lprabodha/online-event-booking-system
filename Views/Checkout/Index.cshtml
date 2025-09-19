@@ -148,15 +148,21 @@
                         </button>
                     </div>
                     <div id="discountMessage" class="mt-2 text-sm hidden"></div>
-                    <div id="appliedDiscountBadge" class="hidden mt-3 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-300 text-sm">
-                        <span id="appliedDiscountText">Discount applied</span>
-                        <button type="button" id="removeDiscount" class="text-green-200 hover:text-white underline">Remove</button>
+                    <div class="mt-3 flex items-center gap-3">
+                        <div id="appliedDiscountBadge" class="hidden inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-500/15 border border-green-500/30 text-green-300 text-sm">
+                            <span id="appliedDiscountText">Discount applied</span>
+                            <button type="button" id="removeDiscount" class="text-green-200 hover:text-white underline">Remove</button>
+                        </div>
+                        <div id="pointsAppliedBadge" class="hidden inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-500/15 border border-teal-500/30 text-teal-300 text-sm">
+                            <span id="pointsAppliedText">Points applied</span>
+                            <button type="button" id="removePoints" class="text-teal-200 hover:text-white underline">Remove</button>
+                        </div>
                     </div>
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
                         <div class="md:col-span-2">
                             <div class="flex items-center justify-between mb-2">
                                 <label class="block text-sm font-bold text-white">Redeem Loyalty Points</label>
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-700/60 border border-slate-600/50 text-slate-200">Available: <span id="availablePoints" class="ml-1 text-white">0</span> pts</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-700/60 border border-slate-600/50 text-slate-200">Available: <span id="availablePoints" class="ml-1 text-white">@Model.AvailableLoyaltyPoints</span> pts</span>
                             </div>
                             <div class="flex gap-3">
                                 <input type="number" id="redeemPoints" min="0" value="0"
@@ -335,6 +341,7 @@
             </div>
         </div>
     </div>
+
 </section>
 
 <!-- Loading Overlay -->
@@ -424,7 +431,7 @@
                 
                 // Initialize available points (server may embed later)
                 try {
-                    availablePoints = checkoutData.AvailableLoyaltyPoints || 0;
+                    availablePoints = checkoutData.AvailableLoyaltyPoints || Number('@Model.AvailableLoyaltyPoints') || 0;
                     const ap = document.getElementById('availablePoints');
                     if (ap) ap.textContent = availablePoints;
                 } catch {}
@@ -484,6 +491,15 @@
             if (applyDiscountBtn) {
                 applyDiscountBtn.addEventListener('click', handleDiscountApplication);
             }
+            const removeDiscountBtn = document.getElementById('removeDiscount');
+            if (removeDiscountBtn) {
+                removeDiscountBtn.addEventListener('click', function() {
+                    appliedDiscount = null;
+                    const badge = document.getElementById('appliedDiscountBadge');
+                    if (badge) badge.classList.add('hidden');
+                    updateOrderSummary();
+                });
+            }
 
             const applyPointsBtn = document.getElementById('applyPoints');
             if (applyPointsBtn) {
@@ -491,6 +507,23 @@
                     const input = document.getElementById('redeemPoints');
                     const val = Math.max(0, parseInt(input.value || '0'));
                     redeemedPoints = Math.min(val, availablePoints);
+                    updateOrderSummary();
+                    const badge = document.getElementById('pointsAppliedBadge');
+                    const text = document.getElementById('pointsAppliedText');
+                    if (badge && text && redeemedPoints > 0) {
+                        text.textContent = `Points applied (LKR ${Number(redeemedPoints).toFixed(2)})`;
+                        badge.classList.remove('hidden');
+                    }
+                });
+            }
+            const removePointsBtn = document.getElementById('removePoints');
+            if (removePointsBtn) {
+                removePointsBtn.addEventListener('click', function() {
+                    redeemedPoints = 0;
+                    const input = document.getElementById('redeemPoints');
+                    if (input) input.value = '0';
+                    const badge = document.getElementById('pointsAppliedBadge');
+                    if (badge) badge.classList.add('hidden');
                     updateOrderSummary();
                 });
             }
@@ -612,7 +645,7 @@
                 updateElementText('total', `LKR ${total.toFixed(2)}`);
                 const discountRow = document.getElementById('discountRow');
                 if (discountRow) {
-                    discountRow.classList.toggle('hidden', discount <= 0.0001);
+                    discountRow.classList.toggle('hidden', (discount + (redeemedPoints || 0)) <= 0.0001);
                 }
                 // Reflect points redemption in UI by appending to discount display
                 try {
