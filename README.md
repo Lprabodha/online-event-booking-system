@@ -2,16 +2,13 @@
 
 <p align="center">
   <a href="https://dotnet.microsoft.com/">
-    <img alt=".NET 9" src="https://img.shields.io/badge/.NET-9.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white">
+    <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white">
   </a>
   <a href="#configuration-environment-variables">
     <img alt="Config" src="https://img.shields.io/badge/Configure-ENV_VARS-0ea5e9?style=for-the-badge&logo=azurekeyvault&logoColor=white">
   </a>
   <a href="https://localhost:5001/">
-    <img alt="Live Demo" src="https://img.shields.io/badge/Live_Demo-localhost%3A5001-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white">
-  </a>
-  <a href="./LICENSE">
-    <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge">
+    <img alt="Localhost" src="https://img.shields.io/badge/Localhost-5001-2563eb?style=for-the-badge&logo=googlechrome&logoColor=white">
   </a>
   <a href="#tech-stack">
     <img alt="Stripe" src="https://img.shields.io/badge/Payments-Stripe-635BFF?style=for-the-badge&logo=stripe&logoColor=white">
@@ -21,7 +18,7 @@
   </a>
 </p>
 
-A comprehensive web-based event ticketing platform built for StarEvents Pvt Ltd, enabling seamless event management, ticket booking, and secure payment processing for concerts, theatre shows, and cultural events in Sri Lanka. This project forms part of the AD coursework for the Software Engineering degree at London Metropolitan University.
+A production‑ready web platform for discovering events, purchasing tickets, and managing sales. Customers buy QR‑coded tickets, organizers create and track events, and admins manage users and reporting.
 
 ---
 
@@ -29,60 +26,78 @@ A comprehensive web-based event ticketing platform built for StarEvents Pvt Ltd,
 - Overview
 - Features
 - Tech Stack
-- Architecture Overview
+- Architecture
 - Getting Started
 - Configuration (Environment Variables)
-- Database and Migrations
-- Running and Debugging
+- Database & Migrations
+- Running & Debugging
+- Key Workflows
 - Deployment
 - Troubleshooting
 - Security Notes
 - Academic Attribution
 - Contributing
-- Team Members
+- Team
 - License
 
 ---
 
 ## Overview
-Customers discover and book events. Organizers create events, set pricing, track sales, and validate QR-coded tickets. Admins manage users, roles, and system-wide settings.
+The system supports three roles with tailored experiences: `Customer`, `Organizer`, and `Admin`. Core flows include event publishing, multi‑tier ticket pricing, secure checkout with discount codes and loyalty points, automated emails, and analytics/reporting.
 
 ---
 
 ## Features
-- Authentication and roles with ASP.NET Core Identity
+- Authentication & Roles (ASP.NET Core Identity)
   - Roles: Admin, Organizer, Customer
-- Event management: events, venues, categories, pricing tiers
-- Checkout and payments (Stripe integration included)
-- Bookings and QR-coded tickets (generated and stored in S3)
-- Organizer dashboard with charts and KPIs
-- Email notifications via SMTP
+- Event Management
+  - Venues, categories, images, multi‑tier ticket pricing, stock control
+  - Robust creation flow supporting multiple price tiers
+- Checkout & Payments
+  - Stripe payment intents and confirmation
+  - Discount codes with full validation (active, date range, usage limits, event match)
+  - Loyalty points redemption (1 point = LKR 1), applied after discount
+  - Accurate totals and modern UI with live updates
+- Tickets & Invoices
+  - QR‑coded tickets stored on AWS S3
+  - PDF invoices showing subtotal, discount, and total
+  - Emails include clear order summaries with discount display
+- Emails
+  - Customer welcome email on registration
+  - Organizer invitation email (modern design)
+  - Organizer promo emails to selected customers
+  - Organizer daily summary email
+  - Admin weekly report email (manual trigger, cron‑friendly)
+- Reporting
+  - Organizer sales report download (`excel`/`pdf`/`csv`) with date range
+  - Admin/Organizer dashboards and KPIs
 
 ---
 
 ## Tech Stack
-- ASP.NET Core 9 (MVC + Razor Views)
-- Entity Framework Core 9 (Pomelo MySQL provider)
-- Identity (ApplicationUser + Roles)
-- Chart.js for dashboards
-- QRCoder for QR code generation
-- AWS S3 for ticket QR storage
+- ASP.NET Core 8 (MVC + Razor Views)
+- Entity Framework Core 8 (Pomelo MySQL provider)
+- ASP.NET Core Identity (custom `ApplicationUser`)
+- Stripe (payments)
+- MailKit/MimeKit (SMTP emails)
+- QRCoder (QR generation) + AWS S3 (storage)
+- iTextSharp / ClosedXML (PDF/Excel reports)
 
 ---
 
-## Architecture Overview
-High-level folders:
+## Architecture
+High‑level folders:
 
 ```text
 Controllers/
-  Admin/        Customer/      Organizer/      Public/
+  Admin/  Customer/  Organizer/  Public/
 Business/
-  Interface/    Service/
+  Interface/  Service/
 Data/
-  Entities/     ApplicationDbContext.cs
-Services/       Helper/
+  Entities/  ApplicationDbContext.cs
+Services/  Helper/
 Views/
-  Shared/       Customer/      Organizer/      Events/   Checkout/
+  Shared/  Customer/  Organizer/  Events/  Checkout/
 wwwroot/
   css/  images/  lib/
 ```
@@ -92,48 +107,51 @@ wwwroot/
 ## Getting Started
 
 Prerequisites:
-- .NET 9 SDK
+- .NET 8 SDK
 - MySQL 8.x (or MariaDB 10.x)
 - EF Core Tools: `dotnet tool install --global dotnet-ef`
 
 Clone and restore:
 ```bash
-git clone <your-fork-or-repo-url>
+git clone <your-repo-url>
 cd online-event-booking-system
 dotnet restore
 ```
 
-Set up configuration (see next section), then create the database and run:
+Create the database and run:
 ```bash
 dotnet ef database update
 dotnet run
 ```
-Browse: https://localhost:5001 or http://localhost:5000
+Browse: `https://localhost:5001` or `http://localhost:5000`
 
 ---
 
 ## Configuration (Environment Variables)
-Use User Secrets or environment variables for sensitive settings. Do not commit secrets to git.
+Use User Secrets or environment variables for all secrets. Do not commit secrets to git.
 
-Required keys (names mirror `appsettings.json`):
-
-```json
+Keys (mirror `appsettings.json`):
+```text
 ConnectionStrings:DefaultConnection
-SmtpSettings:Host
+
+SmtpSettings:Server
 SmtpSettings:Port
 SmtpSettings:Username
 SmtpSettings:Password
-SmtpSettings:EnableSsl
+SmtpSettings:SenderEmail
+SmtpSettings:SenderName
+
 AWS:S3BucketName
 AWS:Region
 AWS:AccessKey
 AWS:SecretKey
+
 StripeSettings:PublishableKey
 StripeSettings:SecretKey
 StripeSettings:WebhookSecret
 ```
 
-Using dotnet user-secrets (recommended for local):
+Example (User Secrets):
 ```bash
 dotnet user-secrets init
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "Server=localhost;Database=eventbookingdb;Uid=root;Pwd=yourpassword;"
@@ -144,22 +162,29 @@ dotnet user-secrets set "AWS:S3BucketName" "your-bucket"
 dotnet user-secrets set "AWS:Region" "us-east-1"
 dotnet user-secrets set "AWS:AccessKey" "AKIA..."
 dotnet user-secrets set "AWS:SecretKey" "..."
-dotnet user-secrets set "SmtpSettings:Host" "smtp.gmail.com"
+dotnet user-secrets set "SmtpSettings:Server" "smtp.gmail.com"
 dotnet user-secrets set "SmtpSettings:Port" "587"
 dotnet user-secrets set "SmtpSettings:Username" "your@gmail.com"
 dotnet user-secrets set "SmtpSettings:Password" "app-password"
-dotnet user-secrets set "SmtpSettings:EnableSsl" "true"
+dotnet user-secrets set "SmtpSettings:SenderEmail" "noreply@yourdomain.com"
+dotnet user-secrets set "SmtpSettings:SenderName" "Event Booking System"
+```
+
+Stripe webhook (local):
+```bash
+# In Stripe CLI
+stripe listen --forward-to https://localhost:5001/stripe/webhook
 ```
 
 ---
 
-## Database and Migrations
-Create database and apply migrations:
+## Database & Migrations
+Apply existing migrations:
 ```bash
 dotnet ef database update
 ```
 
-Add a new migration when changing entities:
+Add a new migration:
 ```bash
 dotnet ef migrations add <Name>
 dotnet ef database update
@@ -167,81 +192,87 @@ dotnet ef database update
 
 ---
 
-## Running and Debugging
-Development run:
+## Running & Debugging
+Development:
 ```bash
 dotnet run
 ```
 
-Build and run with watch:
+Watch mode:
 ```bash
 dotnet watch run
 ```
 
-Default roles and demo users (if seeding is enabled):
-- Admin: admin@mail.com / Password@123
-- Organizer: organizer@mail.com / Password@123
-- Customer: customer@mail.com / Password@123
+Seed users/roles may be enabled (see `Data/Seeders`). Example credentials:
+- Admin: `admin@mail.com` / `Password@123`
+- Organizer: `organizer@mail.com` / `Password@123`
+- Customer: `customer@mail.com` / `Password@123`
+
+---
+
+## Key Workflows
+- Discounts
+  - Validate via `POST /checkout/validate-discount` with `discountCode` and `eventId`
+  - Handles active flag, start/end dates, usage limit, event applicability
+- Checkout
+  - Client calculates live totals (subtotal − discount − redeemed points)
+  - Server persists `Payment.Amount` and `Payment.DiscountAmount`
+- Loyalty Points
+  - Redeem on checkout (1 point = LKR 1), capped at order value after discount
+  - Available points shown to the customer
+- Emails
+  - Welcome email on registration
+  - Organizer promo emails (compose and send to selected customers)
+  - Organizer daily summary email
+  - Admin weekly report (manual button, cron/scheduler friendly)
+- Reporting
+  - Organizer sales report download: `POST /organizer/reports/download-sales` with `format=excel|pdf|csv` and optional `dateFrom/dateTo`
 
 ---
 
 ## Deployment
-- Set environment variables in your hosting platform (do not deploy secrets in files)
-- Run migrations on startup or via CI/CD: `dotnet ef database update`
-- Build: `dotnet publish -c Release -o out`
-- Configure reverse proxy/static files as per ASP.NET Core docs
+- Configure environment variables in your host (no secrets in files)
+- Run migrations: `dotnet ef database update`
+- Publish: `dotnet publish -c Release -o out`
+- Ensure reverse proxy/HTTPS/static files per ASP.NET Core guidance
 
 ---
 
 ## Troubleshooting
-- Database connection errors: verify `DefaultConnection` and DB server is running
-- 403 on Stripe webhook: confirm `StripeSettings:WebhookSecret` and webhook URL
-- Images/QR not loading: ensure AWS bucket CORS and that S3 keys are correct; app uses direct S3 URLs
-- 500 errors in production: enable logging, check `Logging:LogLevel` and hosting logs
+- Database: verify `DefaultConnection` and DB server running
+- Stripe webhook 403: check `StripeSettings:WebhookSecret` and webhook URL
+- S3 assets/QR not visible: verify bucket CORS and credentials; app uses direct S3 URLs
+- Emails not sending: confirm SMTP server/port/credentials and less‑secure/app passwords
 
 ---
 
 ## Security Notes
-- Do NOT commit API keys or credentials to source control
-- Prefer `dotnet user-secrets` for local dev and environment variables for prod
-- Rotate keys regularly; configure least-privilege for AWS IAM
+- Never commit API keys or credentials
+- Use `dotnet user-secrets` locally and environment variables in prod
+- Rotate keys regularly; apply least‑privilege IAM policies for AWS
 
 ---
 
 ## Academic Attribution
-This repository is submitted as part of coursework for the Software Engineering degree programme at London Metropolitan University.
-
-- Programme: BSc Software Engineering (or applicable)
-- Institution: London Metropolitan University
-- Academic Year: 2025
-
-Note: Any opinions, findings, and conclusions in this work are those of the authors and do not necessarily reflect the views of the institution.
+This repository is submitted as part of coursework for the Software Engineering degree programme at London Metropolitan University (Academic Year 2025).
 
 ---
 
 ## Contributing
-We welcome contributions! Please follow these steps:
+We welcome contributions:
+1) Fork and branch
+2) Make focused changes (Conventional Commits: `feat:`, `fix:`, `docs:` …)
+3) Ensure build/migrations pass: `dotnet build`, `dotnet ef database update`
+4) Open a PR with a clear description and test steps
 
-1. Fork the repository and create a branch
-   - git checkout -b feat/short-description
-2. Make your changes with clear, small commits
-   - Use Conventional Commits: feat:, fix:, docs:, refactor:, chore:
-3. Ensure the app builds and lints cleanly
-   - dotnet build
-   - dotnet ef migrations add <Name> (if schema changes)
-   - dotnet ef database update
-4. Open a Pull Request
-   - Describe the change, screenshots for UI, steps to test
-   - Reference related issues if applicable
-
-Coding guidelines:
-- Favor readability and clear naming
-- Avoid breaking changes to public endpoints without discussion
-- Do not include secrets in code or config files
+Guidelines:
+- Prefer readability and clear naming
+- Avoid breaking public endpoints without prior discussion
+- Do not include secrets in code or configs
 
 ---
 
-## Team Members
+## Team
 - Amandi
 - Tharindu Nuwan
 - Dulan
