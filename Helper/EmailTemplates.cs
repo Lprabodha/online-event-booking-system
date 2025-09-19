@@ -443,7 +443,10 @@
             DateTime eventDate,
             string venueName,
             string bookingReference,
-            List<TicketInfo> tickets)
+            List<TicketInfo> tickets,
+            decimal subtotal,
+            decimal discountAmount,
+            decimal total)
         {
             var ticketsHtml = string.Join("", tickets.Select(ticket => $@"
                 <div class='ticket-card'>
@@ -468,6 +471,8 @@
                         </div>
                     </div>
                 </div>"));
+
+            var discountRow = discountAmount > 0 ? $@"<div class='summary-row'><span>Discount</span><span>- LKR {discountAmount:F2}</span></div>" : string.Empty;
 
             return $@"
 <!DOCTYPE html>
@@ -658,6 +663,29 @@
             font-weight: 600;
             margin: 5px;
         }}
+        .order-summary {{
+            width: 100%;
+            max-width: 360px;
+            margin-left: auto;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+        }}
+        .summary-row {{
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }}
+        .summary-row:last-child {{
+            border-bottom: none;
+        }}
+        .summary-total {{
+            font-weight: 700;
+            color: #1f2937;
+        }}
         @media (max-width: 600px) {{
             .ticket-details {{
                 flex-direction: column;
@@ -705,6 +733,12 @@
             <div class='tickets-section'>
                 <h3>🎟️ Your Tickets ({tickets.Count})</h3>
                 {ticketsHtml}
+            </div>
+
+            <div class='order-summary'>
+                <div class='summary-row'><span>Subtotal</span><span>LKR {subtotal:F2}</span></div>
+                {discountRow}
+                <div class='summary-row summary-total'><span>Total</span><span>LKR {total:F2}</span></div>
             </div>
             
             <div class='download-section'>

@@ -9,6 +9,9 @@ namespace online_event_booking_system.Data.Entities
         [Range(0, double.MaxValue, ErrorMessage = "Amount must be greater than or equal to 0")]
         public decimal Amount { get; set; }
         
+        [Range(0, double.MaxValue, ErrorMessage = "Discount must be greater than or equal to 0")]
+        public decimal DiscountAmount { get; set; } = 0;
+        
         public DateTime PaidAt { get; set; } = DateTime.UtcNow;
 
         [Required, MaxLength(50)]

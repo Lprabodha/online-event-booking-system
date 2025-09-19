@@ -97,20 +97,27 @@ namespace online_event_booking_system.Business.Service
                         return false;
                 }
 
-                // Validate discount code if provided
+                // Validate discount code if provided with detailed checks
                 if (!string.IsNullOrEmpty(request.DiscountCode))
                 {
+                    var code = request.DiscountCode.Trim();
+                    var now = DateTime.UtcNow;
                     var discount = await _context.Discounts
-                        .FirstOrDefaultAsync(d => d.Code == request.DiscountCode && 
-                                                 d.IsActive && 
-                                                 d.ValidFrom <= DateTime.UtcNow && 
-                                                 d.ValidTo >= DateTime.UtcNow);
+                        .FirstOrDefaultAsync(d => d.Code == code);
 
                     if (discount == null)
                         return false;
 
-                    // Check usage limit
-                    if (discount.UsageLimit.HasValue && discount.UsedCount >= discount.UsageLimit)
+                    if (!discount.IsActive)
+                        return false;
+
+                    if (discount.ValidFrom > now || discount.ValidTo < now)
+                        return false;
+
+                    if (discount.UsageLimit.HasValue && discount.UsedCount >= discount.UsageLimit.Value)
+                        return false;
+
+                    if (discount.EventId.HasValue && discount.EventId.Value != request.EventId)
                         return false;
                 }
 
@@ -170,17 +177,62 @@ namespace online_event_booking_system.Business.Service
                     appliedDiscount = await _context.Discounts
                         .FirstOrDefaultAsync(d => d.Code == request.DiscountCode);
                     
-                    if (appliedDiscount != null)
+                    if (appliedDiscount == null)
                     {
-                        if (appliedDiscount.Type == "Percent")
-                            discountAmount = subtotal * (appliedDiscount.Value / 100);
-                        else
-                            discountAmount = appliedDiscount.Value;
+                        return new CheckoutResponse
+                        {
+                            Success = false,
+                            Message = "Invalid coupon code."
+                        };
                     }
+
+                    // Validate discount state
+                    var now = DateTime.UtcNow;
+                    if (!appliedDiscount.IsActive)
+                    {
+                        return new CheckoutResponse
+                        {
+                            Success = false,
+                            Message = "This coupon is inactive."
+                        };
+                    }
+                    if (appliedDiscount.ValidFrom > now || appliedDiscount.ValidTo < now)
+                    {
+                        return new CheckoutResponse
+                        {
+                            Success = false,
+                            Message = "This coupon is expired."
+                        };
+                    }
+                    if (appliedDiscount.UsageLimit.HasValue && appliedDiscount.UsedCount >= appliedDiscount.UsageLimit.Value)
+                    {
+                        return new CheckoutResponse
+                        {
+                            Success = false,
+                            Message = "This coupon has reached its usage limit."
+                        };
+                    }
+                    if (appliedDiscount.EventId.HasValue && appliedDiscount.EventId.Value != request.EventId)
+                    {
+                        return new CheckoutResponse
+                        {
+                            Success = false,
+                            Message = "This coupon is not valid for the selected event."
+                        };
+                    }
+
+                    if (appliedDiscount.Type == "Percent")
+                        discountAmount = subtotal * (appliedDiscount.Value / 100);
+                    else
+                        discountAmount = appliedDiscount.Value;
                 }
 
                 // New pricing policy: customer pays only ticket price minus discounts
                 decimal total = subtotal - discountAmount;
+                if (total < 0)
+                {
+                    total = 0;
+                }
 
                 // Create booking record first
                 var booking = new Booking
@@ -203,6 +255,7 @@ namespace online_event_booking_system.Business.Service
                 {
                     CustomerId = userId,
                     Amount = total,
+                    DiscountAmount = Math.Min(discountAmount, subtotal),
                     PaymentMethod = "Stripe",
                     Status = "Pending",
                     Currency = "LKR",
@@ -279,6 +332,9 @@ namespace online_event_booking_system.Business.Service
 
                 var booking = await _context.Bookings
                     .Include(b => b.Tickets)
+                        .ThenInclude(t => t.EventPrice)
+                    .Include(b => b.Tickets)
+                        .ThenInclude(t => t.Payment)
                     .Include(b => b.Event)
                     .Include(b => b.Customer)
                     .FirstOrDefaultAsync(b => b.Id == bookingId);
@@ -367,6 +423,8 @@ namespace online_event_booking_system.Business.Service
                 .Include(b => b.Customer)
                 .Include(b => b.Tickets)
                     .ThenInclude(t => t.EventPrice)
+                .Include(b => b.Tickets)
+                    .ThenInclude(t => t.Payment)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
         }
 
@@ -640,13 +698,30 @@ namespace online_event_booking_system.Business.Service
                 }
 
                 // Create comprehensive email with all tickets
+                // Compute pricing summary for email
+                decimal subtotal = booking.Tickets.Sum(t => t.EventPrice?.Price ?? 0);
+                decimal discountAmount = 0;
+                try
+                {
+                    var payment = booking.Tickets.FirstOrDefault()?.Payment;
+                    if (payment != null)
+                    {
+                        discountAmount = payment.DiscountAmount;
+                    }
+                }
+                catch { }
+                var total = Math.Max(0, subtotal - discountAmount);
+
                 var emailBody = online_event_booking_system.Helper.EmailTemplates.GetMultiTicketBookingTemplate(
                     customerName: booking.Customer.FullName,
                     eventName: booking.Event.Title,
                     eventDate: booking.Event.EventDate,
                     venueName: booking.Event.Venue?.Name ?? "TBA",
                     bookingReference: booking.BookingReference,
-                    tickets: ticketInfos
+                    tickets: ticketInfos,
+                    subtotal: subtotal,
+                    discountAmount: discountAmount,
+                    total: total
                 );
 
                 await _emailService.SendEmailAsync(

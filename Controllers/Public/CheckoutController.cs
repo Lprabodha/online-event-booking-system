@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using online_event_booking_system.Business.Interface;
+using online_event_booking_system.Data;
+using Microsoft.EntityFrameworkCore;
 using online_event_booking_system.Models.View_Models;
 using online_event_booking_system.Models;
 using online_event_booking_system.Services;
@@ -12,6 +14,7 @@ namespace online_event_booking_system.Controllers.Public
     public class CheckoutController : Controller
     {
         private readonly IBookingService _bookingService;
+        private readonly ApplicationDbContext _context;
         private readonly ILogger<CheckoutController> _logger;
         private readonly UserManager<online_event_booking_system.Data.Entities.ApplicationUser> _userManager;
         private readonly ITicketQRService _ticketQRService;
@@ -19,12 +22,14 @@ namespace online_event_booking_system.Controllers.Public
 
         public CheckoutController(
             IBookingService bookingService,
+            ApplicationDbContext context,
             ILogger<CheckoutController> logger,
             UserManager<online_event_booking_system.Data.Entities.ApplicationUser> userManager,
             ITicketQRService ticketQRService,
             IS3Service s3Service)
         {
             _bookingService = bookingService;
+            _context = context;
             _logger = logger;
             _userManager = userManager;
             _ticketQRService = ticketQRService;
@@ -204,20 +209,53 @@ namespace online_event_booking_system.Controllers.Public
         {
             try
             {
-                // This would be implemented in the booking service
-                // For now, return a simple validation
-                return Json(new { 
-                    valid = !string.IsNullOrEmpty(request.DiscountCode),
-                    message = "Discount code validated successfully." 
+                if (string.IsNullOrWhiteSpace(request.DiscountCode))
+                {
+                    return Json(new { valid = false, message = "Please enter a discount code." });
+                }
+
+                var code = request.DiscountCode.Trim();
+                var now = DateTime.UtcNow;
+
+                var discount = await _context.Discounts
+                    .FirstOrDefaultAsync(d => d.Code == code);
+
+                if (discount == null)
+                {
+                    return Json(new { valid = false, message = "Invalid coupon code." });
+                }
+
+                if (!discount.IsActive)
+                {
+                    return Json(new { valid = false, message = "This coupon is inactive." });
+                }
+
+                if (discount.ValidFrom > now || discount.ValidTo < now)
+                {
+                    return Json(new { valid = false, message = "This coupon is expired." });
+                }
+
+                if (discount.UsageLimit.HasValue && discount.UsedCount >= discount.UsageLimit.Value)
+                {
+                    return Json(new { valid = false, message = "This coupon has reached its usage limit." });
+                }
+
+                if (discount.EventId.HasValue && discount.EventId.Value != request.EventId)
+                {
+                    return Json(new { valid = false, message = "This coupon is not valid for the selected event." });
+                }
+
+                return Json(new {
+                    valid = true,
+                    message = "Discount code applied.",
+                    type = discount.Type,
+                    value = discount.Value
                 });
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error validating discount code");
-                return Json(new { 
-                    valid = false, 
-                    message = "Invalid discount code." 
-                });
+                return Json(new { valid = false, message = "Failed to validate discount code." });
             }
         }
     }
