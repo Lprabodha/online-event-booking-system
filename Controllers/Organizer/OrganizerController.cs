@@ -7,6 +7,8 @@ using online_event_booking_system.Models;
 using online_event_booking_system.Models.View_Models;
 using online_event_booking_system.Data.Entities;
 using online_event_booking_system.Services;
+using online_event_booking_system.Models.View_Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace online_event_booking_system.Controllers.Organizer
 {
@@ -18,19 +20,91 @@ namespace online_event_booking_system.Controllers.Organizer
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<OrganizerController> _logger;
         private readonly IS3Service _s3Service;
+        private readonly IEmailService _emailService;
+        private readonly online_event_booking_system.Data.ApplicationDbContext _context;
 
         public OrganizerController(
             IEventService eventService, 
             IDiscountService discountService, 
             UserManager<ApplicationUser> userManager,
             ILogger<OrganizerController> logger,
-            IS3Service s3Service)
+            IS3Service s3Service,
+            IEmailService emailService,
+            online_event_booking_system.Data.ApplicationDbContext context)
         {
             _eventService = eventService;
             _discountService = discountService;
             _userManager = userManager;
             _logger = logger;
             _s3Service = s3Service;
+            _emailService = emailService;
+            _context = context;
+        }
+
+        [HttpGet("organizer/email-compose")]
+        public async Task<IActionResult> EmailCompose()
+        {
+            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var recipients = await _context.Users
+                .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
+                .OrderBy(u => u.FullName)
+                .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
+                .ToListAsync();
+
+            var model = new OrganizerEmailViewModel
+            {
+                Recipients = recipients
+            };
+            return View("~/Views/Organizer/EmailCompose.cshtml", model);
+        }
+
+        [HttpPost("organizer/email-send")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailSend(OrganizerEmailViewModel model)
+        {
+            if (!ModelState.IsValid || model.SelectedUserIds.Count == 0)
+            {
+                // reload recipients
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                model.Recipients = await _context.Users
+                    .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
+                    .OrderBy(u => u.FullName)
+                    .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
+                    .ToListAsync();
+                TempData["ErrorMessage"] = "Please fill subject/body and select at least one recipient.";
+                return View("~/Views/Organizer/EmailCompose.cshtml", model);
+            }
+
+            try
+            {
+                var organizer = await _userManager.GetUserAsync(User);
+                var recipients = await _context.Users
+                    .Where(u => model.SelectedUserIds.Contains(u.Id) && u.Email != null)
+                    .Select(u => new { u.Email, u.FullName })
+                    .ToListAsync();
+
+                var body = online_event_booking_system.Helper.EmailTemplates.GetEventPromoTemplate(
+                    organizer?.FullName ?? "Organizer",
+                    model.Subject,
+                    model.Body,
+                    null,
+                    null
+                );
+
+                foreach (var r in recipients)
+                {
+                    await _emailService.SendEmailAsync(r.Email!, model.Subject, body);
+                }
+
+                TempData["SuccessMessage"] = $"Email sent to {recipients.Count} recipient(s).";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending organizer email");
+                TempData["ErrorMessage"] = "Failed to send emails. Please try again.";
+                return RedirectToAction("EmailCompose");
+            }
         }
 
         [HttpGet("organizer/event-analytics/{id}")]
@@ -428,6 +502,61 @@ namespace online_event_booking_system.Controllers.Organizer
                 _logger.LogError(ex, "Error getting events data");
                 return Json(new { error = "Failed to load events data" });
             }
+        }
+
+        [HttpPost("organizer/email-daily-summary")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendDailySummary()
+        {
+            try
+            {
+                var organizer = await _userManager.GetUserAsync(User);
+                if (organizer == null || string.IsNullOrEmpty(organizer.Email))
+                {
+                    TempData["ErrorMessage"] = "Organizer not found or missing email.";
+                    return RedirectToAction("Index");
+                }
+
+                var today = DateTime.UtcNow.Date;
+                var events = await _eventService.GetEventsByOrganizerAsync(organizer.Id);
+
+                var tickets = events.SelectMany(e => e.Bookings ?? new List<Booking>())
+                    .Where(b => b.CreatedAt.Date == today && b.Status == "Confirmed")
+                    .SelectMany(b => b.Tickets ?? new List<Ticket>())
+                    .ToList();
+
+                var revenue = tickets.Where(t => t.Payment != null).Sum(t => t.Payment.Amount);
+                var ticketsSold = tickets.Count;
+
+                var topEvents = events.Select(e => new
+                {
+                    e.Title,
+                    Tickets = e.Bookings?.Where(b => b.CreatedAt.Date == today && b.Status == "Confirmed").SelectMany(b => b.Tickets ?? new List<Ticket>()).Count() ?? 0,
+                    Sales = e.Bookings?.Where(b => b.CreatedAt.Date == today && b.Status == "Confirmed").SelectMany(b => b.Tickets ?? new List<Ticket>()).Where(t => t.Payment != null).Sum(t => t.Payment.Amount) ?? 0m
+                })
+                .OrderByDescending(x => x.Sales)
+                .Take(5)
+                .ToList();
+
+                var body = online_event_booking_system.Helper.EmailTemplates.GetOrganizerDailySummaryTemplate(
+                    organizer.FullName,
+                    today,
+                    events.Count,
+                    ticketsSold,
+                    revenue,
+                    topEvents.Select(x => (x.Title, x.Tickets, x.Sales)).ToList()
+                );
+
+                await _emailService.SendEmailAsync(organizer.Email, $"Daily Summary — {today:MMM dd}", body);
+                TempData["SuccessMessage"] = "Daily summary email sent.";
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending daily summary email");
+                TempData["ErrorMessage"] = "Failed to send daily summary email.";
+            }
+
+            return RedirectToAction("Index");
         }
 
         [HttpGet("organizer/discounts")]

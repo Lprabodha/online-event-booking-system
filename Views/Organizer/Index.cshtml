@@ -90,6 +90,10 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <a asp-controller="Organizer" asp-action="CreateEvent" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-4 py-3 rounded-xl font-bold text-sm hover:from-purple-600 hover:to-teal-600 transition transform hover:scale-105 text-center">Create Event</a>
                         <a asp-controller="Organizer" asp-action="Discounts" class="px-4 py-3 rounded-xl text-sm font-semibold text-purple-400 border border-purple-400/50 hover:bg-dark-navy transition text-center">Manage Discounts</a>
+                        <form asp-controller="Organizer" asp-action="SendDailySummary" method="post" class="contents">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="px-4 py-3 rounded-xl text-sm font-semibold text-blue-400 border border-blue-400/50 hover:bg-dark-navy transition text-center w-full">Send Daily Summary Email</button>
+                        </form>
                         <a href="#" class="px-4 py-3 rounded-xl text-sm font-semibold text-teal-400 border border-teal-400/50 hover:bg-dark-navy transition text-center">Export Attendees (CSV)</a>
                         <a href="#" class="px-4 py-3 rounded-xl text-sm font-semibold text-blue-400 border border-blue-400/50 hover:bg-dark-navy transition text-center">Download QR Set (ZIP)</a>
                     </div>
