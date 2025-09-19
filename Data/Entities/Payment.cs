@@ -18,7 +18,7 @@ namespace online_event_booking_system.Data.Entities
         public string Status { get; set; } = "Pending"; // Pending, Completed, Failed, Refunded
 
         [Required, MaxLength(10)]
-        public string Currency { get; set; } = "USD";
+        public string Currency { get; set; } = "LKR";
 
         [MaxLength(200)]
         public string? TransactionId { get; set; }

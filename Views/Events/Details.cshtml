@@ -592,7 +592,7 @@
                             <div class="space-y-3">
                                 @foreach (var discount in Model.Event.Discounts.Where(d => d.IsActive))
                                 {
-                                    var discountDisplay = discount.Type == "Percent" ? $"{discount.Value}% OFF" : $"${discount.Value} OFF";
+                                    var discountDisplay = discount.Type == "Percent" ? $"{discount.Value}% OFF" : $"LKR {discount.Value} OFF";
                                     <div class="flex items-center justify-between p-3 bg-green-500/10 rounded-xl border border-green-500/20">
                                         <div>
                                             <div class="font-semibold text-white">@discount.Code</div>

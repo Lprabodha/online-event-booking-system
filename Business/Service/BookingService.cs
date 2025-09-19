@@ -179,9 +179,8 @@ namespace online_event_booking_system.Business.Service
                     }
                 }
 
-                decimal serviceFee = subtotal * 0.08m; // 8% service fee
-                decimal processingFee = 2.99m;
-                decimal total = subtotal + serviceFee + processingFee - discountAmount;
+                // New pricing policy: customer pays only ticket price minus discounts
+                decimal total = subtotal - discountAmount;
 
                 // Create booking record first
                 var booking = new Booking
