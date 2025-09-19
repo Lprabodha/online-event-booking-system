@@ -58,6 +58,14 @@ namespace online_event_booking_system.Business.Service
                 }).ToList()
             };
 
+            // Attach available loyalty points if signed in
+            try
+            {
+                // No HttpContext here; points will be populated in controller if needed
+                checkoutData.AvailableLoyaltyPoints = 0;
+            }
+            catch { }
+
             return checkoutData;
         }
 
@@ -227,8 +235,13 @@ namespace online_event_booking_system.Business.Service
                         discountAmount = appliedDiscount.Value;
                 }
 
-                // New pricing policy: customer pays only ticket price minus discounts
-                decimal total = subtotal - discountAmount;
+                // Loyalty redemption: 1 point = LKR 1
+                int redeemPoints = Math.Max(0, request.RedeemPoints);
+                var loyalty = await _context.LoyaltyPoints.FirstOrDefaultAsync(lp => lp.CustomerId == userId);
+                int usablePoints = Math.Min(redeemPoints, loyalty?.Points ?? 0);
+
+                // New pricing policy: customer pays only ticket price minus discounts and redeemed points
+                decimal total = subtotal - discountAmount - usablePoints;
                 if (total < 0)
                 {
                     total = 0;
@@ -265,6 +278,21 @@ namespace online_event_booking_system.Business.Service
 
                 _context.Payments.Add(payment);
                 await _context.SaveChangesAsync();
+
+                // Deduct redeemed points
+                if (usablePoints > 0)
+                {
+                    if (loyalty == null)
+                    {
+                        loyalty = new LoyaltyPoint { CustomerId = userId, Points = 0, LastUpdated = DateTime.UtcNow };
+                        _context.LoyaltyPoints.Add(loyalty);
+                    }
+                    loyalty.Points -= usablePoints;
+                    loyalty.LastUpdated = DateTime.UtcNow;
+                    loyalty.Description = $"Redeemed {usablePoints} points for booking {booking.BookingReference}";
+                    _context.LoyaltyPoints.Update(loyalty);
+                    await _context.SaveChangesAsync();
+                }
 
                 // Create ticket records
                 foreach (var ticket in request.Tickets)
