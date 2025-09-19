@@ -7,67 +7,111 @@ namespace online_event_booking_system.Business.Service
 {
     public class CustomerPdfService : ICustomerPdfService
     {
-        public async Task<byte[]> GenerateTicketsPdfAsync(Booking booking)
-        {
-            return await Task.Run(() =>
-            {
-                using var ms = new MemoryStream();
-                var doc = new Document(PageSize.A4, 36, 36, 36, 36);
-                PdfWriter.GetInstance(doc, ms);
-                doc.Open();
+		public async Task<byte[]> GenerateTicketsPdfAsync(Booking booking)
+		{
+			return await Task.Run(() =>
+			{
+				using var ms = new MemoryStream();
+				var doc = new Document(PageSize.A4, 28, 28, 28, 28);
+				PdfWriter.GetInstance(doc, ms);
+				doc.Open();
 
-                // Title
-                var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
-                var textFont = FontFactory.GetFont(FontFactory.HELVETICA, 11);
-                doc.Add(new Paragraph($"Tickets - {booking.Event.Title}", titleFont));
-                doc.Add(new Paragraph($"Booking Ref: {booking.BookingReference}", textFont));
-                doc.Add(new Paragraph("\n"));
+				// Fonts and colors
+				var titleFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 20, new BaseColor(255, 255, 255));
+				var headerFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(55, 65, 81));
+				var labelFont = FontFactory.GetFont(FontFactory.HELVETICA, 9, new BaseColor(107, 114, 128));
+				var valueFont = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(31, 41, 55));
+				var smallFont = FontFactory.GetFont(FontFactory.HELVETICA, 8, new BaseColor(75, 85, 99));
+				var darkBg = new BaseColor(30, 41, 59);
+				var lightBg = new BaseColor(243, 244, 246);
+				var accent = new BaseColor(99, 102, 241); // indigo
 
-                foreach (var ticket in booking.Tickets)
-                {
-                    // Ticket header
-                    var table = new PdfPTable(2) { WidthPercentage = 100 };
-                    table.SetWidths(new float[] { 60, 40 });
+				// Document header (one time)
+				var header = new PdfPTable(2) { WidthPercentage = 100 };
+				header.SetWidths(new float[] { 70, 30 });
+				var headerLeft = new PdfPCell(new Phrase($"{booking.Event.Title}", titleFont))
+				{ BackgroundColor = darkBg, Border = Rectangle.NO_BORDER, Padding = 14 };
+				header.AddCell(headerLeft);
+				var headerRight = new PdfPCell(new Phrase($"Booking Ref: {booking.BookingReference}", FontFactory.GetFont(FontFactory.HELVETICA, 10, Font.NORMAL, new BaseColor(229, 231, 235))))
+				{ BackgroundColor = darkBg, Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_RIGHT, Padding = 14 };
+				header.AddCell(headerRight);
+				doc.Add(header);
+				doc.Add(new Paragraph("\n"));
 
-                    var left = new PdfPTable(1) { WidthPercentage = 100 };
-                    left.AddCell(Cell($"Ticket #: {ticket.TicketNumber}", textFont));
-                    left.AddCell(Cell($"Category: {ticket.EventPrice?.Category ?? "General"}", textFont));
-                    left.AddCell(Cell($"Price: {ticket.EventPrice?.Price.ToString("F2") ?? "0.00"}", textFont));
-                    left.AddCell(Cell($"Event Date: {booking.Event.EventDate:MMM dd, yyyy}", textFont));
-                    left.AddCell(Cell($"Venue: {booking.Event.Venue?.Name}", textFont));
+				var ticketsList = booking.Tickets?.ToList() ?? new List<Ticket>();
+				for (int index = 0; index < ticketsList.Count; index++)
+				{
+					var ticket = ticketsList[index];
 
-                    var leftCell = new PdfPCell(left) { Border = Rectangle.NO_BORDER };
-                    table.AddCell(leftCell);
+					// Outer card table
+					var card = new PdfPTable(1) { WidthPercentage = 100 };
+					var cardCell = new PdfPCell { BackgroundColor = new BaseColor(255, 255, 255), Padding = 14, BorderColor = new BaseColor(229, 231, 235), BorderWidth = 1f };
 
-                    // QR code image (if path is an URL, we can load it directly)
-                    try
-                    {
-                        if (!string.IsNullOrEmpty(ticket.QRCode))
-                        {
-                            var img = Image.GetInstance(ticket.QRCode);
-                            img.ScaleToFit(140f, 140f);
-                            var imgCell = new PdfPCell(img) { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_RIGHT };
-                            table.AddCell(imgCell);
-                        }
-                        else
-                        {
-                            table.AddCell(new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER });
-                        }
-                    }
-                    catch
-                    {
-                        table.AddCell(new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER });
-                    }
+					// Content: two columns (details | QR)
+					var content = new PdfPTable(2) { WidthPercentage = 100 };
+					content.SetWidths(new float[] { 62, 38 });
 
-                    doc.Add(table);
-                    doc.Add(new Paragraph("\n"));
-                    doc.NewPage();
-                }
+					// Left details
+					var details = new PdfPTable(2) { WidthPercentage = 100 };
+					details.SetWidths(new float[] { 30, 70 });
+					details.AddCell(InfoLabel("Ticket #", labelFont));
+					details.AddCell(InfoValue(ticket.TicketNumber, valueFont));
+					details.AddCell(InfoLabel("Name", labelFont));
+					details.AddCell(InfoValue(booking.Customer?.FullName ?? booking.CustomerId, valueFont));
+					details.AddCell(InfoLabel("Category", labelFont));
+					details.AddCell(InfoValue(ticket.EventPrice?.Category ?? "General", valueFont));
+					details.AddCell(InfoLabel("Price", labelFont));
+					details.AddCell(InfoValue($"LKR {(ticket.EventPrice?.Price ?? 0):N2}", valueFont));
+					details.AddCell(InfoLabel("Date & Time", labelFont));
+					details.AddCell(InfoValue($"{booking.Event.EventDate:MMM dd, yyyy}  {booking.Event.EventTime:hh:mm tt}", valueFont));
+					details.AddCell(InfoLabel("Venue", labelFont));
+					details.AddCell(InfoValue(booking.Event.Venue?.Name ?? "-", valueFont));
 
-                doc.Close();
-                return ms.ToArray();
-            });
-        }
+					var detailsCell = new PdfPCell(details) { Border = Rectangle.NO_BORDER, PaddingRight = 10 };
+					content.AddCell(detailsCell);
+
+					// Right QR
+					PdfPCell qrCell;
+					try
+					{
+						if (!string.IsNullOrEmpty(ticket.QRCode))
+						{
+							var qr = Image.GetInstance(ticket.QRCode);
+							qr.ScaleToFit(180f, 180f);
+							qrCell = new PdfPCell(qr) { Border = Rectangle.BOX, BorderColor = new BaseColor(229, 231, 235), Padding = 8f, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE };
+						}
+						else
+						{
+							qrCell = new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER };
+						}
+					}
+					catch
+					{
+						qrCell = new PdfPCell(new Phrase("")) { Border = Rectangle.NO_BORDER };
+					}
+					content.AddCell(qrCell);
+
+					cardCell.AddElement(content);
+					card.AddCell(cardCell);
+					doc.Add(card);
+
+					// Footer note
+					var note = new PdfPTable(1) { WidthPercentage = 100 };
+					var noteCell = new PdfPCell(new Phrase("Please present this ticket and a valid ID at entry. The QR code is unique and non-transferable.", smallFont))
+					{ BackgroundColor = lightBg, Border = Rectangle.NO_BORDER, Padding = 10 };
+					note.AddCell(noteCell);
+					doc.Add(note);
+
+					if (index < ticketsList.Count - 1)
+					{
+						doc.NewPage();
+					}
+				}
+
+				doc.Close();
+				return ms.ToArray();
+			});
+		}
 
         public async Task<byte[]> GenerateInvoicePdfAsync(Booking booking)
         {
@@ -136,17 +180,27 @@ namespace online_event_booking_system.Business.Service
             });
         }
 
-        private static PdfPCell Cell(string text, Font font)
+		private static PdfPCell Cell(string text, Font font)
         {
             return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, Padding = 4 };
         }
 
-        private static PdfPCell Header(string text, Font font)
+		private static PdfPCell Header(string text, Font font)
         {
             var cell = new PdfPCell(new Phrase(text, font)) { Padding = 6 };
             cell.BackgroundColor = new BaseColor(240, 240, 240);
             return cell;
         }
+
+		private static PdfPCell InfoLabel(string text, Font font)
+		{
+			return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, PaddingBottom = 6f };
+		}
+
+		private static PdfPCell InfoValue(string text, Font font)
+		{
+			return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, PaddingBottom = 6f };
+		}
     }
 }
 

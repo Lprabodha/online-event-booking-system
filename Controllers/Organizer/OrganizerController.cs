@@ -58,10 +58,12 @@ namespace online_event_booking_system.Controllers.Organizer
                 var totalEvents = events.Count();
                 var publishedEvents = events.Count(e => e.IsPublished);
                 var totalBookings = events.SelectMany(e => e.Bookings ?? new List<Booking>()).Count();
-                var totalRevenue = events.SelectMany(e => e.Bookings ?? new List<Booking>())
+                // Organizer revenue: 98% of ticket payments
+                var grossRevenue = events.SelectMany(e => e.Bookings ?? new List<Booking>())
                     .SelectMany(b => b.Tickets ?? new List<Ticket>())
                     .Where(t => t.Payment != null)
                     .Sum(t => t.Payment.Amount);
+                var totalRevenue = Math.Round(grossRevenue * 0.98m, 2);
 
                 // Prepare recent and top-selling events
                 var recentEvents = events
@@ -100,28 +102,28 @@ namespace online_event_booking_system.Controllers.Organizer
                 var data7 = new List<decimal>();
                 for (var d = start7; d <= endDate; d = d.AddDays(1))
                 {
-                    var daySales = events
+                    var dayGross = events
                         .SelectMany(e => e.Bookings ?? new List<Booking>())
                         .Where(b => b.CreatedAt.Date == d && b.Status == "Confirmed")
                         .SelectMany(b => b.Tickets ?? new List<Ticket>())
                         .Where(t => t.Payment != null)
                         .Sum(t => t.Payment.Amount);
                     labels7.Add(d.ToString("MMM dd"));
-                    data7.Add(daySales);
+                    data7.Add(Math.Round(dayGross * 0.98m, 2));
                 }
 
                 var labels30 = new List<string>();
                 var data30 = new List<decimal>();
                 for (var d = start30; d <= endDate; d = d.AddDays(1))
                 {
-                    var daySales = events
+                    var dayGross = events
                         .SelectMany(e => e.Bookings ?? new List<Booking>())
                         .Where(b => b.CreatedAt.Date == d && b.Status == "Confirmed")
                         .SelectMany(b => b.Tickets ?? new List<Ticket>())
                         .Where(t => t.Payment != null)
                         .Sum(t => t.Payment.Amount);
                     labels30.Add(d.ToString("MMM dd"));
-                    data30.Add(daySales);
+                    data30.Add(Math.Round(dayGross * 0.98m, 2));
                 }
 
                 // Active discounts
@@ -211,7 +213,7 @@ namespace online_event_booking_system.Controllers.Organizer
                     TicketsSold = e.Bookings?.Sum(b => b.Tickets?.Count ?? 0) ?? 0,
                     Revenue = e.Bookings?.SelectMany(b => b.Tickets ?? new List<Ticket>())
                         .Where(t => t.Payment != null)
-                        .Sum(t => t.Payment.Amount) ?? 0
+                        .Sum(t => t.Payment.Amount) * 0.98m ?? 0
                 })
                 .OrderByDescending(x => x.Revenue)
                 .Take(5)

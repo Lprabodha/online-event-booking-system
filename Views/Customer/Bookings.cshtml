@@ -87,9 +87,9 @@
                                 </a>
                                 @if (booking.Status == "Confirmed")
                                 {
-                                    <button onclick="window.print()" class="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm">
-                                        Download Ticket
-                                    </button>
+                                    <a href="@Url.Action("DownloadTickets", "Customer", new { id = booking.Id })" class="px-4 py-2 bg-white/10 border border-white/20 text-white rounded-lg hover:bg-white/20 transition-all duration-200 font-medium text-sm text-center">
+                                        Download Ticket (PDF)
+                                    </a>
                                 }
                                 else if (booking.Status == "Pending")
                                 {

@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using online_event_booking_system.Business.Interface;
 using online_event_booking_system.Business.Service;
 using online_event_booking_system.Data.Entities;
@@ -85,8 +87,9 @@ namespace online_event_booking_system.Controllers.Admin
                     eventsData.Add(await context.Events.CountAsync(e => e.CreatedAt.Date == d));
                     var dayTickets = await context.Tickets.CountAsync(t => t.PurchaseDate.Date == d && t.IsPaid);
                     ticketsData.Add(dayTickets);
-                    var dayRevenue = await context.Payments.Where(p => p.Status == "Completed" && p.PaidAt.Date == d).SumAsync(p => (decimal?)p.Amount) ?? 0m;
-                    revenueData.Add(dayRevenue);
+                    var dayGross = await context.Payments.Where(p => p.Status == "Completed" && p.PaidAt.Date == d).SumAsync(p => (decimal?)p.Amount) ?? 0m;
+                    var adminShare = Math.Round(dayGross * 0.02m, 2);
+                    revenueData.Add(adminShare);
                 }
                 ViewBag.PerfLabels = perfLabels;
                 ViewBag.PerfEvents = eventsData;
