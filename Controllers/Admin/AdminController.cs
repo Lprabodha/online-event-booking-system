@@ -20,6 +20,8 @@ namespace online_event_booking_system.Controllers.Admin
         private readonly IVenueService _venueService;
         private readonly IEventService _eventService;
         private readonly IS3Service _s3Service;
+        private readonly IEmailService _emailService;
+        private readonly online_event_booking_system.Data.ApplicationDbContext _context;
 
         /// <summary>
         /// Constructor for AdminController
@@ -27,13 +29,15 @@ namespace online_event_booking_system.Controllers.Admin
         /// <param name="adminService"></param>
         /// <param name="userManager"></param>
         /// <param name="venueService"></param>
-        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService, IS3Service s3Service, IEventService eventService)
+        public AdminController(IAdminService adminService, UserManager<ApplicationUser> userManager, IVenueService venueService, IS3Service s3Service, IEventService eventService, IEmailService emailService, online_event_booking_system.Data.ApplicationDbContext context)
         {
             _adminService = adminService;
             _userManager = userManager;
             _venueService = venueService;
             _s3Service = s3Service;
             _eventService = eventService;
+            _emailService = emailService;
+            _context = context;
         }
 
         /// <summary>
@@ -672,6 +676,68 @@ namespace online_event_booking_system.Controllers.Admin
         public IActionResult Settings()
         {
             return View();
+        }
+
+        [HttpPost("admin/email-weekly-report")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> SendWeeklyReport()
+        {
+            try
+            {
+                var now = DateTime.UtcNow.Date;
+                var weekStart = now.AddDays(-7);
+                var weekEnd = now;
+
+                var newUsers = await _context.Users.CountAsync(u => u.CreatedAt.Date >= weekStart && u.CreatedAt.Date <= weekEnd);
+                var eventsCreated = await _context.Events.CountAsync(e => e.CreatedAt.Date >= weekStart && e.CreatedAt.Date <= weekEnd);
+
+                var tickets = await _context.Tickets
+                    .Where(t => t.PurchaseDate.Date >= weekStart && t.PurchaseDate.Date <= weekEnd && t.IsPaid)
+                    .Include(t => t.Payment)
+                    .Include(t => t.Event)
+                    .ToListAsync();
+                var ticketsSold = tickets.Count;
+                var revenue = tickets.Where(t => t.Payment != null).Sum(t => t.Payment.Amount);
+
+                var topEvents = tickets
+                    .GroupBy(t => t.Event.Title)
+                    .Select(g => new { Title = g.Key, Tickets = g.Count(), Sales = g.Where(t => t.Payment != null).Sum(t => t.Payment.Amount) })
+                    .OrderByDescending(x => x.Sales)
+                    .Take(5)
+                    .ToList();
+
+                var topOrganizers = await _context.Events
+                    .Where(e => e.CreatedAt.Date <= weekEnd)
+                    .Select(e => new {
+                        Organizer = e.Organizer.FullName,
+                        Sales = e.Bookings.SelectMany(b => b.Tickets).Where(t => t.PurchaseDate.Date >= weekStart && t.PurchaseDate.Date <= weekEnd && t.IsPaid && t.Payment != null).Sum(t => (decimal?)t.Payment.Amount) ?? 0m
+                    })
+                    .GroupBy(x => x.Organizer)
+                    .Select(g => new { Organizer = g.Key, Sales = g.Sum(x => x.Sales) })
+                    .OrderByDescending(x => x.Sales)
+                    .Take(5)
+                    .ToListAsync();
+
+                var body = online_event_booking_system.Helper.EmailTemplates.GetAdminWeeklyReportTemplate(
+                    weekStart, weekEnd, newUsers, eventsCreated, ticketsSold, revenue,
+                    topEvents.Select(x => (x.Title, x.Tickets, x.Sales)).ToList(),
+                    topOrganizers.Select(x => (x.Organizer, x.Sales)).ToList()
+                );
+
+                var adminUsers = await _userManager.GetUsersInRoleAsync("Admin");
+                foreach (var admin in adminUsers.Where(a => !string.IsNullOrEmpty(a.Email)))
+                {
+                    await _emailService.SendEmailAsync(admin.Email!, $"Weekly Platform Report — {weekStart:MMM dd} - {weekEnd:MMM dd}", body);
+                }
+
+                TempData["SuccessMessage"] = "Weekly report email sent to admins.";
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Failed to send weekly report.";
+            }
+
+            return RedirectToAction("Settings");
         }
 
         [HttpGet]

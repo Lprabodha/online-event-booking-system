@@ -2,6 +2,162 @@
 {
     public static class EmailTemplates
     {
+        public static string GetAdminWeeklyReportTemplate(DateTime weekStart, DateTime weekEnd, int newUsers, int eventsCreated, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents, List<(string Organizer, decimal Sales)> topOrganizers)
+        {
+            var eventRows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
+            if (string.IsNullOrEmpty(eventRows)) eventRows = "<tr><td colspan='3' style='padding:12px;text-align:center;color:#6b7280'>No event sales this week</td></tr>";
+            var orgRows = string.Join("", topOrganizers.Select(o => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{o.Organizer}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {o.Sales:N2}</td></tr>"));
+            if (string.IsNullOrEmpty(orgRows)) orgRows = "<tr><td colspan='2' style='padding:12px;text-align:center;color:#6b7280'>No organizer sales this week</td></tr>";
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Weekly Report {weekStart:MMM dd} - {weekEnd:MMM dd}</title>
+    <style>
+        body {{ margin:0; padding:0; background:#f8f9fa; color:#1f2937; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
+        .wrap {{ padding:24px 12px; }}
+        .card {{ max-width:800px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.06); }}
+        .hdr {{ background:linear-gradient(135deg,#4f46e5,#06b6d4); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
+        .content {{ padding:22px 20px; line-height:1.6; }}
+        .kpis {{ display:flex; gap:10px; flex-wrap:wrap; }}
+        .kpi {{ flex:1 1 180px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }}
+        .kpi h4 {{ margin:0 0 6px; color:#6b7280; font-size:12px; letter-spacing:.3px; }}
+        .kpi p {{ margin:0; font-weight:800; font-size:18px; color:#111827; }}
+        .table {{ width:100%; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-top:14px; overflow:hidden; }}
+        .footer {{ text-align:center; color:#6b7280; font-size:12px; padding:0 0 22px; }}
+    </style>
+    </head>
+    <body>
+        <div class='wrap'>
+            <div class='card'>
+                <div class='hdr'>⭐ Star Events — Weekly Report ({weekStart:MMM dd} - {weekEnd:MMM dd})</div>
+                <div class='content'>
+                    <div class='kpis'>
+                        <div class='kpi'><h4>New Users</h4><p>{newUsers}</p></div>
+                        <div class='kpi'><h4>Events Created</h4><p>{eventsCreated}</p></div>
+                        <div class='kpi'><h4>Tickets Sold</h4><p>{ticketsSold}</p></div>
+                        <div class='kpi'><h4>Gross Revenue</h4><p>LKR {revenue:N2}</p></div>
+                    </div>
+
+                    <h3 style='margin:18px 0 8px'>Top Events</h3>
+                    <div class='table'>
+                        <table style='width:100%; border-collapse:collapse;'>
+                            <thead><tr><th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Event</th><th style='text-align:center;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Tickets</th><th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th></tr></thead>
+                            <tbody>{eventRows}</tbody>
+                        </table>
+                    </div>
+
+                    <h3 style='margin:18px 0 8px'>Top Organizers</h3>
+                    <div class='table'>
+                        <table style='width:100%; border-collapse:collapse;'>
+                            <thead><tr><th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Organizer</th><th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th></tr></thead>
+                            <tbody>{orgRows}</tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='footer'>© {DateTime.Now.Year} Star Events</div>
+            </div>
+        </div>
+    </body>
+    </html>";
+        }
+        public static string GetOrganizerDailySummaryTemplate(string organizerName, DateTime date, int eventsCount, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents)
+        {
+            var rows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
+            if (string.IsNullOrEmpty(rows))
+            {
+                rows = "<tr><td colspan='3' style='padding:12px;text-align:center;color:#6b7280'>No sales today</td></tr>";
+            }
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Daily Summary - {date:MMM dd, yyyy}</title>
+    <style>
+        body {{ margin:0; padding:0; background:#f8f9fa; color:#1f2937; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
+        .wrap {{ padding:24px 12px; }}
+        .card {{ max-width:720px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.06); }}
+        .hdr {{ background:linear-gradient(135deg,#6366f1,#06b6d4); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
+        .content {{ padding:22px 20px; line-height:1.6; }}
+        .kpis {{ display:flex; gap:10px; flex-wrap:wrap; }}
+        .kpi {{ flex:1 1 180px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }}
+        .kpi h4 {{ margin:0 0 6px; color:#6b7280; font-size:12px; letter-spacing:.3px; }}
+        .kpi p {{ margin:0; font-weight:800; font-size:18px; color:#111827; }}
+        .table {{ width:100%; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-top:14px; overflow:hidden; }}
+        .footer {{ text-align:center; color:#6b7280; font-size:12px; padding:0 0 22px; }}
+    </style>
+    </head>
+    <body>
+        <div class='wrap'>
+            <div class='card'>
+                <div class='hdr'>⭐ Star Events — Daily Summary</div>
+                <div class='content'>
+                    <p style='margin:0 0 10px;color:#374151'>Hi {organizerName}, here is your summary for {date:MMMM dd, yyyy}.</p>
+                    <div class='kpis'>
+                        <div class='kpi'><h4>Active Events</h4><p>{eventsCount}</p></div>
+                        <div class='kpi'><h4>Tickets Sold</h4><p>{ticketsSold}</p></div>
+                        <div class='kpi'><h4>Gross Revenue</h4><p>LKR {revenue:N2}</p></div>
+                    </div>
+                    <div class='table'>
+                        <table style='width:100%; border-collapse:collapse;'>
+                            <thead>
+                                <tr>
+                                    <th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Event</th>
+                                    <th style='text-align:center;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Tickets</th>
+                                    <th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {rows}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class='footer'>© {DateTime.Now.Year} Star Events</div>
+            </div>
+        </div>
+    </body>
+    </html>";
+        }
+        public static string GetEventPromoTemplate(string organizerName, string title, string message, string? ctaText = null, string? ctaUrl = null)
+        {
+            var button = string.IsNullOrWhiteSpace(ctaUrl) ? string.Empty : $"<div style='text-align:center;margin-top:18px;'><a href='{ctaUrl}' style='display:inline-block;background:linear-gradient(135deg,#7c3aed,#06b6d4);color:#fff;padding:12px 22px;border-radius:10px;text-decoration:none;font-weight:700'>{(string.IsNullOrWhiteSpace(ctaText) ? "View Event" : ctaText)}</a></div>";
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>{title}</title>
+    <style>
+        body {{ margin:0; padding:0; background:#0b1220; color:#e5e7eb; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
+        .wrap {{ padding:24px 12px; }}
+        .card {{ max-width:640px; margin:0 auto; background:#0f172a; border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.35); }}
+        .hdr {{ background:linear-gradient(135deg,#6d28d9,#0ea5e9); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
+        .content {{ padding:22px 20px; line-height:1.6; }}
+        .footer {{ text-align:center; color:#64748b; font-size:12px; padding:0 0 22px; }}
+    </style>
+    </head>
+    <body>
+        <div class='wrap'>
+            <div class='card'>
+                <div class='hdr'>⭐ Star Events</div>
+                <div class='content'>
+                    <h2 style='margin:0 0 8px;font-size:20px;color:#f8fafc'>{title}</h2>
+                    <p style='margin:0 0 14px;color:#cbd5e1'>{message}</p>
+                    {button}
+                    <p style='margin-top:18px;color:#94a3b8;font-size:13px'>— {organizerName}</p>
+                </div>
+                <div class='footer'>© {DateTime.Now.Year} Star Events</div>
+            </div>
+        </div>
+    </body>
+    </html>";
+        }
         public static string GetCustomerWelcomeTemplate(string fullName)
         {
             return $@"
@@ -98,100 +254,144 @@
         {
             return $@"
 <!DOCTYPE html>
-<html lang=""en"">
+<html lang='en'>
 <head>
-    <meta charset=""UTF-8"">
-    <meta name=""viewport"" content=""width=device-width, initial-scale=1.0"">
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Your Organizer Account - Star Events</title>
     <style>
         body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 0;
             padding: 0;
-            color: #333;
+            background: #0b1220;
+            color: #e5e7eb;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }}
+        .wrapper {{
+            width: 100%;
+            padding: 24px 12px;
         }}
         .container {{
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            border-radius: 8px;
+            max-width: 640px;
+            margin: 0 auto;
+            background: #0f172a;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.35);
         }}
         .header {{
-            background-color: #1a237e;
-            color: #ffffff;
-            padding: 24px;
+            background: linear-gradient(135deg, #6d28d9, #0ea5e9);
+            padding: 28px 24px;
             text-align: center;
         }}
-        .header img {{
-            max-width: 150px;
-            height: auto;
-            margin-bottom: 10px;
+        .brand {{
+            font-size: 26px;
+            font-weight: 800;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }}
+        .subbrand {{
+            color: rgba(255,255,255,0.85);
+            margin-top: 6px;
+            font-size: 13px;
         }}
         .content {{
-            padding: 32px;
+            padding: 28px 24px 8px;
+        }}
+        .greeting {{
+            font-size: 20px;
+            font-weight: 700;
+            color: #f8fafc;
+            margin: 0 0 10px;
+        }}
+        .lead {{
+            color: #cbd5e1;
             line-height: 1.6;
-            text-align: center;
+            margin: 0 0 18px;
         }}
-        .credentials-box {{
-            background-color: #e8f5e9;
-            border-left: 4px solid #4caf50;
-            margin: 24px 0;
-            padding: 16px;
-            border-radius: 4px;
+        .panel {{
+            background: #0b1220;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            padding: 16px 18px;
+            margin: 18px 0;
         }}
-        .credentials-box p {{
-            margin: 0;
-            color: #1b5e20;
+        .panel h4 {{
+            margin: 0 0 10px;
+            font-size: 14px;
+            color: #93c5fd;
+            font-weight: 700;
+            letter-spacing: .3px;
         }}
-        .credentials-box strong {{
-            color: #1b5e20;
-            display: block;
-            font-size: 1.2em;
-            margin-top: 8px;
+        .row {{
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-top: 1px dashed rgba(255,255,255,0.08);
         }}
+        .row:first-of-type {{
+            border-top: 0;
+        }}
+        .label {{ color: #94a3b8; font-size: 14px; }}
+        .value {{ color: #e5e7eb; font-weight: 700; font-size: 14px; }}
+        .cta {{ text-align: center; padding: 8px 24px 28px; }}
         .button {{
             display: inline-block;
-            background-color: #4caf50;
-            color: #ffffff;
-            padding: 12px 24px;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4);
+            color: #fff;
+            padding: 12px 22px;
             text-decoration: none;
-            border-radius: 4px;
-            margin-top: 24px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: .3px;
+        }}
+        .hint {{
+            margin-top: 10px;
+            color: #94a3b8;
+            font-size: 12px;
         }}
         .footer {{
             text-align: center;
-            padding: 24px;
-            color: #999;
+            color: #64748b;
             font-size: 12px;
-            border-top: 1px solid #eee;
+            padding: 18px 16px 26px;
         }}
     </style>
-</head>
-<body>
-    <div class=""container"">
-        <div class=""header"">
-            <h2>Welcome to STAR EVENTS Event Booking System!</h2>
-        </div>
-        <div class=""content"">
-            <p>Hello {fullName},</p>
-            <p>Your new organizer account has been successfully created. You can now log in using the credentials below. For security, please change your password upon your first login.</p>
-            
-            <div class=""credentials-box"">
-                <h4>Your Credentials:</h4>
-                <p><strong>Username:</strong> {username}</p>
-                <p><strong>Password:</strong> {password}</p>
+    </head>
+    <body>
+        <div class='wrapper'>
+            <div class='container'>
+                <div class='header'>
+                    <div class='brand'>⭐ Star Events</div>
+                    <div class='subbrand'>Organizer Account Invitation</div>
+                </div>
+                <div class='content'>
+                    <div class='greeting'>Hello {fullName},</div>
+                    <p class='lead'>An administrator has created an organizer account for you on Star Events. Use the credentials below to sign in and start creating events.</p>
+                    <div class='panel'>
+                        <h4>Your credentials</h4>
+                        <div class='row'>
+                            <span class='label'>Username</span>
+                            <span class='value'>{username}</span>
+                        </div>
+                        <div class='row'>
+                            <span class='label'>Temporary Password</span>
+                            <span class='value'>{password}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class='cta'>
+                    <a href='{"/Identity/Account/Login"}' class='button'>Sign in to your organizer dashboard</a>
+                    <div class='hint'>For security, please change your password after your first login.</div>
+                </div>
+                <div class='footer'>
+                    © {DateTime.Now.Year} Star Events • This is an automated message, please do not reply.
+                </div>
             </div>
-            
-            <p>Thank you,<br>Star Events Team</p>
         </div>
-        <div class=""footer"">
-            &copy; {DateTime.Now.Year} Star Events Booking System. All rights reserved.
-        </div>
-    </div>
-</body>
-</html>";
+    </body>
+    </html>";
         }
 
         public static string GetPasswordResetTemplate(string userName, string callbackUrl)

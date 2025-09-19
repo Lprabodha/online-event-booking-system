@@ -318,6 +318,14 @@
                 </div>
             </div>
 
+            <!-- Weekly Report -->
+            <div class="mt-6 flex justify-end">
+                <form asp-controller="Admin" asp-action="SendWeeklyReport" method="post" class="contents">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="px-8 py-3 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-xl hover:bg-blue-500/30 transition-all duration-200">Send Weekly Report Now</button>
+                </form>
+            </div>
+
             <!-- Save Button -->
             <div class="mt-8 flex justify-end">
                 <button onclick="saveSettings()" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-teal-500 text-white rounded-xl font-semibold hover:from-purple-600 hover:to-teal-600 transition-all duration-200">

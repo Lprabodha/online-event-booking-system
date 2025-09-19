@@ -291,19 +291,19 @@
                     <h2 class="text-xl font-bold mb-6">Event Performance</h2>
                     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-green-400">@ViewBag.TotalTicketsSold</p>
+                            <p class="text-3xl font-bold text-green-400">@(((int?)ViewBag.TotalTicketsSold) ?? 0)</p>
                             <p class="text-gray-400 text-sm">Tickets Sold</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-blue-400">LKR @ViewBag.TotalRevenue.ToString("N2")</p>
+                            <p class="text-3xl font-bold text-blue-400">LKR @((((decimal?)ViewBag.TotalRevenue)?.ToString("N2")) ?? "0.00")</p>
                             <p class="text-gray-400 text-sm">Revenue</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-purple-400">@ViewBag.CapacityUsedPercentage.ToString("F1")%</p>
+                            <p class="text-3xl font-bold text-purple-400">@((((double?)ViewBag.CapacityUsedPercentage)?.ToString("F1")) ?? "0.0")%</p>
                             <p class="text-gray-400 text-sm">Capacity Used</p>
                         </div>
                         <div class="text-center">
-                            <p class="text-3xl font-bold text-teal-400">@ViewBag.RemainingTickets</p>
+                            <p class="text-3xl font-bold text-teal-400">@(((int?)ViewBag.RemainingTickets) ?? 0)</p>
                             <p class="text-gray-400 text-sm">Remaining</p>
                         </div>
                     </div>

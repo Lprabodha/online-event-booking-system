@@ -1,0 +1,67 @@
+@model online_event_booking_system.Models.View_Models.OrganizerEmailViewModel
+@{
+    ViewData["Title"] = "Compose Email";
+    Layout = "_DashboardLayout";
+}
+
+<div class="min-h-screen bg-dark-navy text-white pt-20">
+    <div class="p-4 md:p-6 pt-8 max-w-5xl mx-auto">
+        <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-teal-400 text-transparent bg-clip-text mb-6">Send Promotional Email</h1>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl text-green-400">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400">@TempData["ErrorMessage"]</div>
+        }
+
+        <form asp-action="EmailSend" asp-controller="Organizer" method="post" class="space-y-6">
+            @Html.AntiForgeryToken()
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Subject</label>
+                <input asp-for="Subject" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Your event update or promotion">
+                <span asp-validation-for="Subject" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <label class="block text-sm font-medium text-gray-300 mb-2">Message</label>
+                <textarea asp-for="Body" rows="8" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Write your message..."></textarea>
+                <span asp-validation-for="Body" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <div class="flex items-center justify-between mb-3">
+                    <label class="text-sm font-medium text-gray-300">Recipients</label>
+                    <button type="button" class="text-sm text-purple-300 hover:text-purple-200" onclick="toggleAll(true)">Select all</button>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2">
+                    @foreach (var r in Model.Recipients)
+                    {
+                        <label class="flex items-center space-x-3 p-3 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all">
+                            <input type="checkbox" name="SelectedUserIds" value="@r.Id" class="rounded text-purple-500 focus:ring-purple-500">
+                            <span class="text-white">@r.Name</span>
+                            <span class="text-gray-400 text-sm">(@r.Email)</span>
+                        </label>
+                    }
+                </div>
+                <span asp-validation-for="SelectedUserIds" class="text-red-400 text-sm"></span>
+            </div>
+
+            <div class="flex justify-end">
+                <button type="submit" class="bg-gradient-to-r from-purple-500 to-teal-500 text-white px-6 py-3 rounded-xl font-bold hover:from-purple-600 hover:to-teal-600 transition-all">Send Email</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function toggleAll(check) {
+            document.querySelectorAll('input[name="SelectedUserIds"]').forEach(cb => cb.checked = check);
+        }
+    </script>
+}
+
+
