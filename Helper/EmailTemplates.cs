@@ -4,7 +4,7 @@
     {
         public static string GetOrganizerDailySummaryTemplate(string organizerName, DateTime date, int eventsCount, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents)
         {
-            var rows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #eee'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #eee;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #eee;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
+            var rows = string.Join("", topEvents.Select(e => $"<tr><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb'>{e.Title}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:center'>{e.Tickets}</td><td style='padding:8px 12px;border-bottom:1px solid #e5e7eb;text-align:right'>LKR {e.Sales:N2}</td></tr>"));
             if (string.IsNullOrEmpty(rows))
             {
                 rows = "<tr><td colspan='3' style='padding:12px;text-align:center;color:#6b7280'>No sales today</td></tr>";
@@ -17,17 +17,17 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>Daily Summary - {date:MMM dd, yyyy}</title>
     <style>
-        body {{ margin:0; padding:0; background:#0b1220; color:#e5e7eb; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
+        body {{ margin:0; padding:0; background:#f8f9fa; color:#1f2937; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif; }}
         .wrap {{ padding:24px 12px; }}
-        .card {{ max-width:720px; margin:0 auto; background:#0f172a; border:1px solid rgba(255,255,255,.08); border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.35); }}
-        .hdr {{ background:linear-gradient(135deg,#6d28d9,#0ea5e9); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
+        .card {{ max-width:720px; margin:0 auto; background:#ffffff; border:1px solid #e5e7eb; border-radius:16px; overflow:hidden; box-shadow:0 10px 30px rgba(0,0,0,.06); }}
+        .hdr {{ background:linear-gradient(135deg,#6366f1,#06b6d4); padding:24px; text-align:center; font-weight:800; font-size:22px; color:#fff; }}
         .content {{ padding:22px 20px; line-height:1.6; }}
         .kpis {{ display:flex; gap:10px; flex-wrap:wrap; }}
-        .kpi {{ flex:1 1 180px; background:#0b1220; border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:12px; }}
-        .kpi h4 {{ margin:0 0 6px; color:#94a3b8; font-size:12px; letter-spacing:.3px; }}
-        .kpi p {{ margin:0; font-weight:800; font-size:18px; color:#f8fafc; }}
-        .table {{ width:100%; background:#0b1220; border:1px solid rgba(255,255,255,.08); border-radius:12px; margin-top:14px; overflow:hidden; }}
-        .footer {{ text-align:center; color:#64748b; font-size:12px; padding:0 0 22px; }}
+        .kpi {{ flex:1 1 180px; background:#f8fafc; border:1px solid #e5e7eb; border-radius:12px; padding:12px; }}
+        .kpi h4 {{ margin:0 0 6px; color:#6b7280; font-size:12px; letter-spacing:.3px; }}
+        .kpi p {{ margin:0; font-weight:800; font-size:18px; color:#111827; }}
+        .table {{ width:100%; background:#ffffff; border:1px solid #e5e7eb; border-radius:12px; margin-top:14px; overflow:hidden; }}
+        .footer {{ text-align:center; color:#6b7280; font-size:12px; padding:0 0 22px; }}
     </style>
     </head>
     <body>
@@ -35,7 +35,7 @@
             <div class='card'>
                 <div class='hdr'>⭐ Star Events — Daily Summary</div>
                 <div class='content'>
-                    <p style='margin:0 0 10px;color:#cbd5e1'>Hi {organizerName}, here is your summary for {date:MMMM dd, yyyy}.</p>
+                    <p style='margin:0 0 10px;color:#374151'>Hi {organizerName}, here is your summary for {date:MMMM dd, yyyy}.</p>
                     <div class='kpis'>
                         <div class='kpi'><h4>Active Events</h4><p>{eventsCount}</p></div>
                         <div class='kpi'><h4>Tickets Sold</h4><p>{ticketsSold}</p></div>
@@ -45,9 +45,9 @@
                         <table style='width:100%; border-collapse:collapse;'>
                             <thead>
                                 <tr>
-                                    <th style='text-align:left;padding:10px 12px;border-bottom:1px solid #eee;color:#94a3b8;font-weight:700'>Event</th>
-                                    <th style='text-align:center;padding:10px 12px;border-bottom:1px solid #eee;color:#94a3b8;font-weight:700'>Tickets</th>
-                                    <th style='text-align:right;padding:10px 12px;border-bottom:1px solid #eee;color:#94a3b8;font-weight:700'>Sales</th>
+                                    <th style='text-align:left;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Event</th>
+                                    <th style='text-align:center;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Tickets</th>
+                                    <th style='text-align:right;padding:10px 12px;border-bottom:1px solid #e5e7eb;color:#6b7280;font-weight:700'>Sales</th>
                                 </tr>
                             </thead>
                             <tbody>
