@@ -76,7 +76,8 @@ namespace online_event_booking_system.Areas.Identity.Pages.Account
         {
             if (code == null)
             {
-                return BadRequest("A code must be supplied for password reset.");
+                // Handle missing code gracefully by showing a friendly page instead of BadRequest
+                return RedirectToPage("./ForgotPassword");
             }
             else
             {

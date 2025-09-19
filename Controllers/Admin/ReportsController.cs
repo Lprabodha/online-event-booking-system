@@ -89,6 +89,76 @@ namespace online_event_booking_system.Controllers.Admin
         }
 
         /// <summary>
+        /// Revenue summary for events within filters (date, category, organizer).
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("RevenueSummary")]
+        public async Task<IActionResult> RevenueSummary(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null)
+        {
+            try
+            {
+                var paymentsQuery = _context.Payments
+                    .Include(p => p.Tickets)
+                        .ThenInclude(t => t.Event)
+                            .ThenInclude(e => e.Category)
+                    .Include(p => p.Tickets)
+                        .ThenInclude(t => t.Event)
+                            .ThenInclude(e => e.Organizer)
+                    .Where(p => p.Status == "Completed");
+
+                if (dateFrom.HasValue)
+                {
+                    var from = dateFrom.Value.Date;
+                    paymentsQuery = paymentsQuery.Where(p => p.PaidAt.Date >= from);
+                }
+                if (dateTo.HasValue)
+                {
+                    var to = dateTo.Value.Date;
+                    paymentsQuery = paymentsQuery.Where(p => p.PaidAt.Date <= to);
+                }
+                if (!string.IsNullOrEmpty(category) && category != "All Categories")
+                {
+                    paymentsQuery = paymentsQuery.Where(p => p.Tickets.Any(t => t.Event.Category != null && t.Event.Category.Name == category));
+                }
+                if (!string.IsNullOrEmpty(organizer) && organizer != "All Organizers")
+                {
+                    paymentsQuery = paymentsQuery.Where(p => p.Tickets.Any(t => t.Event.OrganizerId == organizer));
+                }
+
+                var payments = await paymentsQuery.ToListAsync();
+
+                var totalRevenue = payments.Sum(p => p.Amount);
+                var ticketsSold = payments.SelectMany(p => p.Tickets).Count();
+                var orders = payments.SelectMany(p => p.Tickets).Select(t => t.BookingId).Distinct().Count();
+                var avgTicketPrice = ticketsSold > 0 ? Math.Round(totalRevenue / ticketsSold, 2) : 0m;
+
+                var daily = payments
+                    .GroupBy(p => p.PaidAt.Date)
+                    .Select(g => new { date = g.Key, amount = g.Sum(p => p.Amount), tickets = g.SelectMany(p => p.Tickets).Count() })
+                    .OrderBy(g => g.date)
+                    .ToList();
+
+                return Json(new
+                {
+                    revenue = totalRevenue,
+                    ticketsSold,
+                    orders,
+                    avgTicketPrice,
+                    daily
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { error = "Failed to load revenue summary" });
+            }
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="reportType"></param>

@@ -177,7 +177,9 @@ namespace online_event_booking_system.Areas.Identity.Pages.Account
                         // Ignore email errors to not block registration
                     }
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    return LocalRedirect(returnUrl);
+                    // Redirect newly registered users to customer dashboard with success message
+                    TempData["SuccessMessage"] = "Welcome! Your account has been created successfully.";
+                    return RedirectToAction("Index", "Customer");
                 }
                 foreach (var error in result.Errors)
                 {

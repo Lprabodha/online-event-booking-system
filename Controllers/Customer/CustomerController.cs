@@ -22,6 +22,7 @@ namespace online_event_booking_system.Controllers.Customer
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ICustomerPdfService _customerPdfService;
+        private readonly IEmailService _emailService;
 
         public CustomerController(
             IBookingService bookingService, 
@@ -31,7 +32,8 @@ namespace online_event_booking_system.Controllers.Customer
             ILogger<CustomerController> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ICustomerPdfService customerPdfService)
+            ICustomerPdfService customerPdfService,
+            IEmailService emailService)
         {
             _bookingService = bookingService;
             _context = context;
@@ -41,6 +43,7 @@ namespace online_event_booking_system.Controllers.Customer
             _userManager = userManager;
             _signInManager = signInManager;
             _customerPdfService = customerPdfService;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -85,7 +88,7 @@ namespace online_event_booking_system.Controllers.Customer
         /// <returns></returns>
 
         [HttpGet("customer/events")]
-        public async Task<IActionResult> Events(string? search, string? category)
+        public async Task<IActionResult> Events(string? search, string? category, string? location)
         {
             try
             {
@@ -106,7 +109,17 @@ namespace online_event_booking_system.Controllers.Customer
                         e.Title.Contains(search, StringComparison.OrdinalIgnoreCase) ||
                         (e.Description?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
                         (e.Venue?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
-                        (e.Category?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
+                        (e.Category?.Name?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (e.Venue?.Location?.Contains(search, StringComparison.OrdinalIgnoreCase) ?? false)
+                    ).ToList();
+                }
+
+                // Apply explicit location filter
+                if (!string.IsNullOrWhiteSpace(location))
+                {
+                    events = events.Where(e =>
+                        (e.Venue?.Location?.Contains(location, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                        (e.Venue?.Name?.Contains(location, StringComparison.OrdinalIgnoreCase) ?? false)
                     ).ToList();
                 }
 
@@ -134,6 +147,7 @@ namespace online_event_booking_system.Controllers.Customer
                 ViewBag.Categories = categories;
                 ViewBag.SelectedCategory = category;
                 ViewBag.SearchTerm = search;
+                ViewBag.SelectedLocation = location;
 
                 return View(events);
             }
@@ -370,7 +384,36 @@ namespace online_event_booking_system.Controllers.Customer
                 return Json(new { success = false, message = "Unauthorized" });
 
             var success = await _bookingService.CancelBookingAsync(id, userId);
-            return Json(new { success, message = success ? "Booking cancelled successfully" : "Failed to cancel booking" });
+
+            if (!success)
+            {
+                return Json(new { success = false, message = "Cancellation not allowed (must be 24+ hours before start) or booking not found." });
+            }
+
+            // Try refund
+            var refunded = await _bookingService.RefundBookingAsync(id);
+            if (refunded)
+            {
+                try
+                {
+                    var booking = await _bookingService.GetBookingByIdAsync(id);
+                    var payment = booking?.Tickets?.FirstOrDefault()?.Payment;
+                    if (booking?.Customer?.Email != null && payment != null)
+                    {
+                        await _emailService.SendRefundEmailAsync(
+                            booking.Customer.Email!,
+                            booking.Customer.FullName ?? "Customer",
+                            booking.Event.Title,
+                            booking.Event.EventDate,
+                            payment.Amount,
+                            booking.BookingReference
+                        );
+                    }
+                }
+                catch { }
+            }
+
+            return Json(new { success = true, message = refunded ? "Booking cancelled and refund initiated." : "Booking cancelled. Refund unavailable." });
         }
     }
 }

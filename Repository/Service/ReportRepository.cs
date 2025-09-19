@@ -2,6 +2,7 @@
 using online_event_booking_system.Data;
 using online_event_booking_system.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
+using online_event_booking_system.Models;
 
 namespace online_event_booking_system.Repository.Service
 {
@@ -143,6 +144,55 @@ namespace online_event_booking_system.Repository.Service
             }
 
             return await query.ToListAsync();
+        }
+
+        /// <summary>
+        /// Fetch revenue aggregates by day filtered by date/category/organizer
+        /// </summary>
+        public async Task<IEnumerable<RevenueReportRow>> GetRevenueAsync(DateTime? from, DateTime? to, string category = null, string organizer = null)
+        {
+            var payments = _context.Payments
+                .Include(p => p.Tickets)
+                    .ThenInclude(t => t.Event)
+                        .ThenInclude(e => e.Category)
+                .Where(p => p.Status == "Completed")
+                .AsQueryable();
+
+            if (from.HasValue)
+            {
+                var f = from.Value.Date;
+                payments = payments.Where(p => p.PaidAt.Date >= f);
+            }
+            if (to.HasValue)
+            {
+                var t = to.Value.Date;
+                payments = payments.Where(p => p.PaidAt.Date <= t);
+            }
+            if (!string.IsNullOrEmpty(category) && category != "All Categories")
+            {
+                payments = payments.Where(p => p.Tickets.Any(t => t.Event.Category != null && t.Event.Category.Name == category));
+            }
+            if (!string.IsNullOrEmpty(organizer) && organizer != "All Organizers")
+            {
+                payments = payments.Where(p => p.Tickets.Any(t => t.Event.OrganizerId == organizer));
+            }
+
+            var list = await payments.ToListAsync();
+
+            var grouped = list
+                .GroupBy(p => p.PaidAt.Date)
+                .Select(g => new RevenueReportRow
+                {
+                    Date = g.Key,
+                    Orders = g.SelectMany(p => p.Tickets).Select(t => t.BookingId).Distinct().Count(),
+                    Tickets = g.SelectMany(p => p.Tickets).Count(),
+                    Revenue = g.Sum(p => p.Amount),
+                    AvgTicketPrice = (g.SelectMany(p => p.Tickets).Count()) > 0 ? Math.Round(g.Sum(p => p.Amount) / g.SelectMany(p => p.Tickets).Count(), 2) : 0m
+                })
+                .OrderBy(r => r.Date)
+                .ToList();
+
+            return grouped;
         }
     }
 }

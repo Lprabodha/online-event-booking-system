@@ -87,6 +87,25 @@
 
         <!-- Events Tab Content -->
         <div id="eventsContent" class="tab-content hidden">
+            <!-- Revenue Summary Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <p class="text-gray-400 text-sm">Total Revenue</p>
+                    <p id="revTotal" class="text-3xl font-bold mt-2">LKR 0</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <p class="text-gray-400 text-sm">Tickets Sold</p>
+                    <p id="revTickets" class="text-3xl font-bold mt-2">0</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <p class="text-gray-400 text-sm">Orders</p>
+                    <p id="revOrders" class="text-3xl font-bold mt-2">0</p>
+                </div>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6">
+                    <p class="text-gray-400 text-sm">Avg Ticket Price</p>
+                    <p id="revAvg" class="text-3xl font-bold mt-2">LKR 0.00</p>
+                </div>
+            </div>
             <!-- Event Filters -->
             <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-6 mb-8">
                 <h3 class="text-xl font-bold text-white mb-6">Event Report Filters</h3>
@@ -151,6 +170,9 @@
                         </button>
                         <button onclick="downloadReport('events', 'excel')" class="px-4 py-2 bg-green-500/20 border border-green-500/30 text-green-400 rounded-lg hover:bg-green-500/30 transition-all duration-200 font-medium text-sm">
                             📊 Download Excel
+                        </button>
+                        <button onclick="downloadReport('revenue', 'excel')" class="px-4 py-2 bg-blue-500/20 border border-blue-500/30 text-blue-400 rounded-lg hover:bg-blue-500/30 transition-all duration-200 font-medium text-sm">
+                            💰 Revenue (Excel)
                         </button>
                     </div>
                 </div>
@@ -254,9 +276,26 @@
             }
             const html = await response.text();
             container.innerHTML = html;
+            // Also load revenue summary
+            loadRevenueSummary(dateFrom, dateTo, category, organizer);
         } catch (error) {
             console.error('Error loading events:', error);
             container.innerHTML = '<div class="text-center text-red-400 py-8"><p>Error loading events data: ' + error.message + '</p></div>';
+        }
+    }
+
+    async function loadRevenueSummary(dateFrom, dateTo, category, organizer) {
+        try {
+            const res = await fetch(`/Admin/Reports/RevenueSummary?dateFrom=${dateFrom}&dateTo=${dateTo}&category=${encodeURIComponent(category)}&organizer=${encodeURIComponent(organizer)}`);
+            const data = await res.json();
+            if (data && !data.error) {
+                document.getElementById('revTotal').textContent = `LKR ${Number(data.revenue).toLocaleString()}`;
+                document.getElementById('revTickets').textContent = Number(data.ticketsSold).toLocaleString();
+                document.getElementById('revOrders').textContent = Number(data.orders).toLocaleString();
+                document.getElementById('revAvg').textContent = `LKR ${Number(data.avgTicketPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+            }
+        } catch (e) {
+            console.error('Failed to load revenue summary', e);
         }
     }
 

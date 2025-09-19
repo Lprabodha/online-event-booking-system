@@ -41,5 +41,10 @@ namespace online_event_booking_system.Business.Interface
         /// <param name="organizer"></param>
         /// <returns></returns>
         Task<IEnumerable<Event>> GetEventsAsync(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null);
+
+        /// <summary>
+        /// Get revenue aggregates for admin reports
+        /// </summary>
+        Task<IEnumerable<RevenueReportRow>> GetRevenueAsync(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null);
     }
 }

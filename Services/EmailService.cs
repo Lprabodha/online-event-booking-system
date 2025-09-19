@@ -116,5 +116,15 @@ namespace online_event_booking_system.Services
                 }
             }
         }
+
+        public async Task SendRefundEmailAsync(string toEmail, string customerName, string eventTitle, DateTime eventDate, decimal amount, string bookingReference)
+        {
+            var html = $@"<p>Hi {customerName},</p>
+<p>Your booking <strong>{bookingReference}</strong> for <strong>{eventTitle}</strong> on <strong>{eventDate:MMM dd, yyyy}</strong> has been cancelled successfully.</p>
+<p>We have initiated your refund of <strong>LKR {amount:N2}</strong>. Depending on your bank, it may take 3–5 business days to appear on your statement.</p>
+<p>If you have any questions, reply to this email.</p>
+<p>— Star Events</p>";
+            await SendEmailAsync(toEmail, $"Refund processed — {eventTitle}", html);
+        }
     }
 }

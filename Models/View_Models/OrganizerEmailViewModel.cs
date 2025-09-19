@@ -16,6 +16,11 @@ namespace online_event_booking_system.Models.View_Models
         public List<string> SelectedUserIds { get; set; } = new List<string>();
 
         public List<RecipientOption> Recipients { get; set; } = new List<RecipientOption>();
+
+        // Optional: attach a promo for a specific event
+        public Guid? EventId { get; set; }
+        public List<PromoEventOption> Events { get; set; } = new List<PromoEventOption>();
+        public string? CtaText { get; set; }
     }
 
     public class RecipientOption
@@ -23,6 +28,14 @@ namespace online_event_booking_system.Models.View_Models
         public string Id { get; set; } = string.Empty;
         public string Name { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
+    }
+
+    public class PromoEventOption
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? DiscountCode { get; set; }
+        public bool HasActiveDiscount { get; set; }
     }
 }
 

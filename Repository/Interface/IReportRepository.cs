@@ -1,4 +1,5 @@
 ﻿using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Models;
 
 namespace online_event_booking_system.Repository.Interface
 {
@@ -35,5 +36,15 @@ namespace online_event_booking_system.Repository.Interface
         /// <param name="to"></param>
         /// <returns></returns>
         Task<IEnumerable<ApplicationUser>> GetCustomersAsync(DateTime? from, DateTime? to);
+
+        /// <summary>
+        /// Get revenue aggregates by day within the specified filters
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="category">Category name or null</param>
+        /// <param name="organizer">Organizer user id or null</param>
+        /// <returns></returns>
+        Task<IEnumerable<RevenueReportRow>> GetRevenueAsync(DateTime? from, DateTime? to, string category = null, string organizer = null);
     }
 }

@@ -27,8 +27,32 @@
 
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
                 <label class="block text-sm font-medium text-gray-300 mb-2">Message</label>
-                <textarea asp-for="Body" rows="8" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Write your message..."></textarea>
+                <textarea asp-for="Body" rows="8" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500" placeholder="Write your message... Include promo details if any"></textarea>
                 <span asp-validation-for="Body" class="text-red-400 text-sm"></span>
+            </div>
+
+            <!-- Optional promo: event with active discount and CTA -->
+            <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-300 mb-2">Event (with discount)</label>
+                        <select asp-for="EventId" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white">
+                            <option value="">None</option>
+                            @if (Model.Events != null)
+                            {
+                                foreach (var e in Model.Events)
+                                {
+                                    <option value="@e.Id">@e.Title @(e.HasActiveDiscount ? $"(Code: {e.DiscountCode})" : "")</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="block text-sm font-medium text-gray-300 mb-2">CTA Button Text (optional)</label>
+                        <input asp-for="CtaText" class="w-full px-4 py-3 bg-dark-navy border border-white/20 rounded-xl text-white" placeholder="Shop Now / Get Offer / View Event">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-400 mt-3">If an event is selected and has an active discount, recipients will get a button linking to the event with the promo code.</p>
             </div>
 
             <div class="bg-white/5 border border-white/10 rounded-2xl p-6">
