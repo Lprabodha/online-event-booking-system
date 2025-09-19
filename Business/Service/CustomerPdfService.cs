@@ -167,12 +167,32 @@ namespace online_event_booking_system.Business.Service
                 doc.Add(table);
                 doc.Add(new Paragraph("\n"));
 
-                // Totals
+                // Totals (with discount if applied)
                 var totals = new PdfPTable(2) { WidthPercentage = 40, HorizontalAlignment = Element.ALIGN_RIGHT };
                 totals.AddCell(Cell("Subtotal:", headerFont));
                 totals.AddCell(Cell(subtotal.ToString("F2"), textFont));
+
+                // Derive discount from ticket payments if available (same Payment for all tickets)
+                decimal discountAmount = 0;
+                try
+                {
+                    var payment = booking.Tickets?.FirstOrDefault()?.Payment;
+                    if (payment != null)
+                    {
+                        discountAmount = payment.DiscountAmount;
+                    }
+                }
+                catch { }
+
+                if (discountAmount > 0)
+                {
+                    totals.AddCell(Cell("Discount:", headerFont));
+                    totals.AddCell(Cell(("-" + discountAmount.ToString("F2")), textFont));
+                }
+
+                var grandTotal = Math.Max(0, subtotal - discountAmount);
                 totals.AddCell(Cell("Total:", headerFont));
-                totals.AddCell(Cell(subtotal.ToString("F2"), textFont));
+                totals.AddCell(Cell(grandTotal.ToString("F2"), textFont));
                 doc.Add(totals);
 
                 doc.Close();

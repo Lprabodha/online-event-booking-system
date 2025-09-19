@@ -138,6 +138,10 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
             .Property(p => p.Amount)
             .HasPrecision(18, 2);
 
+        builder.Entity<Payment>()
+            .Property(p => p.DiscountAmount)
+            .HasPrecision(18, 2);
+
         builder.Entity<Discount>()
             .Property(d => d.Value)
             .HasPrecision(18, 2);

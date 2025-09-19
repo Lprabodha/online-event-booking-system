@@ -2,6 +2,98 @@
 {
     public static class EmailTemplates
     {
+        public static string GetCustomerWelcomeTemplate(string fullName)
+        {
+            return $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Welcome to Star Events</title>
+    <style>
+        body {{
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+        }}
+        .container {{
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }}
+        .header {{
+            text-align: center;
+            margin-bottom: 20px;
+        }}
+        .logo {{
+            font-size: 28px;
+            font-weight: bold;
+            color: #4f46e5;
+        }}
+        .greeting {{
+            font-size: 22px;
+            font-weight: 600;
+            color: #1f2937;
+            margin: 10px 0 15px;
+        }}
+        .content {{
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 18px;
+        }}
+        .cta {{
+            text-align: center;
+            margin-top: 24px;
+        }}
+        .button {{
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 22px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+        }}
+        .footer {{
+            text-align: center;
+            color: #6b7280;
+            font-size: 12px;
+            margin-top: 20px;
+        }}
+    </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='header'>
+                <div class='logo'>⭐ Star Events</div>
+            </div>
+            <div class='greeting'>Welcome, {fullName}!</div>
+            <div class='content'>
+                <p>Thanks for creating your account at Star Events. You're all set to discover and book great events.</p>
+                <p>Here are a few tips to get started:</p>
+                <ul>
+                    <li>Browse events and filter by category or venue</li>
+                    <li>Use promo codes at checkout when available</li>
+                    <li>Access your tickets and invoices from your profile</li>
+                </ul>
+            </div>
+            <div class='cta'>
+                <a href='{"/"}' class='button'>Explore Events</a>
+            </div>
+            <div class='footer'>
+                &copy; {DateTime.Now.Year} Star Events. All rights reserved.
+            </div>
+        </div>
+    </body>
+    </html>";
+        }
         public static string GetOrganizerAccountCreationTemplate(string fullName, string username, string password)
         {
             return $@"
@@ -443,7 +535,10 @@
             DateTime eventDate,
             string venueName,
             string bookingReference,
-            List<TicketInfo> tickets)
+            List<TicketInfo> tickets,
+            decimal subtotal,
+            decimal discountAmount,
+            decimal total)
         {
             var ticketsHtml = string.Join("", tickets.Select(ticket => $@"
                 <div class='ticket-card'>
@@ -468,6 +563,8 @@
                         </div>
                     </div>
                 </div>"));
+
+            var discountRow = discountAmount > 0 ? $@"<div class='summary-row'><span>Discount</span><span>- LKR {discountAmount:F2}</span></div>" : string.Empty;
 
             return $@"
 <!DOCTYPE html>
@@ -658,6 +755,29 @@
             font-weight: 600;
             margin: 5px;
         }}
+        .order-summary {{
+            width: 100%;
+            max-width: 360px;
+            margin-left: auto;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px 20px;
+        }}
+        .summary-row {{
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 14px;
+        }}
+        .summary-row:last-child {{
+            border-bottom: none;
+        }}
+        .summary-total {{
+            font-weight: 700;
+            color: #1f2937;
+        }}
         @media (max-width: 600px) {{
             .ticket-details {{
                 flex-direction: column;
@@ -705,6 +825,12 @@
             <div class='tickets-section'>
                 <h3>🎟️ Your Tickets ({tickets.Count})</h3>
                 {ticketsHtml}
+            </div>
+
+            <div class='order-summary'>
+                <div class='summary-row'><span>Subtotal</span><span>LKR {subtotal:F2}</span></div>
+                {discountRow}
+                <div class='summary-row summary-total'><span>Total</span><span>LKR {total:F2}</span></div>
             </div>
             
             <div class='download-section'>

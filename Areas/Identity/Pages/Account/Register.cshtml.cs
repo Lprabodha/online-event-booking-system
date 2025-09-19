@@ -17,6 +17,8 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using online_event_booking_system.Data.Entities;
+using online_event_booking_system.Services;
+using online_event_booking_system.Helper;
 
 namespace online_event_booking_system.Areas.Identity.Pages.Account
 {
@@ -28,13 +30,15 @@ namespace online_event_booking_system.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<ApplicationUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IEmailService _emailService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             IUserStore<ApplicationUser> userStore,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IEmailService emailService)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -42,6 +46,7 @@ namespace online_event_booking_system.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _roleManager = roleManager;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -161,6 +166,16 @@ namespace online_event_booking_system.Areas.Identity.Pages.Account
                     await _userManager.AddToRoleAsync(user, "Customer");
 
                     var userId = await _userManager.GetUserIdAsync(user);
+                    // Send welcome email (non-blocking best-effort)
+                    try
+                    {
+                        var body = EmailTemplates.GetCustomerWelcomeTemplate(user.FullName ?? user.Email);
+                        await _emailService.SendEmailAsync(user.Email, "Welcome to Star Events", body);
+                    }
+                    catch
+                    {
+                        // Ignore email errors to not block registration
+                    }
                     await _signInManager.SignInAsync(user, isPersistent: false);
                     return LocalRedirect(returnUrl);
                 }
