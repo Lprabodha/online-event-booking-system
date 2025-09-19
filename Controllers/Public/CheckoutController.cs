@@ -42,6 +42,13 @@ namespace online_event_booking_system.Controllers.Public
             try
             {
                 var checkoutData = await _bookingService.GetCheckoutDataAsync(eventId);
+                // Populate available loyalty points for signed-in customer
+                var userId = _userManager.GetUserId(User);
+                if (!string.IsNullOrEmpty(userId))
+                {
+                    var lp = await _bookingService.GetUserLoyaltyPointsAsync(userId);
+                    checkoutData.AvailableLoyaltyPoints = lp?.Points ?? 0;
+                }
                 
                 // Process event image using direct URL for better performance
                 if (!string.IsNullOrEmpty(checkoutData.Event.Image))
