@@ -113,7 +113,7 @@ Prerequisites:
 
 Clone and restore:
 ```bash
-git clone <your-repo-url>
+git clone git@github.com:Lprabodha/online-event-booking-system.git
 cd online-event-booking-system
 dotnet restore
 ```
