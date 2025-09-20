@@ -7,7 +7,12 @@ namespace online_event_booking_system.Business.Service
 {
     public class CustomerPdfService : ICustomerPdfService
     {
-		public async Task<byte[]> GenerateTicketsPdfAsync(Booking booking)
+        /// <summary>
+        /// Generate PDF tickets for a booking
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns></returns>
+        public async Task<byte[]> GenerateTicketsPdfAsync(Booking booking)
 		{
 			return await Task.Run(() =>
 			{
@@ -113,6 +118,11 @@ namespace online_event_booking_system.Business.Service
 			});
 		}
 
+        /// <summary>
+        /// Generate PDF invoice for a booking
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns></returns>
         public async Task<byte[]> GenerateInvoicePdfAsync(Booking booking)
         {
             return await Task.Run(() =>
@@ -200,11 +210,24 @@ namespace online_event_booking_system.Business.Service
             });
         }
 
-		private static PdfPCell Cell(string text, Font font)
+
+        /// <summary>
+        /// Create a table cell with no border and padding
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
+        /// <returns></returns>
+        private static PdfPCell Cell(string text, Font font)
         {
             return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, Padding = 4 };
         }
 
+        /// <summary>
+        /// Create a table header cell with background color
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
+        /// <returns></returns>
 		private static PdfPCell Header(string text, Font font)
         {
             var cell = new PdfPCell(new Phrase(text, font)) { Padding = 6 };
@@ -212,11 +235,23 @@ namespace online_event_booking_system.Business.Service
             return cell;
         }
 
+        /// <summary>
+        /// Create a label cell for info tables
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
+        /// <returns></returns>
 		private static PdfPCell InfoLabel(string text, Font font)
 		{
 			return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, PaddingBottom = 6f };
 		}
 
+        /// <summary>
+        /// Create a value cell for info tables
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="font"></param>
+        /// <returns></returns>
 		private static PdfPCell InfoValue(string text, Font font)
 		{
 			return new PdfPCell(new Phrase(text, font)) { Border = Rectangle.NO_BORDER, PaddingBottom = 6f };

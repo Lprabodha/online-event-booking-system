@@ -1,5 +1,8 @@
 ﻿namespace online_event_booking_system.Models
 {
+    /// <summary>
+    /// SMTP settings for email configuration
+    /// </summary>
     public class SmtpSettings
     {
         public string Server { get; set; }

@@ -11,6 +11,10 @@ namespace online_event_booking_system.Controllers.Admin
     {
         private readonly ICategoryService _categoryService;
 
+        /// <summary>
+        /// Initializes a new instance of the CategoryController class.
+        /// </summary>
+        /// <param name="categoryService"></param>
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;

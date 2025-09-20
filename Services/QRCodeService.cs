@@ -13,7 +13,12 @@ namespace online_event_booking_system.Services
             _logger = logger;
         }
 
-        // size parameter interpreted as target image width in pixels (not pixels-per-module)
+        /// <summary>
+        /// Generate QR code as a base64 PNG data URL
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public string GenerateQRCode(string data, int size = 200)
         {
             try
@@ -36,7 +41,12 @@ namespace online_event_booking_system.Services
             }
         }
 
-        // size parameter interpreted as target image width in pixels (not pixels-per-module)
+        /// <summary>
+        /// Generate QR code as raw PNG byte array
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public byte[] GenerateQRCodeBytes(string data, int size = 200)
         {
             try
@@ -57,6 +67,13 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Generate a QR code for a ticket containing structured data
+        /// </summary>
+        /// <param name="ticketId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
         public string GenerateTicketQRCode(Guid ticketId, Guid eventId, string customerId)
         {
             try
@@ -82,6 +99,14 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Generate a QR code for a ticket containing human-readable data
+        /// </summary>
+        /// <param name="ticketId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="customerId"></param>
+        /// <param name="ticketNumber"></param>
+        /// <returns></returns>
         public string GenerateTicketQRCodeWithData(Guid ticketId, Guid eventId, string customerId, string ticketNumber)
         {
             try
@@ -97,6 +122,15 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Generate a QR code as PNG byte array for a ticket containing human-readable data
+        /// </summary>
+        /// <param name="ticketId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="customerId"></param>
+        /// <param name="ticketNumber"></param>
+        /// <param name="size"></param>
+        /// <returns></returns>
         public byte[] GenerateTicketQRCodeBytes(Guid ticketId, Guid eventId, string customerId, string ticketNumber, int size = 220)
         {
             try

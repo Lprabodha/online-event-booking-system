@@ -17,6 +17,16 @@ namespace online_event_booking_system.Services
             StripeConfiguration.ApiKey = _stripeSettings.SecretKey;
         }
 
+        /// <summary>
+        /// Create a payment intent with Stripe
+        /// </summary>
+        /// <param name="amount"></param>
+        /// <param name="currency"></param>
+        /// <param name="customerId"></param>
+        /// <param name="eventId"></param>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<PaymentIntent> CreatePaymentIntentAsync(decimal amount, string currency, string customerId, string eventId, Guid bookingId)
         {
             try
@@ -57,6 +67,12 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Confirm a payment intent with Stripe
+        /// </summary>
+        /// <param name="paymentIntentId"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<PaymentIntent> ConfirmPaymentIntentAsync(string paymentIntentId)
         {
             try
@@ -80,6 +96,12 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Refund a payment intent with Stripe
+        /// </summary>
+        /// <param name="paymentIntentId"></param>
+        /// <param name="amount"></param>
+        /// <returns></returns>
         public async Task<bool> RefundPaymentAsync(string paymentIntentId, decimal? amount = null)
         {
             try
@@ -101,6 +123,12 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Create or get an existing Stripe customer for the given user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public async Task<Customer> CreateOrGetStripeCustomerAsync(ApplicationUser user)
         {
             try
@@ -149,6 +177,11 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Validate the status of a payment intent
+        /// </summary>
+        /// <param name="paymentIntentId"></param>
+        /// <returns></returns>
         public async Task<bool> ValidatePaymentAsync(string paymentIntentId)
         {
             try

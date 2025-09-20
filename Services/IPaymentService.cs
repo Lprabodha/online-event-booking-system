@@ -10,7 +10,9 @@ namespace online_event_booking_system.Services
         Task<Customer> CreateOrGetStripeCustomerAsync(ApplicationUser user);
         Task<bool> ValidatePaymentAsync(string paymentIntentId);
     }
-
+    /// <summary>
+    /// Represents a payment intent with relevant details.
+    /// </summary>
     public class PaymentIntent
     {
         public string Id { get; set; } = string.Empty;

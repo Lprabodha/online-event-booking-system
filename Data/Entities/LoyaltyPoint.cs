@@ -2,6 +2,9 @@
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// LoyaltyPoint entity representing customer loyalty points in the system.
+    /// </summary>
     public class LoyaltyPoint
     {
         public Guid Id { get; set; } = Guid.NewGuid();

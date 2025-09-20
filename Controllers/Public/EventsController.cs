@@ -20,6 +20,14 @@ namespace online_event_booking_system.Controllers.Public
             _s3Service = s3Service;
         }
 
+        /// <summary>
+        /// Display the events page with filtering and sorting options.
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="category"></param>
+        /// <param name="dateFilter"></param>
+        /// <param name="sortBy"></param>
+        /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("events")]
         public async Task<IActionResult> Index(string? search, string? category, string? dateFilter, string? sortBy)
@@ -120,6 +128,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Display details for a specific event.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("events/{id}")]
         public async Task<IActionResult> Details(Guid id)
         {

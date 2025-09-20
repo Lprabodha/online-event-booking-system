@@ -23,6 +23,10 @@ namespace online_event_booking_system.Controllers.Public
             _configuration = configuration;
         }
 
+        /// <summary>
+        /// Handle incoming Stripe webhooks for payment events.
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("stripe")]
         public async Task<IActionResult> HandleWebhook()
         {
@@ -65,6 +69,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Process the Stripe event based on its type.
+        /// </summary>
+        /// <param name="stripeEvent"></param>
+        /// <returns></returns>
         private async Task ProcessStripeEvent(Event stripeEvent)
         {
             switch (stripeEvent.Type)
@@ -94,6 +103,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Process webhook without signature verification (less secure).
+        /// </summary>
+        /// <param name="json"></param>
+        /// <returns></returns>
         private async Task<IActionResult> ProcessWebhookWithoutVerification(string json)
         {
             try
@@ -127,6 +141,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Handle successful payment intents.
+        /// </summary>
+        /// <param name="paymentIntent"></param>
+        /// <returns></returns>
         private async Task HandlePaymentSucceeded(PaymentIntent paymentIntent)
         {
             try
@@ -150,6 +169,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Handle failed payment intents.
+        /// </summary>
+        /// <param name="paymentIntent"></param>
+        /// <returns></returns>
         private async Task HandlePaymentFailed(PaymentIntent paymentIntent)
         {
             try

@@ -10,11 +10,19 @@ namespace online_event_booking_system.Business.Service
     {
         private readonly ApplicationDbContext _context;
 
+        /// <summary>
+        /// Initializes a new instance of the DiscountService class.
+        /// </summary>
+        /// <param name="context"></param>
         public DiscountService(ApplicationDbContext context)
         {
             _context = context;
         }
 
+        /// <summary>
+        /// Get all discounts in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Discount>> GetAllDiscountsAsync()
         {
             return await _context.Discounts
@@ -23,6 +31,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get discounts by organizer
+        /// </summary>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Discount>> GetDiscountsByOrganizerAsync(string organizerId)
         {
             return await _context.Discounts
@@ -32,6 +45,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get discount by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Discount?> GetDiscountByIdAsync(Guid id)
         {
             return await _context.Discounts
@@ -39,6 +57,11 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync(d => d.Id == id);
         }
 
+        /// <summary>
+        /// Get discount by event id
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public async Task<Discount?> GetDiscountByEventIdAsync(Guid eventId)
         {
             return await _context.Discounts
@@ -46,6 +69,11 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync(d => d.EventId == eventId);
         }
 
+        /// <summary>
+        /// Get discount by code
+        /// </summary>
+        /// <param name="code"></param>
+        /// <returns></returns>
         public async Task<Discount?> GetDiscountByCodeAsync(string code)
         {
             return await _context.Discounts
@@ -53,6 +81,12 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync(d => d.Code == code.ToUpper());
         }
 
+        /// <summary>
+        /// Create a new discount
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<Discount> CreateDiscountAsync(DiscountViewModel model, string organizerId)
         {
             var discount = new Discount
@@ -87,6 +121,13 @@ namespace online_event_booking_system.Business.Service
             return discount;
         }
 
+        /// <summary>
+        /// Update an existing discount
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Discount> UpdateDiscountAsync(Guid id, DiscountViewModel model)
         {
             var discount = await _context.Discounts.FindAsync(id);
@@ -112,6 +153,11 @@ namespace online_event_booking_system.Business.Service
             return discount;
         }
 
+        /// <summary>
+        /// Delete a discount
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteDiscountAsync(Guid id)
         {
             var discount = await _context.Discounts.FindAsync(id);
@@ -123,6 +169,12 @@ namespace online_event_booking_system.Business.Service
             return true;
         }
 
+        /// <summary>
+        /// Validate a discount code for an event
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
         public async Task<bool> ValidateDiscountCodeAsync(string code, Guid? eventId = null)
         {
             var existingDiscount = await _context.Discounts
@@ -134,6 +186,11 @@ namespace online_event_booking_system.Business.Service
             return existingDiscount.Id == eventId;
         }
 
+        /// <summary>
+        /// Get available events for discount assignment
+        /// </summary>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<EventOption>> GetAvailableEventsAsync(string organizerId)
         {
             var events = await _context.Events
@@ -150,6 +207,11 @@ namespace online_event_booking_system.Business.Service
             return events;
         }
 
+        /// <summary>
+        /// Toggle the active status of a discount
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> ToggleDiscountStatusAsync(Guid id)
         {
             var discount = await _context.Discounts.FindAsync(id);

@@ -7,6 +7,9 @@ using online_event_booking_system.Services;
 
 namespace online_event_booking_system.Business.Service
 {
+    /// <summary>
+    /// Service class for booking-related operations, implementing IBookingService interface.
+    /// </summary>
     public class BookingService : IBookingService
     {
         private readonly ApplicationDbContext _context;
@@ -31,6 +34,12 @@ namespace online_event_booking_system.Business.Service
             _ticketQRService = ticketQRService;
             _logger = logger;
         }
+        /// <summary>
+        /// Get checkout data for a specific event
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
 
         public async Task<CheckoutViewModel> GetCheckoutDataAsync(Guid eventId)
         {
@@ -69,6 +78,11 @@ namespace online_event_booking_system.Business.Service
             return checkoutData;
         }
 
+        /// <summary>
+        /// Validate booking request
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<bool> ValidateBookingAsync(ProcessCheckoutRequest request)
         {
             try
@@ -138,6 +152,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Process checkout and create booking, payment, and tickets
+        /// </summary>
+        /// <param name="request"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<CheckoutResponse> ProcessCheckoutAsync(ProcessCheckoutRequest request, string userId)
         {
             try
@@ -350,6 +370,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Process payment confirmation, update booking, payment, tickets, generate QR codes, send emails, and award loyalty points
+        /// </summary>
+        /// <param name="paymentIntentId"></param>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         public async Task<bool> ProcessPaymentAsync(string paymentIntentId, Guid bookingId)
         {
             try
@@ -443,6 +469,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Get booking details by ID, including event, customer, tickets, prices, and payments
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         public async Task<Booking?> GetBookingByIdAsync(Guid bookingId)
         {
             return await _context.Bookings
@@ -455,6 +486,12 @@ namespace online_event_booking_system.Business.Service
                     .ThenInclude(t => t.Payment)
                 .FirstOrDefaultAsync(b => b.Id == bookingId);
         }
+
+        /// <summary>
+        /// Get booking details by ID with optimized query for OrderDetails view
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
 
         public async Task<Booking?> GetBookingByIdOptimizedAsync(Guid bookingId)
         {
@@ -513,7 +550,11 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync();
         }
 
-
+        /// <summary>
+        /// Get all bookings for a specific user, including event, venue, tickets, prices, and payments
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<Booking>> GetUserBookingsAsync(string userId)
         {
             return await _context.Bookings
@@ -527,6 +568,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get all bookings for a specific user with optimized query for UserBookings view
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<Booking>> GetUserBookingsOptimizedAsync(string userId)
         {
             // Optimized query that only loads the fields needed by the view
@@ -564,6 +610,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get all payments for a specific user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<List<Payment>> GetUserPaymentsAsync(string userId)
         {
             return await _context.Payments
@@ -572,12 +623,24 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get loyalty points for a specific user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<LoyaltyPoint?> GetUserLoyaltyPointsAsync(string userId)
         {
             return await _context.LoyaltyPoints
                 .FirstOrDefaultAsync(lp => lp.CustomerId == userId);
         }
 
+        /// <summary>
+        /// Add loyalty points to a user's account
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="points"></param>
+        /// <param name="description"></param>
+        /// <returns></returns>
         public async Task<bool> AddLoyaltyPointsAsync(string userId, int points, string description)
         {
             try
@@ -614,6 +677,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Cancel a booking if allowed, mark tickets as used, and update booking status
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<bool> CancelBookingAsync(Guid bookingId, string userId)
         {
             try
@@ -653,6 +722,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Process refund for a cancelled booking
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         public async Task<bool> RefundBookingAsync(Guid bookingId)
         {
             try
@@ -689,6 +763,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Send comprehensive booking email with all tickets and pricing summary
+        /// </summary>
+        /// <param name="booking"></param>
+        /// <returns></returns>
         private async Task SendComprehensiveBookingEmailAsync(Booking booking)
         {
             try
@@ -765,6 +844,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Award loyalty points based on number of tickets purchased
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="ticketCount"></param>
+        /// <returns></returns>
         private async Task AwardLoyaltyPointsAsync(string customerId, int ticketCount)
         {
             try

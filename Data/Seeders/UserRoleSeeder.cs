@@ -3,6 +3,9 @@ using online_event_booking_system.Data.Entities;
 
 namespace online_event_booking_system.Data.Seeders
 {
+    /// <summary>
+    /// Class to seed initial user roles and users into the database.
+    /// </summary>
     public class UserRoleSeeder
     {
         public static async Task SeedRoles(IServiceProvider serviceProvider)

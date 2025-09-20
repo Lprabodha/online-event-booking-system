@@ -2,6 +2,9 @@
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// Payment entity representing a payment transaction.
+    /// </summary>
     public class Payment
     {
         public Guid Id { get; set; } = Guid.NewGuid();

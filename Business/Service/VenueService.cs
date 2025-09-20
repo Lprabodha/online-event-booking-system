@@ -8,21 +8,41 @@ public class VenueService : IVenueService
 {
     private readonly IVenueRepository _venueRepository;
 
+    /// <summary>
+    /// Initializes a new instance of the VenueService class.
+    /// </summary>
+    /// <param name="venueRepository"></param>
     public VenueService(IVenueRepository venueRepository)
     {
         _venueRepository = venueRepository;
     }
 
+    /// <summary>
+    /// Get all venues in the system
+    /// </summary>
+    /// <returns></returns>
     public async Task<IEnumerable<Venue>> GetAllVenuesAsync()
     {
         return await _venueRepository.GetAllAsync();
     }
 
+    /// <summary>
+    /// Get venue by its unique identifier
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<Venue> GetVenueByIdAsync(Guid id)
     {
         return await _venueRepository.GetByIdAsync(id);
     }
 
+    /// <summary>
+    /// Create a new venue
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<Venue> CreateVenueAsync(Venue model)
     {
         // Additional business validation
@@ -52,6 +72,14 @@ public class VenueService : IVenueService
         return await _venueRepository.AddAsync(venue);
     }
 
+    /// <summary>
+    /// Update an existing venue
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<Venue> UpdateVenueAsync(Guid id, Venue model)
     {
         var venue = await _venueRepository.GetByIdAsync(id);
@@ -86,6 +114,11 @@ public class VenueService : IVenueService
         return await _venueRepository.UpdateAsync(venue);
     }
 
+    /// <summary>
+    /// Delete a venue
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<bool> DeleteVenueAsync(Guid id)
     {
         return await _venueRepository.DeleteAsync(id);

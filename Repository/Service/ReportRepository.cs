@@ -14,6 +14,14 @@ namespace online_event_booking_system.Repository.Service
             _context = context;
         }
 
+        /// <summary>
+        /// Fetch events based on filters.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Event>> GetEventsAsync(DateTime? from, DateTime? to, string category = null, string organizer = null)
         {
             var query = _context.Events
@@ -45,6 +53,13 @@ namespace online_event_booking_system.Repository.Service
             return await query.ToListAsync();
         }
 
+        /// <summary>
+        /// Fetch users based on filters.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(DateTime? from, DateTime? to, string role = null)
         {
             var query = _context.Users.AsQueryable();
@@ -72,6 +87,12 @@ namespace online_event_booking_system.Repository.Service
             return await query.OrderByDescending(u => u.CreatedAt).ToListAsync();
         }
 
+        /// <summary>
+        /// Fetch organizers based on filters.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<ApplicationUser>> GetOrganizersAsync(DateTime? from, DateTime? to)
         {
             // Get users with the "Organizer" role
@@ -95,6 +116,12 @@ namespace online_event_booking_system.Repository.Service
             return await query.ToListAsync();
         }
 
+        /// <summary>
+        /// Fetch customers based on filters.
+        /// </summary>
+        /// <param name="from"></param>
+        /// <param name="to"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<ApplicationUser>> GetCustomersAsync(DateTime? from, DateTime? to)
         {
             // Get users with the "Customer" role

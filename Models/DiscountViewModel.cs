@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace online_event_booking_system.Models
 {
+    /// <summary>
+    /// ViewModel for creating or editing a discount.
+    /// </summary>
     public class DiscountViewModel
     {
         [Required(ErrorMessage = "Discount code is required")]
@@ -41,12 +44,17 @@ namespace online_event_booking_system.Models
         public List<EventOption> AvailableEvents { get; set; } = new List<EventOption>();
     }
 
+    /// <summary>
+    /// Enumeration for discount types.
+    /// </summary>
     public enum DiscountType
     {
         Percentage = 1,
         FixedAmount = 2
     }
-
+    /// <summary>
+    /// Helper class to represent event options in dropdowns.
+    /// </summary>
     public class EventOption
     {
         public Guid Id { get; set; }

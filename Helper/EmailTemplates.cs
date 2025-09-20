@@ -1,5 +1,8 @@
 ﻿namespace online_event_booking_system.Helper
 {
+    /// <summary>
+    /// Static class containing HTML email templates for various notifications.
+    /// </summary>
     public static class EmailTemplates
     {
         public static string GetAdminWeeklyReportTemplate(DateTime weekStart, DateTime weekEnd, int newUsers, int eventsCreated, int ticketsSold, decimal revenue, List<(string Title, int Tickets, decimal Sales)> topEvents, List<(string Organizer, decimal Sales)> topOrganizers)

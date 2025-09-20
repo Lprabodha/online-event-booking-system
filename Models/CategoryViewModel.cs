@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace online_event_booking_system.Models
 {
+    /// <summary>
+    /// ViewModel for representing a category in the event booking system.
+    /// </summary>
     public class CategoryViewModel
     {
         public Guid Id { get; set; }
@@ -27,6 +30,9 @@ namespace online_event_booking_system.Models
         [Display(Name = "Events Count")]
         public int EventsCount { get; set; }
     }
+    /// <summary>
+    /// ViewModel for creating a new category.
+    /// </summary>
 
     public class CategoryCreateViewModel
     {
@@ -43,6 +49,9 @@ namespace online_event_booking_system.Models
         public bool IsActive { get; set; } = true;
     }
 
+    /// <summary>
+    /// ViewModel for editing an existing category.
+    /// </summary>
     public class CategoryEditViewModel
     {
         public Guid Id { get; set; }

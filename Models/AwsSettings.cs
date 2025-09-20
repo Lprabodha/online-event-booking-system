@@ -1,5 +1,8 @@
 namespace online_event_booking_system.Models
 {
+    /// <summary>
+    /// AWS settings for S3 integration
+    /// </summary>
     public class AwsSettings
     {
         public string AccessKey { get; set; } = string.Empty;

@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// Represents a category for events in the online event booking system.
+    /// </summary>
     public class Category
     {
         public Guid Id { get; set; } = Guid.NewGuid();

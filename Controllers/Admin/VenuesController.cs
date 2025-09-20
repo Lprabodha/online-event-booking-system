@@ -18,6 +18,10 @@ namespace online_event_booking_system.Controllers.Admin
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all venues in the system
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> GetAllVenues()
         {
@@ -32,6 +36,11 @@ namespace online_event_booking_system.Controllers.Admin
                 return StatusCode(500, new { success = false, message = "An error occurred while retrieving venues" });
             }
         }
+        /// <summary>
+        /// Get venue by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetVenueById(Guid id)
@@ -57,6 +66,11 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Create a new venue
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> CreateVenue([FromBody] Venue model)
         {
@@ -104,6 +118,12 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Update an existing venue
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateVenue(Guid id, [FromBody] Venue model)
         {
@@ -160,6 +180,11 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Delete a venue by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVenue(Guid id)
         {
@@ -185,6 +210,12 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Validate venue business rules
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="existingId"></param>
+        /// <returns></returns>
         private async Task<(bool IsValid, List<string> Errors)> ValidateVenueBusinessRules(Venue model, Guid? existingId = null)
         {
             var errors = new List<string>();

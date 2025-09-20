@@ -23,6 +23,10 @@ public class HomeController : Controller
         _s3Service = s3Service;
     }
 
+    /// <summary>
+    /// Display the home page with categories and event sections.
+    /// </summary>
+    /// <returns></returns>
     public async Task<IActionResult> Index()
     {
         try
@@ -82,6 +86,13 @@ public class HomeController : Controller
         return View();
     }
 
+    /// <summary>
+    /// Display filtered events based on search, category, and date filters.
+    /// </summary>
+    /// <param name="search"></param>
+    /// <param name="category"></param>
+    /// <param name="dateFilter"></param>
+    /// <returns></returns>
     [HttpGet("events/filtered")]
     public async Task<IActionResult> FilteredEvents(string? search, string? category, string? dateFilter)
     {
@@ -157,6 +168,10 @@ public class HomeController : Controller
         }
     }
 
+    /// <summary>
+    /// Display the error page with request ID.
+    /// </summary>
+    /// <returns></returns>
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

@@ -79,6 +79,11 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Get the URL of the QR code image stored in cloud storage.
+        /// </summary>
+        /// <param name="qrCodePath"></param>
+        /// <returns></returns>
         public async Task<string> GetQRCodeUrlAsync(string qrCodePath)
         {
             try
@@ -93,6 +98,17 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Send an email to the customer with the ticket details and embedded QR code.
+        /// </summary>
+        /// <param name="customerEmail"></param>
+        /// <param name="customerName"></param>
+        /// <param name="eventName"></param>
+        /// <param name="eventDate"></param>
+        /// <param name="venueName"></param>
+        /// <param name="ticketNumber"></param>
+        /// <param name="qrCodePath"></param>
+        /// <returns></returns>
         public async Task<bool> SendTicketEmailWithQRCodeAsync(
             string customerEmail, 
             string customerName, 
@@ -132,6 +148,16 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Create the HTML email template for the ticket with embedded QR code.
+        /// </summary>
+        /// <param name="customerName"></param>
+        /// <param name="eventName"></param>
+        /// <param name="eventDate"></param>
+        /// <param name="venueName"></param>
+        /// <param name="ticketNumber"></param>
+        /// <param name="qrCodeUrl"></param>
+        /// <returns></returns>
         private string CreateTicketEmailTemplate(
             string customerName, 
             string eventName, 
