@@ -1,7 +1,7 @@
 .vs/
 bin/
 obj/
-
+.idea/
 appsettings.json
 node_modules/
 wwwroot/css/app.css
