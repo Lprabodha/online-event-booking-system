@@ -18,6 +18,13 @@ namespace online_event_booking_system.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<string> UploadFileAsync(IFormFile file, string folder = "events")
         {
             try
@@ -67,6 +74,12 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Save file to local wwwroot/uploads folder as a fallback
+        /// </summary>
+        /// <param name="file"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
         private async Task<string> SaveFileLocallyAsync(IFormFile file, string folder)
         {
             try
@@ -90,6 +103,15 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Upload a byte array as a file to S3 or local storage
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="fileName"></param>
+        /// <param name="contentType"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<string> UploadByteArrayAsync(byte[] data, string fileName, string contentType, string folder = "events")
         {
             try
@@ -130,6 +152,13 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Save byte array as a file to local wwwroot/uploads folder as a fallback
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="fileName"></param>
+        /// <param name="folder"></param>
+        /// <returns></returns>
         private async Task<string> SaveByteArrayLocallyAsync(byte[] data, string fileName, string folder)
         {
             try
@@ -152,6 +181,11 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Delete a file from S3 by its key
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteFileAsync(string key)
         {
             try
@@ -182,6 +216,11 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Get a publicly accessible URL for a file stored in S3 or local storage
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public async Task<string> GetFileUrlAsync(string key)
         {
             try
@@ -207,6 +246,11 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Get a publicly accessible URL for an image, handling various input formats
+        /// </summary>
+        /// <param name="imagePath"></param>
+        /// <returns></returns>
         public async Task<string> GetImageUrlAsync(string imagePath)
         {
             try
@@ -232,7 +276,12 @@ namespace online_event_booking_system.Services
             }
         }
 
-    public string GetDirectUrl(string key)
+    /// <summary>
+    /// Get a direct URL for accessing a file, handling various input formats
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+        public string GetDirectUrl(string key)
     {
         try
         {

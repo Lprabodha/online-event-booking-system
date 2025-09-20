@@ -9,6 +9,9 @@ using System.Text;
 
 namespace online_event_booking_system.Business.Service
 {
+    /// <summary>
+    /// Service class for report-related operations, implementing IReportService interface.
+    /// </summary>
     public class ReportService : IReportService
     {
         private readonly IReportRepository _reportRepository;
@@ -18,6 +21,18 @@ namespace online_event_booking_system.Business.Service
             _reportRepository = reportRepository;
         }
 
+        /// <summary>
+        /// Generate report based on the specified parameters
+        /// </summary>
+        /// <param name="reportType"></param>
+        /// <param name="format"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         public async Task<byte[]> GenerateReportAsync(string reportType, string format, DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null, string role = null)
         {
             switch (reportType.ToLower())
@@ -39,16 +54,37 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Get users based on the specified parameters
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<ApplicationUser>> GetUsersAsync(DateTime? dateFrom, DateTime? dateTo, string role = null)
         {
             return await _reportRepository.GetUsersAsync(dateFrom, dateTo, role);
         }
 
+        /// <summary>
+        /// Get events based on the specified parameters
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<Event>> GetEventsAsync(DateTime? dateFrom, DateTime? dateTo, string category = null, string organizer = null)
         {
             return await _reportRepository.GetEventsAsync(dateFrom, dateTo, category, organizer);
         }
 
+        /// <summary>
+        /// Get recent reports generated within the specified date range
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <returns></returns>
         public async Task<IEnumerable<RecentReport>> GetRecentReportsAsync(DateTime? dateFrom, DateTime? dateTo)
         {
             var allReports = new List<RecentReport>();
@@ -107,7 +143,16 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
-        // Generate Event Report with specific columns and formatting
+        /// <summary>
+        /// Generate Event Report with specific columns and formatting
+        /// </summary>
+        /// <param name="events"></param>
+        /// <param name="format"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <returns></returns>
         private byte[] GenerateEventReport(IEnumerable<Event> events, string format, DateTime? dateFrom, DateTime? dateTo, string category, string organizer)
         {
             var eventData = events.Select(e => new EventReportData
@@ -137,6 +182,15 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Generic file generator for different formats
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="format"></param>
+        /// <param name="sheetName"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
         private byte[] GenerateFile<T>(IEnumerable<T> data, string format, string sheetName)
         {
             if (format.ToLower() == "excel")
@@ -154,7 +208,13 @@ namespace online_event_booking_system.Business.Service
             throw new NotImplementedException($"Format '{format}' is not supported.");
         }
 
-        // Generates an Excel file using ClosedXML
+        /// <summary>
+        /// Generates an Excel file using ClosedXML
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="sheetName"></param>
+        /// <returns></returns>
         private byte[] GenerateExcel<T>(IEnumerable<T> data, string sheetName)
         {
             using var workbook = new XLWorkbook();
@@ -170,7 +230,13 @@ namespace online_event_booking_system.Business.Service
             return stream.ToArray();
         }
 
-        // Generates a PDF file using iTextSharp
+        /// <summary>
+        /// Generates a PDF file using iTextSharp
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <param name="reportTitle"></param>
+        /// <returns></returns>
         private byte[] GeneratePdf<T>(IEnumerable<T> data, string reportTitle)
         {
             using var memoryStream = new MemoryStream();
@@ -224,7 +290,12 @@ namespace online_event_booking_system.Business.Service
             return memoryStream.ToArray();
         }
 
-        // Generates a CSV file manually
+        /// <summary>
+        /// Generates a CSV file
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="data"></param>
+        /// <returns></returns>
         private byte[] GenerateCsv<T>(IEnumerable<T> data)
         {
             var csvContent = new StringBuilder();
@@ -241,7 +312,12 @@ namespace online_event_booking_system.Business.Service
             return Encoding.UTF8.GetBytes(csvContent.ToString());
         }
 
-        // Generate User Excel Report
+        /// <summary>
+        /// Generate User Excel Report with specific columns and formatting
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <param name="filterDetails"></param>
+        /// <returns></returns>
         private byte[] GenerateUserExcel(List<UserReportData> userData, string filterDetails)
         {
             using var workbook = new XLWorkbook();
@@ -288,7 +364,12 @@ namespace online_event_booking_system.Business.Service
             return stream.ToArray();
         }
 
-        // Generate Event Excel Report
+        /// <summary>
+        /// Generate Event Excel Report with specific columns and formatting
+        /// </summary>
+        /// <param name="eventData"></param>
+        /// <param name="filterDetails"></param>
+        /// <returns></returns>
         private byte[] GenerateEventExcel(List<EventReportData> eventData, string filterDetails)
         {
             using var workbook = new XLWorkbook();
@@ -334,7 +415,12 @@ namespace online_event_booking_system.Business.Service
             return stream.ToArray();
         }
 
-        // Generate User PDF Report
+        /// <summary>
+        /// Generate User PDF Report with specific columns and formatting
+        /// </summary>
+        /// <param name="userData"></param>
+        /// <param name="filterDetails"></param>
+        /// <returns></returns>
         private byte[] GenerateUserPdf(List<UserReportData> userData, string filterDetails)
         {
             using var memoryStream = new MemoryStream();
@@ -392,7 +478,12 @@ namespace online_event_booking_system.Business.Service
             return memoryStream.ToArray();
         }
 
-        // Generate Event PDF Report
+        /// <summary>
+        /// Generate Event PDF Report with specific columns and formatting
+        /// </summary>
+        /// <param name="eventData"></param>
+        /// <param name="filterDetails"></param>
+        /// <returns></returns>
         private byte[] GenerateEventPdf(List<EventReportData> eventData, string filterDetails)
         {
             using var memoryStream = new MemoryStream();

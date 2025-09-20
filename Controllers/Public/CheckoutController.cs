@@ -35,6 +35,11 @@ namespace online_event_booking_system.Controllers.Public
             _ticketQRService = ticketQRService;
             _s3Service = s3Service;
         }
+        /// <summary>
+        /// Display the checkout page for a specific event.
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <returns></returns>
 
         [HttpGet("checkout/{eventId}")]
         public async Task<IActionResult> Index(Guid eventId)
@@ -76,6 +81,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Process the checkout request and create a booking.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("checkout/process")]
         public async Task<IActionResult> ProcessCheckout([FromBody] ProcessCheckoutRequest request)
         {
@@ -104,6 +114,11 @@ namespace online_event_booking_system.Controllers.Public
                 });
             }
         }
+        /// <summary>
+        /// Confirm payment after redirection from Stripe.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
 
         [HttpPost("checkout/confirm-payment")]
         public async Task<IActionResult> ConfirmPayment([FromBody] ConfirmPaymentRequest request)
@@ -143,7 +158,11 @@ namespace online_event_booking_system.Controllers.Public
                 });
             }
         }
-
+        /// <summary>
+        /// Display booking confirmation with tickets and QR codes.
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
         [HttpGet("checkout/confirm/{bookingId}")]
         public async Task<IActionResult> Confirm(Guid bookingId)
         {
@@ -182,6 +201,11 @@ namespace online_event_booking_system.Controllers.Public
                 return RedirectToAction("Index", "Customer");
             }
         }
+        /// <summary>
+        /// Cancel a booking and issue a refund if applicable.
+        /// </summary>
+        /// <param name="bookingId"></param>
+        /// <returns></returns>
 
         [HttpPost("checkout/cancel/{bookingId}")]
         public async Task<IActionResult> CancelBooking(Guid bookingId)
@@ -211,6 +235,11 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
 
+        /// <summary>
+        /// Validate a discount code for the checkout process.
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("checkout/validate-discount")]
         public async Task<IActionResult> ValidateDiscount([FromBody] ValidateDiscountRequest request)
         {
@@ -266,13 +295,18 @@ namespace online_event_booking_system.Controllers.Public
             }
         }
     }
-
+    /// <summary>
+    /// Request model for processing checkout.
+    /// </summary>
     public class ConfirmPaymentRequest
     {
         public string PaymentIntentId { get; set; } = string.Empty;
         public Guid BookingId { get; set; }
     }
 
+    /// <summary>
+    /// Request model for processing checkout.
+    /// </summary>
     public class ValidateDiscountRequest
     {
         public string DiscountCode { get; set; } = string.Empty;

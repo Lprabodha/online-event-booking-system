@@ -43,6 +43,10 @@ namespace online_event_booking_system.Controllers.Customer
             _customerPdfService = customerPdfService;
         }
 
+        /// <summary>
+        /// Display the customer dashboard with key metrics and recent activity.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("customer")]
         public async Task<IActionResult> Index()
         {
@@ -73,6 +77,12 @@ namespace online_event_booking_system.Controllers.Customer
 
             return View();
         }
+        /// <summary>
+        /// Display a list of available events with search and category filters.
+        /// </summary>
+        /// <param name="search"></param>
+        /// <param name="category"></param>
+        /// <returns></returns>
 
         [HttpGet("customer/events")]
         public async Task<IActionResult> Events(string? search, string? category)
@@ -134,6 +144,10 @@ namespace online_event_booking_system.Controllers.Customer
             }
         }
 
+        /// <summary>
+        /// Display the user's booking history with details and actions.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("customer/bookings")]
         public async Task<IActionResult> Bookings()
         {
@@ -144,6 +158,10 @@ namespace online_event_booking_system.Controllers.Customer
             var bookings = await _bookingService.GetUserBookingsAsync(userId);
             return View(bookings);
         }
+        /// <summary>
+        /// Display and edit the user's profile information.
+        /// </summary>
+        /// <returns></returns>
 
         [HttpGet("customer/profile")]
         public async Task<IActionResult> Profile()
@@ -158,6 +176,12 @@ namespace online_event_booking_system.Controllers.Customer
 
             return View(user);
         }
+
+        /// <summary>
+        /// Update the user's profile information.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
 
         [HttpPost("customer/profile")]
         public async Task<IActionResult> UpdateProfile(ApplicationUser model)
@@ -187,6 +211,11 @@ namespace online_event_booking_system.Controllers.Customer
                 return Json(new { success = false, message = "Error updating profile" });
             }
         }
+        /// <summary>
+        /// Change the user's password.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
 
         [HttpPost("customer/change-password")]
         [ValidateAntiForgeryToken]
@@ -217,6 +246,11 @@ namespace online_event_booking_system.Controllers.Customer
             return Json(new { success = true, message = "Password changed successfully" });
         }
 
+        /// <summary>
+        /// Display the user's loyalty points and rewards summary.
+        /// </summary>
+        /// <returns></returns>
+
         [HttpGet("customer/loyalty")]
         public async Task<IActionResult> Loyalty()
         {
@@ -240,6 +274,12 @@ namespace online_event_booking_system.Controllers.Customer
         {
             return View();
         }
+
+        /// <summary>
+        /// Display detailed information about a specific booking, including tickets and QR codes.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpGet("customer/booking/{id}")]
         public async Task<IActionResult> OrderDetails(Guid id)
@@ -273,6 +313,12 @@ namespace online_event_booking_system.Controllers.Customer
             return View(booking);
         }
 
+        /// <summary>
+        /// Download tickets as a PDF document.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
         [HttpGet("customer/booking/{id}/tickets.pdf")]
         public async Task<IActionResult> DownloadTickets(Guid id)
         {
@@ -288,6 +334,12 @@ namespace online_event_booking_system.Controllers.Customer
             var fileName = $"tickets_{booking.BookingReference}.pdf";
             return File(bytes, "application/pdf", fileName);
         }
+
+        /// <summary>
+        /// Download invoice as a PDF document.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpGet("customer/booking/{id}/invoice.pdf")]
         public async Task<IActionResult> DownloadInvoice(Guid id)
@@ -305,6 +357,11 @@ namespace online_event_booking_system.Controllers.Customer
             return File(bytes, "application/pdf", fileName);
         }
 
+        /// <summary>
+        /// Cancel a booking if eligible.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("customer/booking/{id}/cancel")]
         public async Task<IActionResult> CancelBooking(Guid id)
         {

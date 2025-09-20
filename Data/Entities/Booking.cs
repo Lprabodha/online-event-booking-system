@@ -2,6 +2,9 @@
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// Represents a booking made by a customer for an event.
+    /// </summary>
     public class Booking
     {
         public Guid Id { get; set; } = Guid.NewGuid();

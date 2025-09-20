@@ -19,6 +19,13 @@ namespace online_event_booking_system.Repository.Service
             _context = context;
         }
 
+        /// <summary>
+        /// Create a new user with the specified role.
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public async Task<bool> CreateUser(ApplicationUser user, string password, string role)
         {
             try
@@ -47,16 +54,30 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Get all users in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<ApplicationUser>> GetAllUsers()
         {
             return await _userManager.Users.Where(u => u.DeletedAt == null).ToListAsync();
         }
 
+        /// <summary>
+        /// Get user by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<ApplicationUser> GetUserById(string id)
         {
             return await _userManager.FindByIdAsync(id);
         }
 
+        /// <summary>
+        /// Soft delete a user by setting DeletedAt timestamp
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> SoftDeleteUser(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -70,6 +91,11 @@ namespace online_event_booking_system.Repository.Service
             return result.Succeeded;
         }
 
+        /// <summary>
+        /// Update user details
+        /// </summary>
+        /// <param name="user"></param>
+        /// <returns></returns>
         public async Task<bool> UpdateUser(ApplicationUser user)
         {
             var existingUser = await _userManager.FindByIdAsync(user.Id);
@@ -90,7 +116,11 @@ namespace online_event_booking_system.Repository.Service
             var result = await _userManager.UpdateAsync(existingUser);
             return result.Succeeded;
         }
-
+        /// <summary>
+        /// Get the role of a user by their unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<string> GetUserRole(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
@@ -103,22 +133,43 @@ namespace online_event_booking_system.Repository.Service
             return roles.FirstOrDefault();
         }
 
+        /// <summary>
+        /// Get users in a specific role
+        /// </summary>
+        /// <param name="roleName"></param>
+        /// <returns></returns>
         public async Task<List<ApplicationUser>> GetUsersInRoleAsync(string roleName)
         {
             var users = await _userManager.GetUsersInRoleAsync(roleName);
             return users.ToList();
         }
 
+        /// <summary>
+        /// Create a new organizer user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
         public async Task<IdentityResult> CreateOrganizerAsync(ApplicationUser user, string password)
         {
             return await _userManager.CreateAsync(user, password);
         }
 
+        /// <summary>
+        /// Assign a role to a user
+        /// </summary>
+        /// <param name="user"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
         {
             return await _userManager.AddToRoleAsync(user, role);
         }
 
+        /// <summary>
+        /// Get all events in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Event>> GetAllEventsAsync()
         {
             return await _context.Events

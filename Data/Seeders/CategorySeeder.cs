@@ -3,6 +3,9 @@ using online_event_booking_system.Data.Entities;
 
 namespace online_event_booking_system.Data.Seeders
 {
+    /// <summary>
+    /// Seeds initial categories into the database.
+    /// </summary>
     public class CategorySeeder
     {
         public static async Task SeedCategoriesAsync(ApplicationDbContext context)

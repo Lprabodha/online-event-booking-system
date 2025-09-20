@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace online_event_booking_system.Services
 {
+    /// <summary>
+    /// Service class for sending emails, implementing IEmailService interface.
+    /// </summary>
     public class EmailService : IEmailService
     {
         private readonly SmtpSettings _smtpSettings;
@@ -19,6 +22,13 @@ namespace online_event_booking_system.Services
             _logger = logger;
         }
 
+        /// <summary>
+        /// Send an email asynchronously.
+        /// </summary>
+        /// <param name="toEmail"></param>
+        /// <param name="subject"></param>
+        /// <param name="body"></param>
+        /// <returns></returns>
         public async Task SendEmailAsync(string toEmail, string subject, string body)
         {
             var message = new MimeMessage();
@@ -48,6 +58,16 @@ namespace online_event_booking_system.Services
             }
         }
 
+        /// <summary>
+        /// Send an email with attachment asynchronously.
+        /// </summary>
+        /// <param name="toEmail"></param>
+        /// <param name="subject"></param>
+        /// <param name="body"></param>
+        /// <param name="attachmentData"></param>
+        /// <param name="attachmentFileName"></param>
+        /// <param name="attachmentContentType"></param>
+        /// <returns></returns>
         public async Task SendEmailWithAttachmentAsync(string toEmail, string subject, string body, byte[] attachmentData, string attachmentFileName, string attachmentContentType)
         {
             var message = new MimeMessage();

@@ -41,85 +41,11 @@ namespace online_event_booking_system.Controllers.Organizer
             _context = context;
         }
 
-        [HttpGet("organizer/email-compose")]
-        public async Task<IActionResult> EmailCompose()
-        {
-            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            var recipients = await _context.Users
-                .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
-                .OrderBy(u => u.FullName)
-                .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
-                .ToListAsync();
+        /// <summary>
+        /// Display organizer dashboard with key metrics and recent activity.
+        /// </summary>
+        /// <returns></returns>
 
-            var model = new OrganizerEmailViewModel
-            {
-                Recipients = recipients
-            };
-            return View("~/Views/Organizer/EmailCompose.cshtml", model);
-        }
-
-        [HttpPost("organizer/email-send")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EmailSend(OrganizerEmailViewModel model)
-        {
-            if (!ModelState.IsValid || model.SelectedUserIds.Count == 0)
-            {
-                // reload recipients
-                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-                model.Recipients = await _context.Users
-                    .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
-                    .OrderBy(u => u.FullName)
-                    .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
-                    .ToListAsync();
-                TempData["ErrorMessage"] = "Please fill subject/body and select at least one recipient.";
-                return View("~/Views/Organizer/EmailCompose.cshtml", model);
-            }
-
-            try
-            {
-                var organizer = await _userManager.GetUserAsync(User);
-                var recipients = await _context.Users
-                    .Where(u => model.SelectedUserIds.Contains(u.Id) && u.Email != null)
-                    .Select(u => new { u.Email, u.FullName })
-                    .ToListAsync();
-
-                var body = online_event_booking_system.Helper.EmailTemplates.GetEventPromoTemplate(
-                    organizer?.FullName ?? "Organizer",
-                    model.Subject,
-                    model.Body,
-                    null,
-                    null
-                );
-
-                foreach (var r in recipients)
-                {
-                    await _emailService.SendEmailAsync(r.Email!, model.Subject, body);
-                }
-
-                TempData["SuccessMessage"] = $"Email sent to {recipients.Count} recipient(s).";
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error sending organizer email");
-                TempData["ErrorMessage"] = "Failed to send emails. Please try again.";
-                return RedirectToAction("EmailCompose");
-            }
-        }
-
-        [HttpGet("organizer/event-analytics/{id}")]
-        public async Task<IActionResult> EventAnalytics(Guid id)
-        {
-            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
-            var analytics = await _eventService.GetEventAnalyticsAsync(id, organizerId);
-            if (analytics == null)
-            {
-                TempData["ErrorMessage"] = "Event not found or access denied.";
-                return RedirectToAction("Events");
-            }
-            return View("~/Views/Organizer/EventAnalytics.cshtml", analytics);
-        }
-        
         [HttpGet("organizer")]
         public async Task<IActionResult> Index()
         {
@@ -230,6 +156,12 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// List events created by the organizer with pagination.
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         [HttpGet("organizer/events")]
         public async Task<IActionResult> Events(int page = 1, int pageSize = 10)
         {
@@ -252,6 +184,10 @@ namespace online_event_booking_system.Controllers.Organizer
                 return View(new List<Data.Entities.Event>());
             }
         }
+        /// <summary>
+        /// Display organizer reports and analytics dashboard.
+        /// </summary>
+        /// <returns></returns>
 
         [HttpGet("organizer/reports")]
         public async Task<IActionResult> Reports()
@@ -396,6 +332,11 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Convert a UTC DateTime to a human-readable relative time string.
+        /// </summary>
+        /// <param name="dateTimeUtc"></param>
+        /// <returns></returns>
         private static string GetRelativeTime(DateTime dateTimeUtc)
         {
             var span = DateTime.UtcNow - dateTimeUtc;
@@ -425,6 +366,11 @@ namespace online_event_booking_system.Controllers.Organizer
             return View();
         }
 
+        /// <summary>
+        /// Get sales data for the organizer's events over a specified period (for charts).
+        /// </summary>
+        /// <param name="period"></param>
+        /// <returns></returns>
         [HttpGet("organizer/api/sales-data")]
         public async Task<IActionResult> GetSalesData(string period = "7d")
         {
@@ -473,6 +419,10 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Get events data for the organizer's events (for charts/tables).
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("organizer/api/events-data")]
         public async Task<IActionResult> GetEventsData()
         {
@@ -503,6 +453,10 @@ namespace online_event_booking_system.Controllers.Organizer
                 return Json(new { error = "Failed to load events data" });
             }
         }
+        /// <summary>
+        /// Send daily summary email to the organizer.
+        /// </summary>
+        /// <returns></returns>
 
         [HttpPost("organizer/email-daily-summary")]
         [ValidateAntiForgeryToken]
@@ -558,6 +512,10 @@ namespace online_event_booking_system.Controllers.Organizer
 
             return RedirectToAction("Index");
         }
+        /// <summary>
+        /// Display and manage discounts for the organizer.
+        /// </summary>
+        /// <returns></returns>
 
         [HttpGet("organizer/discounts")]
         public async Task<IActionResult> Discounts()
@@ -575,6 +533,11 @@ namespace online_event_booking_system.Controllers.Organizer
             return View(model);
         }
 
+        /// <summary>
+        /// Create a new discount.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("organizer/discounts")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateDiscount(DiscountViewModel model)
@@ -637,6 +600,12 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Discounts");
         }
 
+        /// <summary>
+        /// Edit an existing discount by ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
 
         [HttpPost("organizer/discounts/edit/{id}")]
         [ValidateAntiForgeryToken]
@@ -700,6 +669,11 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Discounts");
         }
 
+        /// <summary>
+        /// Delete a discount by ID.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("organizer/discounts/delete/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteDiscount(Guid id)
@@ -726,6 +700,11 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Discounts");
         }
 
+        /// <summary>
+        /// Toggle discount active/inactive status via AJAX.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("organizer/discounts/toggle/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ToggleDiscountStatus(Guid id)
@@ -750,6 +729,11 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Fetch existing discount data for editing via AJAX.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("organizer/discounts/get/{id}")]
         public async Task<IActionResult> GetDiscountData(Guid id)
         {
@@ -776,6 +760,10 @@ namespace online_event_booking_system.Controllers.Organizer
             return Json(new { success = true, data = model });
         }
 
+        /// <summary>
+        /// Load the create event page with necessary dropdown data.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet("organizer/create-event")]
         public async Task<IActionResult> CreateEvent()
         {
@@ -792,6 +780,11 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Handle event creation form submission.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("organizer/create-event")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateEvent(CreateEventViewModel model)
@@ -852,6 +845,11 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Load the edit event page with existing event details.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("organizer/edit-event/{id}")]
         public async Task<IActionResult> EditEvent(Guid id)
         {
@@ -936,6 +934,12 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Edit and update an existing event's details.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost("organizer/edit-event/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditEvent(Guid id, CreateEventViewModel model)
@@ -973,6 +977,12 @@ namespace online_event_booking_system.Controllers.Organizer
             }
         }
 
+        /// <summary>
+        /// Delete an event permanently from the system.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
         [HttpPost("organizer/delete-event/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteEvent(Guid id)
@@ -1003,6 +1013,11 @@ namespace online_event_booking_system.Controllers.Organizer
 
             return RedirectToAction("Events");
         }
+        /// <summary>
+        /// Publish an event, making it visible to users for booking.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
 
         [HttpPost("organizer/publish-event/{id}")]
         [ValidateAntiForgeryToken]
@@ -1031,6 +1046,12 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Events");
         }
 
+        /// <summary>
+        /// Unpublish an event, making it no longer visible to users for booking.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
         [HttpPost("organizer/unpublish-event/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UnpublishEvent(Guid id)
@@ -1058,6 +1079,11 @@ namespace online_event_booking_system.Controllers.Organizer
             return RedirectToAction("Events");
         }
 
+        /// <summary>
+        /// Cancel an event, preventing any further ticket sales and notifying attendees.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost("organizer/cancel-event/{id}")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CancelEvent(Guid id)
@@ -1084,6 +1110,12 @@ namespace online_event_booking_system.Controllers.Organizer
 
             return RedirectToAction("Events");
         }
+        /// <summary>
+        /// Update the status of an event (e.g., Scheduled, Ongoing, Completed, Cancelled).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
 
         [HttpPost("organizer/update-event-status/{id}")]
         [ValidateAntiForgeryToken]
@@ -1110,6 +1142,94 @@ namespace online_event_booking_system.Controllers.Organizer
             }
 
             return RedirectToAction("Events");
+        }
+        /// <summary>
+        /// Display the email composition form for organizers to send promotional emails to users.
+        /// </summary>
+        /// <returns></returns>
+
+        [HttpGet("organizer/email-compose")]
+        public async Task<IActionResult> EmailCompose()
+        {
+            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var recipients = await _context.Users
+                .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
+                .OrderBy(u => u.FullName)
+                .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
+                .ToListAsync();
+
+            var model = new OrganizerEmailViewModel
+            {
+                Recipients = recipients
+            };
+            return View("~/Views/Organizer/EmailCompose.cshtml", model);
+        }
+
+        /// <summary>
+        /// Handle the submission of the email composition form and send emails to selected recipients.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost("organizer/email-send")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EmailSend(OrganizerEmailViewModel model)
+        {
+            if (!ModelState.IsValid || model.SelectedUserIds.Count == 0)
+            {
+                // reload recipients
+                var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+                model.Recipients = await _context.Users
+                    .Where(u => u.IsActive && u.Email != null && u.Id != organizerId)
+                    .OrderBy(u => u.FullName)
+                    .Select(u => new RecipientOption { Id = u.Id, Name = u.FullName, Email = u.Email! })
+                    .ToListAsync();
+                TempData["ErrorMessage"] = "Please fill subject/body and select at least one recipient.";
+                return View("~/Views/Organizer/EmailCompose.cshtml", model);
+            }
+
+            try
+            {
+                var organizer = await _userManager.GetUserAsync(User);
+                var recipients = await _context.Users
+                    .Where(u => model.SelectedUserIds.Contains(u.Id) && u.Email != null)
+                    .Select(u => new { u.Email, u.FullName })
+                    .ToListAsync();
+
+                var body = online_event_booking_system.Helper.EmailTemplates.GetEventPromoTemplate(
+                    organizer?.FullName ?? "Organizer",
+                    model.Subject,
+                    model.Body,
+                    null,
+                    null
+                );
+
+                foreach (var r in recipients)
+                {
+                    await _emailService.SendEmailAsync(r.Email!, model.Subject, body);
+                }
+
+                TempData["SuccessMessage"] = $"Email sent to {recipients.Count} recipient(s).";
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error sending organizer email");
+                TempData["ErrorMessage"] = "Failed to send emails. Please try again.";
+                return RedirectToAction("EmailCompose");
+            }
+        }
+
+        [HttpGet("organizer/event-analytics/{id}")]
+        public async Task<IActionResult> EventAnalytics(Guid id)
+        {
+            var organizerId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "";
+            var analytics = await _eventService.GetEventAnalyticsAsync(id, organizerId);
+            if (analytics == null)
+            {
+                TempData["ErrorMessage"] = "Event not found or access denied.";
+                return RedirectToAction("Events");
+            }
+            return View("~/Views/Organizer/EventAnalytics.cshtml", analytics);
         }
     }
 }

@@ -2,6 +2,9 @@
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// Represents the pricing details for an event, including various price categories and types.
+    /// </summary>
     public class EventPrice
     {
         public Guid Id { get; set; } = Guid.NewGuid();

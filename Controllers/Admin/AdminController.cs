@@ -678,6 +678,10 @@ namespace online_event_booking_system.Controllers.Admin
             return View();
         }
 
+        /// <summary>
+        /// Send weekly platform performance report to all admins
+        /// </summary>
+        /// <returns></returns>
         [HttpPost("admin/email-weekly-report")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SendWeeklyReport()
@@ -750,7 +754,11 @@ namespace online_event_booking_system.Controllers.Admin
             }
             return Json(userWithRole);
         }
-
+        /// <summary>
+        /// Create a new organizer
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> CreateOrganizer(ApplicationUser model)

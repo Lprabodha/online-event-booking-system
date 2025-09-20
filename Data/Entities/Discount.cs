@@ -2,6 +2,9 @@
 
 namespace online_event_booking_system.Data.Entities
 {
+    /// <summary>
+    /// Represents a discount or promotional code that can be applied to event bookings.
+    /// </summary>
     public class Discount
     {
         public Guid Id { get; set; } = Guid.NewGuid();

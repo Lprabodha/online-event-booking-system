@@ -13,6 +13,12 @@ namespace online_event_booking_system.Business.Service
         private readonly IS3Service _s3Service;
         private readonly ILogger<EventService> _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the EventService class.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="s3Service"></param>
+        /// <param name="logger"></param>
         public EventService(ApplicationDbContext context, IS3Service s3Service, ILogger<EventService> logger)
         {
             _context = context;
@@ -20,6 +26,13 @@ namespace online_event_booking_system.Business.Service
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create a new event
+        /// </summary>
+        /// <param name="model"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Event> CreateEventAsync(CreateEventViewModel model, string organizerId)
         {
             try
@@ -108,6 +121,11 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Get event by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Event?> GetEventByIdAsync(Guid id)
         {
             return await _context.Events
@@ -121,6 +139,11 @@ namespace online_event_booking_system.Business.Service
                 .FirstOrDefaultAsync(e => e.Id == id);
         }
 
+        /// <summary>
+        /// Get events by organizer
+        /// </summary>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetEventsByOrganizerAsync(string organizerId)
         {
             return await _context.Events
@@ -135,6 +158,13 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get events by organizer with pagination
+        /// </summary>
+        /// <param name="organizerId"></param>
+        /// <param name="page"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public async Task<(List<Event> Events, int TotalCount, int TotalPages)> GetEventsByOrganizerWithPaginationAsync(string organizerId, int page = 1, int pageSize = 10)
         {
             var query = _context.Events
@@ -155,6 +185,14 @@ namespace online_event_booking_system.Business.Service
             return (events, totalCount, totalPages);
         }
 
+        /// <summary>
+        /// Update an existing event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="model"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException"></exception>
         public async Task<Event> UpdateEventAsync(Guid id, CreateEventViewModel model, string organizerId)
         {
             var eventEntity = await _context.Events
@@ -238,7 +276,13 @@ namespace online_event_booking_system.Business.Service
             await _context.SaveChangesAsync();
             return eventEntity;
         }
-
+        /// <summary>
+        /// Delete an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
         public async Task<bool> DeleteEventAsync(Guid id, string organizerId)
         {
             var eventEntity = await _context.Events
@@ -258,7 +302,10 @@ namespace online_event_booking_system.Business.Service
             await _context.SaveChangesAsync();
             return true;
         }
-
+        /// <summary>
+        /// Get all events
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Event>> GetAllEventsAsync()
         {
             return await _context.Events
@@ -270,6 +317,10 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get published events
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Event>> GetPublishedEventsAsync()
         {
             return await _context.Events
@@ -282,6 +333,12 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Publish an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<bool> PublishEventAsync(Guid id, string organizerId)
         {
             try
@@ -309,6 +366,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Unpublish an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<bool> UnpublishEventAsync(Guid id, string organizerId)
         {
             try
@@ -332,6 +395,12 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Cancel an event
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="organizerId"></param>
+        /// <returns></returns>
         public async Task<bool> CancelEventAsync(Guid id, string organizerId)
         {
             try
@@ -359,6 +428,13 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Update Event Status
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="organizerId"></param>
+        /// <param name="status"></param>
+        /// <returns></returns>
         public async Task<bool> UpdateEventStatusAsync(Guid id, string organizerId, string status)
         {
             try
@@ -387,6 +463,10 @@ namespace online_event_booking_system.Business.Service
             }
         }
 
+        /// <summary>
+        /// Get all active categories
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Category>> GetCategoriesAsync()
         {
             return await _context.Categories
@@ -395,6 +475,10 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get all active venues
+        /// </summary>
+        /// <returns></returns>
         public async Task<List<Venue>> GetVenuesAsync()
         {
             return await _context.Venues
@@ -403,6 +487,10 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get CreateEventViewModel with categories and venues
+        /// </summary>
+        /// <returns></returns>
         public async Task<CreateEventViewModel> GetCreateEventViewModelAsync()
         {
             var categories = await GetCategoriesAsync();
@@ -426,6 +514,11 @@ namespace online_event_booking_system.Business.Service
             };
         }
 
+        /// <summary>
+        /// Get upcoming events
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetUpcomingEventsAsync(int count = 6)
         {
             var now = DateTime.UtcNow;
@@ -442,6 +535,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        ///  
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetLatestEventsAsync(int count = 4)
         {
             return await _context.Events
@@ -456,6 +554,12 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get related events by category, excluding the current event. If not enough events in the same category, fill with other categories.
+        /// </summary>
+        /// <param name="eventId"></param>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetRelatedEventsAsync(Guid eventId, int count = 3)
         {
             // First get the current event to find related events
@@ -501,6 +605,11 @@ namespace online_event_booking_system.Business.Service
             return relatedEvents;
         }
 
+        /// <summary>
+        /// Get events happening this week (Sunday to Saturday)
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetEventsThisWeekAsync(int count = 6)
         {
             var now = DateTime.UtcNow;
@@ -521,6 +630,11 @@ namespace online_event_booking_system.Business.Service
                 .ToListAsync();
         }
 
+        /// <summary>
+        /// Get events happening next week (Sunday to Saturday)
+        /// </summary>
+        /// <param name="count"></param>
+        /// <returns></returns>
         public async Task<List<Event>> GetEventsNextWeekAsync(int count = 6)
         {
             var now = DateTime.UtcNow;
@@ -543,23 +657,11 @@ namespace online_event_booking_system.Business.Service
         }
 
         /// <summary>
-        /// Helper method to convert event image paths to URLs
+        /// Get event analytics including tickets sold, revenue, average ticket price, discount usage, and buyer details.
         /// </summary>
-        private async Task<string> GetEventImageUrlAsync(string imagePath)
-        {
-            if (string.IsNullOrEmpty(imagePath))
-                return string.Empty;
-
-            try
-            {
-                return _s3Service.GetDirectUrl(imagePath);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error getting image URL for path: {Path}", imagePath);
-                return imagePath; // Fallback to original path
-            }
-        }
+        /// <param name="eventId"></param>
+        /// <param name="restrictToOrganizerId"></param>
+        /// <returns></returns>
 
         public async Task<EventAnalyticsViewModel?> GetEventAnalyticsAsync(Guid eventId, string? restrictToOrganizerId = null)
         {

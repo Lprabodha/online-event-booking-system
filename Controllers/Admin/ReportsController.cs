@@ -18,7 +18,10 @@ namespace online_event_booking_system.Controllers.Admin
             _reportService = reportService;
             _context = context;
         }
-
+        /// <summary>
+        /// Display the reports dashboard with filtering options.
+        /// </summary>
+        /// <returns></returns>
         // GET: Admin/Reports
         [HttpGet]
         [Route("")]
@@ -35,6 +38,13 @@ namespace online_event_booking_system.Controllers.Admin
             ViewBag.Organizers = organizers;
             return View("~/Views/Admin/Reports.cshtml");
         }
+        /// <summary>
+        /// Fetch users based on filters and return partial view.
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
 
         // GET: Admin/Reports/Users
         [HttpGet]
@@ -52,6 +62,14 @@ namespace online_event_booking_system.Controllers.Admin
                 return PartialView("~/Views/Admin/_UsersTable.cshtml", new List<ApplicationUser>());
             }
         }
+        /// <summary>
+        /// Fetch events based on filters and return partial view.
+        /// </summary>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <returns></returns>
 
         // GET: Admin/Reports/Events
         [HttpGet]
@@ -70,6 +88,17 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="reportType"></param>
+        /// <param name="format"></param>
+        /// <param name="dateFrom"></param>
+        /// <param name="dateTo"></param>
+        /// <param name="category"></param>
+        /// <param name="organizer"></param>
+        /// <param name="role"></param>
+        /// <returns></returns>
         // POST: Admin/Reports/Download
         [HttpPost]
         [Route("Download")]
@@ -98,6 +127,11 @@ namespace online_event_booking_system.Controllers.Admin
             }
         }
 
+        /// <summary>
+        /// Get MIME type based on file format.
+        /// </summary>
+        /// <param name="format"></param>
+        /// <returns></returns>
         private string GetMimeType(string format)
         {
             return format.ToLower() switch

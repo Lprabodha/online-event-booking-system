@@ -17,6 +17,10 @@ namespace online_event_booking_system.Repository.Service
             _logger = logger;
         }
 
+        /// <summary>
+        /// Get all categories in the system
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
             try
@@ -35,6 +39,11 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Get category by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<Category?> GetCategoryByIdAsync(Guid id)
         {
             try
@@ -53,6 +62,11 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Create a new category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             try
@@ -71,6 +85,11 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Update an existing category
+        /// </summary>
+        /// <param name="category"></param>
+        /// <returns></returns>
         public async Task<Category> UpdateCategoryAsync(Category category)
         {
             try
@@ -89,6 +108,11 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Delete a category by its ID. If the category has associated events, it will be marked as inactive instead of being deleted.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteCategoryAsync(Guid id)
         {
             try
@@ -124,6 +148,11 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Check if a category exists by its unique identifier
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<bool> CategoryExistsAsync(Guid id)
         {
             try
@@ -140,6 +169,10 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Get all active categories
+        /// </summary>
+        /// <returns></returns>
         public async Task<IEnumerable<Category>> GetActiveCategoriesAsync()
         {
             try
@@ -159,6 +192,12 @@ namespace online_event_booking_system.Repository.Service
             }
         }
 
+        /// <summary>
+        /// Check if a category name is unique, optionally excluding a specific category ID (useful for updates)
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="excludeId"></param>
+        /// <returns></returns>
         public async Task<bool> IsCategoryNameUniqueAsync(string name, Guid? excludeId = null)
         {
             try

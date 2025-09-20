@@ -1,5 +1,8 @@
 namespace online_event_booking_system.Services
 {
+    /// <summary>
+    /// Interface for QR code generation services.
+    /// </summary>
     public interface IQRCodeService
     {
         string GenerateQRCode(string data, int size = 200);
